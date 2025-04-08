@@ -449,6 +449,41 @@
               <FileType>1</FileType>
               <FilePath>..\User\Base_Modules\bluetooth.c</FilePath>
             </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc_button.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\adc_button.c</FilePath>
+            </File>
+            <File>
+              <FileName>k230_serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\k230_serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_math.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Algorithm\drv_math.c</FilePath>
+            </File>
+            <File>
+              <FileName>kinematics.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Algorithm\kinematics.c</FilePath>
+            </File>
+            <File>
+              <FileName>pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Algorithm\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>car.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Car\car.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

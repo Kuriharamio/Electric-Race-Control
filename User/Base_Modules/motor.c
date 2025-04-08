@@ -1,30 +1,46 @@
 #include "Base_Modules/motor.h"
 
-Class_Motor *create_motor(GPIO_Regs *__SLP_PORT, uint32_t __SLP_PIN, GPTIMER_Regs *__PWM_INST, uint32_t __PWM_IDX, GPIO_Regs *__DIR_PORT, uint32_t __DIR_PIN, GPIO_Regs *__ENCODER_A_PORT, uint32_t __ENCODER_A_PIN, GPIO_Regs *__ENCODER_B_PORT, uint32_t __ENCODER_B_PIN)
-{
-    Class_Motor *tmp_motor_ptr = NULL;
+static Class_Motor _Motor_RB = {RIGHT_BACK};
+static Class_Motor _Motor_LB = {LEFT_BACK};
+static Class_Motor _Motor_RF = {RIGHT_FRONT};
+static Class_Motor _Motor_LF = {LEFT_FRONT};
 
-    tmp_motor_ptr = (Class_Motor *)malloc(sizeof(Class_Motor));
+pClass_Motor create_motor(SIDE side)
+{
+    pClass_Motor tmp_motor_ptr = NULL;
+
+    switch (side)
+    {
+    case LEFT_BACK:
+        tmp_motor_ptr = &_Motor_LB;
+        break;
+    case LEFT_FRONT:
+        tmp_motor_ptr = &_Motor_LF;
+        break;
+    case RIGHT_BACK:
+        tmp_motor_ptr = &_Motor_RB;
+        break;
+    case RIGHT_FRONT:
+        tmp_motor_ptr = &_Motor_RF;
+        break;
+    default:
+        return NULL;
+    }
 
     tmp_motor_ptr->Init = Motor_Init;
-    
+
+    tmp_motor_ptr->Configure_IN_1 = Motor_Configure_IN_1;
+    tmp_motor_ptr->Configure_IN_2 = Motor_Configure_IN_2;
+    tmp_motor_ptr->Configure_PWM = Motor_Configure_PWM;
+    tmp_motor_ptr->Configure_ENCODER_A = Motor_Configure_ENCODER_A;
+    tmp_motor_ptr->Configure_ENCODER_B = Motor_Configure_ENCODER_B;
+
     tmp_motor_ptr->TIM_PID_PeriodElapsedCallback = Motor_TIM_PID_PeriodElapsedCallback;
     tmp_motor_ptr->Encoder_Callback = Motor_Encoder_Callback;
     tmp_motor_ptr->Control = Motor_Control;
     tmp_motor_ptr->Output = Motor_Output;
 
     tmp_motor_ptr->PID_Speed = create_PID();
-
-    tmp_motor_ptr->SLP_PORT = __SLP_PORT;
-    tmp_motor_ptr->SLP_PIN = __SLP_PIN;
-    tmp_motor_ptr->PWM_INST = __PWM_INST;
-    tmp_motor_ptr->PWM_IDX = __PWM_IDX;
-    tmp_motor_ptr->DIR_PORT = __DIR_PORT;
-    tmp_motor_ptr->DIR_PIN = __DIR_PIN;
-    tmp_motor_ptr->ENCODER_A_PORT = __ENCODER_A_PORT;
-    tmp_motor_ptr->ENCODER_A_PIN = __ENCODER_A_PIN;
-    tmp_motor_ptr->ENCODER_B_PORT = __ENCODER_B_PORT;
-    tmp_motor_ptr->ENCODER_B_PIN = __ENCODER_B_PIN;
 
     return tmp_motor_ptr;
 }
@@ -33,126 +49,139 @@ Class_Motor *create_motor(GPIO_Regs *__SLP_PORT, uint32_t __SLP_PIN, GPTIMER_Reg
  * @brief 电机初始化
  *
  */
-void Motor_Init(Class_Motor *self,double __side, double __radius, double __Output_Max, double __Speed_Max, int __Gearbox_Rate, int __Per_Pulse, int __Frequency_doubling)
-{   
-    self->Side = __side;
+void Motor_Init(pClass_Motor this, float __radius, float __Output_Max, float __Speed_Max, int __Gearbox_Rate, int __Per_Pulse, int __Frequency_doubling)
+{
+    this->Direction = BRAKE;
 
-    self->Radius = __radius;
-    self->Output_Max = __Output_Max;
-    self->Speed_Max = __Speed_Max;
-    self->Encoder_Num_Per_Round = __Gearbox_Rate * __Per_Pulse * __Frequency_doubling;
+    this->Radius = __radius;
+    this->Output_Max = __Output_Max;
+    this->Speed_Max = __Speed_Max;
+    this->Encoder_Num_Per_Round = __Gearbox_Rate * __Per_Pulse * __Frequency_doubling;
 
-    self->Total_Encoder_Tick = 0;
-    self->Last_Encoder_Tick = 0;
-    self->Now_Speed = 0.0f;
-    self->Target_Speed = 0.0f;
+    this->Total_Encoder_Tick = 0;
+    this->Last_Encoder_Tick = 0;
+    this->Now_Speed = 0.0f;
+    this->Target_Speed = 0.0f;
 
-    self->Output_Now = 0;
+    this->Output_Now = 0;
+}
 
-    DL_GPIO_setPins(self->DIR_PORT, self->DIR_PIN);
-    // DL_GPIO_setPins(self->SLP_PORT, self->SLP_PIN);
-    // DL_TimerG_setCaptureCompareValue(self->PWM_INST, 39999, self->PWM_IDX);
+/**
+ * @brief 配置IN1引脚
+ *
+ * @param __IN_1_PORT IN1引脚端口
+ * @param __IN_1_PIN IN1引脚引脚号
+ */
+void Motor_Configure_IN_1(pClass_Motor this, GPIO_Regs *__IN_1_PORT, uint32_t __IN_1_PIN)
+{
+    this->IN_1_PORT = __IN_1_PORT;
+    this->IN_1_PIN = __IN_1_PIN;
+}
+/**
+ * @brief 配置IN2引脚
+ *
+ * @param __IN_2_PORT IN2引脚端口
+ * @param __IN_2_PIN IN2引脚引脚号
+ */
+void Motor_Configure_IN_2(pClass_Motor this, GPIO_Regs *__IN_2_PORT, uint32_t __IN_2_PIN)
+{
+    this->IN_2_PORT = __IN_2_PORT;
+    this->IN_2_PIN = __IN_2_PIN;
+}
+
+/**
+ * @brief 配置PWM引脚
+ *
+ * @param __PWM_INST PWM引脚端口
+ * @param __PWM_IDX PWM引脚引脚号
+ */
+void Motor_Configure_PWM(pClass_Motor this, GPTIMER_Regs *__PWM_INST, uint32_t __PWM_IDX)
+{
+    this->PWM_INST = __PWM_INST;
+    this->PWM_IDX = __PWM_IDX;
+}
+
+/**
+ * @brief 配置编码器A引脚
+ *
+ * @param __ENCODER_A_PORT 编码器A引脚端口
+ * @param __ENCODER_A_PIN 编码器A引脚引脚号
+ */
+void Motor_Configure_ENCODER_A(pClass_Motor this, GPIO_Regs *__ENCODER_A_PORT, uint32_t __ENCODER_A_PIN)
+{
+    this->ENCODER_A_PORT = __ENCODER_A_PORT;
+    this->ENCODER_A_PIN = __ENCODER_A_PIN;
+}
+
+/**
+ * @brief 配置编码器B引脚
+ *
+ * @param __ENCODER_B_PORT 编码器B引脚端口
+ * @param __ENCODER_B_PIN 编码器B引脚引脚号
+ */
+void Motor_Configure_ENCODER_B(pClass_Motor this, GPIO_Regs *__ENCODER_B_PORT, uint32_t __ENCODER_B_PIN)
+{
+    this->ENCODER_B_PORT = __ENCODER_B_PORT;
+    this->ENCODER_B_PIN = __ENCODER_B_PIN;
 }
 
 /**
  * @brief 电机控制
- * 
+ *
  * @param __DIR 电机方向
  */
-void Motor_Control(Class_Motor *self, Motor_Dir __DIR)
+void Motor_Control(pClass_Motor this)
 {
-    if(self->Side == LEFT_BACK || self->Side == LEFT_FRONT){
-        switch (__DIR)
-        {
-        case FORWARD: // nSLEEP = 1, DIR = 1
-            DL_GPIO_clearPins(self->DIR_PORT, self->DIR_PIN);
-            DL_GPIO_setPins(self->SLP_PORT, self->SLP_PIN);
-            DL_TimerG_setCaptureCompareValue(self->PWM_INST, (uint32_t)(39999 - fabs(self->Output_Now)), self->PWM_IDX);
-            break;
-        case BACKWARD: // nSLEEP = 1, DIR = 0
-            DL_GPIO_setPins(self->DIR_PORT, self->DIR_PIN);
-            DL_GPIO_setPins(self->SLP_PORT, self->SLP_PIN);
-            DL_TimerG_setCaptureCompareValue(self->PWM_INST, (uint32_t)(fabs(self->Output_Now)), self->PWM_IDX);
-            break;
-        case BRAKE:
-            // DL_GPIO_clearPins(self->SLP_PORT, self->SLP_PIN);
-            DL_GPIO_setPins(self->DIR_PORT, self->DIR_PIN);
-            DL_GPIO_setPins(self->SLP_PORT, self->SLP_PIN);
-            DL_TimerG_setCaptureCompareValue(self->PWM_INST, 0, self->PWM_IDX);
-            break;
-        default:
-            break;
-        }
-    }else{
-        switch (__DIR)
-        {
-        case FORWARD: // nSLEEP = 1, DIR = 1
-            DL_GPIO_clearPins(self->DIR_PORT, self->DIR_PIN);
-            DL_GPIO_setPins(self->SLP_PORT, self->SLP_PIN);
-            DL_TimerG_setCaptureCompareValue(self->PWM_INST, (uint32_t)(fabs(self->Output_Now)), self->PWM_IDX);
-            break;
-        case BACKWARD: // nSLEEP = 1, DIR = 0
-            DL_GPIO_setPins(self->DIR_PORT, self->DIR_PIN);
-            DL_GPIO_setPins(self->SLP_PORT, self->SLP_PIN);
-            DL_TimerG_setCaptureCompareValue(self->PWM_INST, (uint32_t)(39999 - fabs(self->Output_Now)), self->PWM_IDX);
-            break;
-        case BRAKE:
-            // DL_GPIO_clearPins(self->SLP_PORT, self->SLP_PIN);
-            DL_GPIO_setPins(self->DIR_PORT, self->DIR_PIN);
-            DL_GPIO_setPins(self->SLP_PORT, self->SLP_PIN);
-            DL_TimerG_setCaptureCompareValue(self->PWM_INST, 39999, self->PWM_IDX);
-            break;
-        default:
-            break;
-        }
+    switch (this->Direction)
+    {
+    case FORWARD: // IN_1 = 1, IN_2 = 0
+        DL_GPIO_setPins(this->IN_1_PORT, this->IN_1_PIN);
+        DL_GPIO_clearPins(this->IN_2_PORT, this->IN_2_PIN);
+        DL_TimerG_setCaptureCompareValue(this->PWM_INST, (uint32_t)(fabs(this->Output_Now)), this->PWM_IDX);
+        break;
+    case BACKWARD: // IN_1 = 0, IN_2 = 1
+        DL_GPIO_setPins(this->IN_2_PORT, this->IN_2_PIN);
+        DL_GPIO_clearPins(this->IN_1_PORT, this->IN_1_PIN);
+        DL_TimerG_setCaptureCompareValue(this->PWM_INST, (uint32_t)(fabs(this->Output_Now)), this->PWM_IDX);
+        break;
+    case BRAKE:
+        DL_GPIO_setPins(this->IN_1_PORT, this->IN_1_PIN);
+        DL_GPIO_setPins(this->IN_2_PORT, this->IN_2_PIN);
+        DL_TimerG_setCaptureCompareValue(this->PWM_INST, 0, this->PWM_IDX);
+        break;
+    default:
+        break;
     }
-   
-
 }
-
 
 /**
  * @brief 输出PWM
  *
  */
-void Motor_Output(Class_Motor *self)
+void Motor_Output(pClass_Motor this)
 {
+    if (this->Output_Now > this->Output_Max)
+        this->Output_Now = this->Output_Max;
+    if (this->Output_Now < -this->Output_Max)
+        this->Output_Now = -this->Output_Max;
 
-    if (self->Output_Now > self->Output_Max)
-        self->Output_Now = self->Output_Max;
-    if(self->Output_Now < -self->Output_Max)
-        self->Output_Now = -self->Output_Max;
+    if (fabs(this->Target_Speed) <= 0.0025)
+        this->Output_Now = 0;
 
-    if(fabs(self->Target_Speed) <= 0.0025)
-        self->Output_Now = 0;
-
-    switch(self->Side){
-        // case RIGHT:
-        {
-            if (self->Output_Now < -0.1)
-            {
-                self->Control(self, FORWARD);
-            }else if(self->Output_Now > 0.1){
-                self->Control(self, BACKWARD);
-            }else{
-                self->Control(self, BRAKE);
-            }
-        }
-        break;
-        // case LEFT:
-        {
-            if (self->Output_Now > 0.1){
-                self->Control(self, BACKWARD);
-            }else if(self->Output_Now < -0.1){
-                self->Control(self, FORWARD);
-            }else{
-                self->Control(self, BRAKE);
-            }
-        }
-        break;
-        default:
-            break;
+    if (this->Output_Now < -0.1)
+    {
+        this->Direction = BACKWARD;
     }
+    else if (this->Output_Now > 0.1)
+    {
+        this->Direction = FORWARD;
+    }
+    else
+    {
+        this->Direction = BRAKE;
+    }
+
+    this->Control(this);
 }
 
 /**
@@ -160,86 +189,130 @@ void Motor_Output(Class_Motor *self)
  *
  * @param phase 编码器相位
  */
-void Motor_Encoder_Callback(Class_Motor *self, char phase)
+void Motor_Encoder_Callback(pClass_Motor this, char phase)
 {
     switch (phase)
     {
     case 'A':
     {
-        if (DL_GPIO_readPins(self->ENCODER_A_PORT, self->ENCODER_A_PIN))
+        if (DL_GPIO_readPins(this->ENCODER_A_PORT, this->ENCODER_A_PIN))
         {
-            if (DL_GPIO_readPins(self->ENCODER_B_PORT, self->ENCODER_B_PIN))
+            if (DL_GPIO_readPins(this->ENCODER_B_PORT, this->ENCODER_B_PIN))
             {
-                self->Total_Encoder_Tick++;
+                this->Total_Encoder_Tick++;
             }
             else
             {
-                self->Total_Encoder_Tick--;
+                this->Total_Encoder_Tick--;
             }
         }
         else
         {
-            if (DL_GPIO_readPins(self->ENCODER_B_PORT, self->ENCODER_B_PIN))
+            if (DL_GPIO_readPins(this->ENCODER_B_PORT, this->ENCODER_B_PIN))
             {
-                self->Total_Encoder_Tick--;
+                this->Total_Encoder_Tick--;
             }
             else
             {
-                self->Total_Encoder_Tick++;
+                this->Total_Encoder_Tick++;
             }
         }
     }
     break;
     case 'B':
     {
-        if (DL_GPIO_readPins(self->ENCODER_B_PORT, self->ENCODER_B_PIN))
+        if (DL_GPIO_readPins(this->ENCODER_B_PORT, this->ENCODER_B_PIN))
         {
-            if (DL_GPIO_readPins(self->ENCODER_A_PORT, self->ENCODER_A_PIN))
+            if (DL_GPIO_readPins(this->ENCODER_A_PORT, this->ENCODER_A_PIN))
             {
-                self->Total_Encoder_Tick--;
+                this->Total_Encoder_Tick--;
             }
             else
             {
-                self->Total_Encoder_Tick++;
+                this->Total_Encoder_Tick++;
             }
         }
         else
         {
-            if (DL_GPIO_readPins(self->ENCODER_A_PORT, self->ENCODER_A_PIN))
+            if (DL_GPIO_readPins(this->ENCODER_A_PORT, this->ENCODER_A_PIN))
             {
-                self->Total_Encoder_Tick++;
+                this->Total_Encoder_Tick++;
             }
             else
             {
-                self->Total_Encoder_Tick--;
+                this->Total_Encoder_Tick--;
             }
         }
     }
     break;
     }
-       
 }
 
 /**
  * @brief TIM定时器中断计算回调函数
  *
  */
-void Motor_TIM_PID_PeriodElapsedCallback(Class_Motor *self)
+void Motor_TIM_PID_PeriodElapsedCallback(pClass_Motor this)
 {
-    if(self->Target_Speed > self->Speed_Max)
+    if (this->Target_Speed > this->Speed_Max)
     {
-        self->Target_Speed = self->Speed_Max;
+        this->Target_Speed = this->Speed_Max;
     }
-    if (self->Target_Speed < -self->Speed_Max)
+    if (this->Target_Speed < -this->Speed_Max)
     {
-        self->Target_Speed = -self->Speed_Max;
+        this->Target_Speed = -this->Speed_Max;
     }
 
-    self->PID_Speed->Set_Target((self->PID_Speed), self->Target_Speed);
-    self->PID_Speed->Set_Now((self->PID_Speed), self->Now_Speed);
-    self->PID_Speed->TIM_Adjust_PeriodElapsedCallback((self->PID_Speed));
+    this->PID_Speed->Set_Target((this->PID_Speed), this->Target_Speed);
+    this->PID_Speed->Set_Now((this->PID_Speed), this->Now_Speed);
+    this->PID_Speed->TIM_Adjust_PeriodElapsedCallback((this->PID_Speed));
 
-    self->Output_Now = (self->PID_Speed->Get_PID_Out((self->PID_Speed)));
+    this->Output_Now = (this->PID_Speed->Get_PID_Out((this->PID_Speed)));
 
-    self->Output(self);
+    this->Output(this);
+}
+
+void PID_INST_IRQHandler(void)
+{
+    switch (DL_TimerG_getPendingInterrupt(PID_INST))
+    {
+    case DL_TIMER_IIDX_ZERO:
+        _Motor_LB.TIM_PID_PeriodElapsedCallback(&_Motor_LB);
+        _Motor_LF.TIM_PID_PeriodElapsedCallback(&_Motor_LF);
+        _Motor_RB.TIM_PID_PeriodElapsedCallback(&_Motor_RB);
+        _Motor_RF.TIM_PID_PeriodElapsedCallback(&_Motor_RF);
+        break;
+
+    default:
+        break;
+    }
+}
+
+// 里程计中断服务函数
+void ENCODER_INST_IRQHandler(void)
+{
+
+    switch (DL_TimerG_getPendingInterrupt(ENCODER_INST))
+    {
+    case DL_TIMER_IIDX_ZERO:
+        // 计算速度
+        _Motor_LB.Now_Speed = (float)(_Motor_LB.Total_Encoder_Tick) / (float)(_Motor_LB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LB.Radius;
+        _Motor_LB.Total_Encoder_Tick = 0;
+
+        _Motor_LF.Now_Speed = (float)(_Motor_LF.Total_Encoder_Tick) / (float)(_Motor_LF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LF.Radius;
+        _Motor_LF.Total_Encoder_Tick = 0;
+
+        _Motor_RB.Now_Speed = (float)(_Motor_RB.Total_Encoder_Tick) / (float)(_Motor_RB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RB.Radius;
+        _Motor_RB.Total_Encoder_Tick = 0;
+
+        _Motor_RF.Now_Speed = (float)(_Motor_RF.Total_Encoder_Tick) / (float)(_Motor_RF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RF.Radius;
+        _Motor_RF.Total_Encoder_Tick = 0;
+
+        // 更新里程计
+
+        break;
+
+    default:
+        break;
+    }
 }
