@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\3_Base_Plate_Core</IncludePath>
+              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -400,14 +400,14 @@
               <FilePath>startup_mspm0g350x_uvision.s</FilePath>
             </File>
             <File>
-              <FileName>ti_msp_dl_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>../ti_msp_dl_config.h</FilePath>
-            </File>
-            <File>
               <FileName>ti_msp_dl_config.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../ti_msp_dl_config.c</FilePath>
+              <FilePath>..\ti_msp_dl_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>ti_msp_dl_config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\ti_msp_dl_config.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -425,6 +425,16 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
+              <FileName>car.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Car\car.c</FilePath>
+            </File>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\BSP\board.c</FilePath>
+            </File>
+            <File>
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\BSP\delay.c</FilePath>
@@ -435,14 +445,9 @@
               <FilePath>..\User\BSP\uart.c</FilePath>
             </File>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>adc_button.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\BSP\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Base_Modules\led.c</FilePath>
+              <FilePath>..\User\Base_Modules\adc_button.c</FilePath>
             </File>
             <File>
               <FileName>bluetooth.c</FileName>
@@ -450,19 +455,19 @@
               <FilePath>..\User\Base_Modules\bluetooth.c</FilePath>
             </File>
             <File>
-              <FileName>motor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Base_Modules\motor.c</FilePath>
-            </File>
-            <File>
-              <FileName>adc_button.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Base_Modules\adc_button.c</FilePath>
-            </File>
-            <File>
               <FileName>k230_serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Base_Modules\k230_serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\motor.c</FilePath>
             </File>
             <File>
               <FileName>drv_math.c</FileName>
@@ -478,11 +483,6 @@
               <FileName>pid.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Algorithm\pid.c</FilePath>
-            </File>
-            <File>
-              <FileName>car.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Car\car.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -64,6 +64,7 @@ void Motor_Init(pClass_Motor this, float __radius, float __Output_Max, float __S
     this->Target_Speed = 0.0f;
 
     this->Output_Now = 0;
+    this->is_inited = true;
 }
 
 /**
@@ -274,12 +275,12 @@ void Motor_TIM_PID_PeriodElapsedCallback(pClass_Motor this)
 
 void PID_INST_IRQHandler(void)
 {
-    switch (DL_TimerG_getPendingInterrupt(PID_INST))
+    switch (DL_TimerA_getPendingInterrupt(PID_INST))
     {
     case DL_TIMER_IIDX_ZERO:
-        _Motor_LB.TIM_PID_PeriodElapsedCallback(&_Motor_LB);
-        _Motor_LF.TIM_PID_PeriodElapsedCallback(&_Motor_LF);
-        _Motor_RB.TIM_PID_PeriodElapsedCallback(&_Motor_RB);
+        // _Motor_LB.TIM_PID_PeriodElapsedCallback(&_Motor_LB);
+        // _Motor_LF.TIM_PID_PeriodElapsedCallback(&_Motor_LF);
+        // _Motor_RB.TIM_PID_PeriodElapsedCallback(&_Motor_RB);
         _Motor_RF.TIM_PID_PeriodElapsedCallback(&_Motor_RF);
         break;
 
@@ -291,19 +292,18 @@ void PID_INST_IRQHandler(void)
 // 里程计中断服务函数
 void ENCODER_INST_IRQHandler(void)
 {
-
     switch (DL_TimerG_getPendingInterrupt(ENCODER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
         // 计算速度
-        _Motor_LB.Now_Speed = (float)(_Motor_LB.Total_Encoder_Tick) / (float)(_Motor_LB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LB.Radius;
-        _Motor_LB.Total_Encoder_Tick = 0;
+        // _Motor_LB.Now_Speed = (float)(_Motor_LB.Total_Encoder_Tick) / (float)(_Motor_LB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LB.Radius;
+        // _Motor_LB.Total_Encoder_Tick = 0;
 
-        _Motor_LF.Now_Speed = (float)(_Motor_LF.Total_Encoder_Tick) / (float)(_Motor_LF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LF.Radius;
-        _Motor_LF.Total_Encoder_Tick = 0;
+        // _Motor_LF.Now_Speed = (float)(_Motor_LF.Total_Encoder_Tick) / (float)(_Motor_LF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LF.Radius;
+        // _Motor_LF.Total_Encoder_Tick = 0;
 
-        _Motor_RB.Now_Speed = (float)(_Motor_RB.Total_Encoder_Tick) / (float)(_Motor_RB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RB.Radius;
-        _Motor_RB.Total_Encoder_Tick = 0;
+        // _Motor_RB.Now_Speed = (float)(_Motor_RB.Total_Encoder_Tick) / (float)(_Motor_RB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RB.Radius;
+        // _Motor_RB.Total_Encoder_Tick = 0;
 
         _Motor_RF.Now_Speed = (float)(_Motor_RF.Total_Encoder_Tick) / (float)(_Motor_RF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RF.Radius;
         _Motor_RF.Total_Encoder_Tick = 0;
@@ -315,4 +315,40 @@ void ENCODER_INST_IRQHandler(void)
     default:
         break;
     }
+}
+
+void GROUP1_IRQHandler(void)
+{
+
+    /*******************************
+                编码器中断
+    *******************************/
+
+    // uint32_t en_l = DL_GPIO_getEnabledInterruptStatus(ENCODER_L_PORT, car->wheel_L->ENCODER_A_PIN | car->wheel_L->ENCODER_B_PIN);
+ 
+    // if ((en_l & car->wheel_L->ENCODER_A_PIN) == car->wheel_L->ENCODER_A_PIN)
+    // {
+    //     car->wheel_L->Encoder_Callback(car->wheel_L, 'A');
+    //     DL_GPIO_clearInterruptStatus(ENCODER_L_PORT, car->wheel_L->ENCODER_A_PIN);
+    // }
+
+    // if ((en_l & car->wheel_L->ENCODER_B_PIN) == car->wheel_L->ENCODER_B_PIN)
+    // {
+    //     car->wheel_L->Encoder_Callback(car->wheel_L, 'B');
+    //     DL_GPIO_clearInterruptStatus(ENCODER_L_PORT, car->wheel_L->ENCODER_B_PIN);
+    // }
+
+    // uint32_t en_r = DL_GPIO_getEnabledInterruptStatus(ENCODER_R_PORT, car->wheel_R->ENCODER_A_PIN | car->wheel_R->ENCODER_B_PIN);
+
+    // if ((en_r & car->wheel_R->ENCODER_A_PIN) == car->wheel_R->ENCODER_A_PIN)
+    // {
+    //     car->wheel_R->Encoder_Callback(car->wheel_R, 'A');
+    //     DL_GPIO_clearInterruptStatus(ENCODER_R_PORT, car->wheel_R->ENCODER_A_PIN);
+    // }
+
+    // if ((en_r & car->wheel_R->ENCODER_B_PIN) == car->wheel_R->ENCODER_B_PIN)
+    // {
+    //     car->wheel_R->Encoder_Callback(car->wheel_R, 'B');
+    //     DL_GPIO_clearInterruptStatus(ENCODER_R_PORT, car->wheel_R->ENCODER_B_PIN);
+    // }
 }

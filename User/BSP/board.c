@@ -29,7 +29,16 @@ void board_init(void)
     uart_0->Init(uart_0, STREAM); // 初始化串口0
     uart_0 = NULL;        // 释放串口0对象
 
+    // TIM初始化
+    NVIC_ClearPendingIRQ(ENCODER_INST_INT_IRQN);
+    NVIC_ClearPendingIRQ(PID_INST_INT_IRQN);
+	
+    NVIC_EnableIRQ(ENCODER_INST_INT_IRQN);
+    NVIC_EnableIRQ(PID_INST_INT_IRQN);
+
     // ADC初始化
 
     // GPIO初始化
+    NVIC_EnableIRQ(GPIOA_INT_IRQn);
+    NVIC_EnableIRQ(GPIOB_INT_IRQn);
 }

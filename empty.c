@@ -25,14 +25,15 @@ int main(void)
   Motor_RF->Configure_ENCODER_A(Motor_RF, MOTOR_GROUP_L_F_A_PORT, MOTOR_GROUP_L_F_A_PIN); // 配置电机引脚编码器A
   Motor_RF->Configure_ENCODER_B(Motor_RF, MOTOR_GROUP_L_F_B_PORT, MOTOR_GROUP_L_F_B_PIN); // 配置电机引脚编码器B
   Motor_RF->Configure_PWM(Motor_RF, PWM_MOTOR_INST, GPIO_PWM_MOTOR_C0_IDX);
+  Motor_RF->Target_Speed = 0.5f;
 
   // 蓝牙配置
-  pClass_Bluetooth Bluetooth_Debuger = Create_Bluetooth();                           // 创建蓝牙对象
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, 0, 2);                                  // 初始化蓝牙对象
-  Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_0_Rx_Callback); // 配置回调函数
-  Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, WAVE);                        // 配置调试模式
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Motor_RF->Now_Speed));             // 绑定参数
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Motor_RF->Target_Speed));             // 绑定参数
+  // pClass_Bluetooth Bluetooth_Debuger = Create_Bluetooth();                           // 创建蓝牙对象
+  // Bluetooth_Debuger->Init(Bluetooth_Debuger, 0, 2);                                  // 初始化蓝牙对象
+  // Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_0_Rx_Callback); // 配置回调函数
+  // Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, WAVE);                        // 配置调试模式
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Motor_RF->Now_Speed));             // 绑定参数
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Motor_RF->Target_Speed));             // 绑定参数
 
   // DL_GPIO_setPins(MOTOR_GROUP_STBY_PORT, MOTOR_GROUP_STBY_PIN); // 设置电机待机引脚
   // DL_GPIO_setPins(MOTOR_GROUP_L_F_IN1_PORT, MOTOR_GROUP_L_F_IN1_PIN); // 设置电机引脚IN1
@@ -41,7 +42,7 @@ int main(void)
 
   while (1)
   {
-    Bluetooth_Debuger->Send_Datas(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
+    // Bluetooth_Debuger->Send_Datas(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
     LED(TOGGLE);                                                                         // 切换LED灯状态
     delay_ms(1000);                                                                      // 延时1秒
   }

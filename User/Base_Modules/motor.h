@@ -23,6 +23,7 @@ typedef struct Class_Motor
 {
     SIDE Side;
     Motor_Dir Direction;
+    bool is_inited;
     // PID速度环控制
     Class_PID *PID_Speed;
     // 目标速度
