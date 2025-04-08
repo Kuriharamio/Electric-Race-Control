@@ -231,10 +231,10 @@ void UART_0_INST_IRQHandler(void)
 			}
 			// 标记接收标志
 			_UART_0_INST.is_received = true;
-			if (_UART_0_INST.UART_INST_DataProcess != NULL)
-			{
-				_UART_0_INST.UART_INST_DataProcess(&_UART_0_INST); // 调用中断处理函数
-			}
+			// if (_UART_0_INST.UART_INST_DataProcess != NULL)
+			// {
+			// 	_UART_0_INST.UART_INST_DataProcess(&_UART_0_INST); // 调用中断处理函数
+			// }
 		}
 	}
 	break;
@@ -281,10 +281,10 @@ void UART_1_INST_IRQHandler(void)
 			}
 			// 标记接收标志
 			_UART_1_INST.is_received = true;
-			if (_UART_1_INST.UART_INST_DataProcess != NULL)
-			{
-				_UART_1_INST.UART_INST_DataProcess(&_UART_1_INST); // 调用中断处理函数
-			}
+			// if (_UART_1_INST.UART_INST_DataProcess != NULL)
+			// {
+			// 	_UART_1_INST.UART_INST_DataProcess(&_UART_1_INST); // 调用中断处理函数
+			// }
 		}
 	}
 	break;
