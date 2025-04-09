@@ -58,6 +58,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_PID_init();
     SYSCFG_DL_UART_0_init();
     SYSCFG_DL_UART_1_init();
+    SYSCFG_DL_adckey_init();
     SYSCFG_DL_SYSTICK_init();
     /* Ensure backup structures have no valid state */
 	gPWM_MOTORBackup.backupRdy 	= false;
@@ -99,6 +100,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerA_reset(PID_INST);
     DL_UART_Main_reset(UART_0_INST);
     DL_UART_Main_reset(UART_1_INST);
+    DL_ADC12_reset(adckey_INST);
 
 
     DL_GPIO_enablePower(GPIOA);
@@ -108,6 +110,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerA_enablePower(PID_INST);
     DL_UART_Main_enablePower(UART_0_INST);
     DL_UART_Main_enablePower(UART_1_INST);
+    DL_ADC12_enablePower(adckey_INST);
 
     delay_cycles(POWER_STARTUP_DELAY);
 }
@@ -264,7 +267,8 @@ SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_init(void)
 	//Low Power Mode is configured to be SLEEP0
     DL_SYSCTL_setBORThreshold(DL_SYSCTL_BOR_THRESHOLD_LEVEL_0);
 
-    DL_SYSCTL_setSYSOSCFreq(DL_SYSCTL_SYSOSC_FREQ_BASE);
+    
+	DL_SYSCTL_setSYSOSCFreq(DL_SYSCTL_SYSOSC_FREQ_BASE);
 
 }
 
@@ -295,39 +299,40 @@ SYSCONFIG_WEAK void SYSCFG_DL_PWM_MOTOR_init(void) {
     DL_TimerA_initPWMMode(
         PWM_MOTOR_INST, (DL_TimerA_PWMConfig *) &gPWM_MOTORConfig);
 
-    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_0_INDEX);
     DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
 		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
 		DL_TIMERA_CAPTURE_COMPARE_0_INDEX);
 
     DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_0_INDEX);
+    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_0_INDEX);
 
-    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_1_INDEX);
     DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
 		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
 		DL_TIMERA_CAPTURE_COMPARE_1_INDEX);
 
     DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_1_INDEX);
+    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_1_INDEX);
 
-    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_2_INDEX);
     DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
 		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
 		DL_TIMERA_CAPTURE_COMPARE_2_INDEX);
 
     DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_2_INDEX);
+    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_2_INDEX);
 
-    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_3_INDEX);
     DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
 		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
 		DL_TIMERA_CAPTURE_COMPARE_3_INDEX);
 
     DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_3_INDEX);
+    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_3_INDEX);
 
     DL_TimerA_enableClock(PWM_MOTOR_INST);
 
 
     
     DL_TimerA_setCCPDirection(PWM_MOTOR_INST , DL_TIMER_CC0_OUTPUT | DL_TIMER_CC1_OUTPUT | DL_TIMER_CC2_OUTPUT | DL_TIMER_CC3_OUTPUT );
+
 
 }
 
@@ -367,6 +372,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_ENCODER_init(void) {
 
 
 
+
 }
 
 /*
@@ -399,6 +405,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_PID_init(void) {
         (DL_TimerA_TimerConfig *) &gPIDTimerConfig);
     DL_TimerA_enableInterrupt(PID_INST , DL_TIMERA_INTERRUPT_ZERO_EVENT);
     DL_TimerA_enableClock(PID_INST);
+
 
 
 
@@ -481,6 +488,25 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_1_init(void)
 
 
     DL_UART_Main_enable(UART_1_INST);
+}
+
+/* adckey Initialization */
+static const DL_ADC12_ClockConfig gadckeyClockConfig = {
+    .clockSel       = DL_ADC12_CLOCK_SYSOSC,
+    .divideRatio    = DL_ADC12_CLOCK_DIVIDE_8,
+    .freqRange      = DL_ADC12_CLOCK_FREQ_RANGE_24_TO_32,
+};
+SYSCONFIG_WEAK void SYSCFG_DL_adckey_init(void)
+{
+    DL_ADC12_setClockConfig(adckey_INST, (DL_ADC12_ClockConfig *) &gadckeyClockConfig);
+    DL_ADC12_configConversionMem(adckey_INST, adckey_ADCMEM_key,
+        DL_ADC12_INPUT_CHAN_0, DL_ADC12_REFERENCE_VOLTAGE_VDDA, DL_ADC12_SAMPLE_TIMER_SOURCE_SCOMP0, DL_ADC12_AVERAGING_MODE_DISABLED,
+        DL_ADC12_BURN_OUT_SOURCE_DISABLED, DL_ADC12_TRIGGER_MODE_AUTO_NEXT, DL_ADC12_WINDOWS_COMP_MODE_DISABLED);
+    DL_ADC12_setSampleTime0(adckey_INST,40000);
+    /* Enable ADC12 interrupt */
+    DL_ADC12_clearInterruptStatus(adckey_INST,(DL_ADC12_INTERRUPT_MEM0_RESULT_LOADED));
+    DL_ADC12_enableInterrupt(adckey_INST,(DL_ADC12_INTERRUPT_MEM0_RESULT_LOADED));
+    DL_ADC12_enableConversions(adckey_INST);
 }
 
 SYSCONFIG_WEAK void SYSCFG_DL_SYSTICK_init(void)
