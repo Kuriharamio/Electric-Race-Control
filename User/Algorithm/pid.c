@@ -10,14 +10,14 @@
  *
  * @return Class_PID*
  */
-Class_PID *create_PID(void)
+pClass_PID create_PID(void)
 {
-    Class_PID *tmp_pid_ptr = NULL;
+    pClass_PID tmp_pid_ptr = NULL;
 
 #ifdef USE_FREERTOS
-    tmp_pid_ptr = (Class_PID *)pvPortMalloc(sizeof(Class_PID));
+    tmp_pid_ptr = (pClass_PID)pvPortMalloc(sizeof(Class_PID));
 #else
-    tmp_pid_ptr = (Class_PID *)malloc(sizeof(Class_PID));
+    tmp_pid_ptr = (pClass_PID)malloc(sizeof(Class_PID));
 #endif
 
     tmp_pid_ptr->PID_Init = PID_Init;
@@ -49,8 +49,13 @@ Class_PID *create_PID(void)
  * @param __I_Out_Max 积分限幅
  * @param __Out_Max 输出限幅
  * @param __D_T 时间片长度
+ * @param __Dead_Zone 死区
+ * @param __I_Variable_Speed_A 定速内段阈值
+ * @param __I_Variable_Speed_B 变速区间
+ * @param __I_Separate_Threshold 积分分离阈值
+ * @param __D_First 微分先行
  */
-void PID_Init(Class_PID *pid, float __K_P, float __K_I, float __K_D, float __K_F, float __I_Out_Max, float __Out_Max, float __D_T, float __Dead_Zone, float __I_Variable_Speed_A, float __I_Variable_Speed_B, float __I_Separate_Threshold, Enum_PID_D_First __D_First)
+void PID_Init(pClass_PID pid, float __K_P, float __K_I, float __K_D, float __K_F, float __I_Out_Max, float __Out_Max, float __D_T, float __Dead_Zone, float __I_Variable_Speed_A, float __I_Variable_Speed_B, float __I_Separate_Threshold, Enum_PID_D_First __D_First)
 {
     pid->K_P = __K_P;
     pid->K_I = __K_I;
@@ -80,7 +85,7 @@ void PID_Init(Class_PID *pid, float __K_P, float __K_I, float __K_D, float __K_F
  *
  * @return float 输出值
  */
-float Get_Integral_Error(Class_PID *pid)
+float Get_Integral_Error(pClass_PID pid)
 {
     return (pid->Integral_Error);
 }
@@ -90,7 +95,7 @@ float Get_Integral_Error(Class_PID *pid)
  *
  * @return float 输出值
  */
-float Get_PID_Out(Class_PID *pid)
+float Get_PID_Out(pClass_PID pid)
 {
     return (pid->Out);
 }
@@ -100,7 +105,7 @@ float Get_PID_Out(Class_PID *pid)
  *
  * @param __K_P PID的P
  */
-void Set_K_P(Class_PID *pid, float __K_P)
+void Set_K_P(pClass_PID pid, float __K_P)
 {
     pid->K_P = __K_P;
 }
@@ -110,7 +115,7 @@ void Set_K_P(Class_PID *pid, float __K_P)
  *
  * @param __K_I PID的I
  */
-void Set_K_I(Class_PID *pid, float __K_I)
+void Set_K_I(pClass_PID pid, float __K_I)
 {
     pid->K_I = __K_I;
 }
@@ -120,7 +125,7 @@ void Set_K_I(Class_PID *pid, float __K_I)
  *
  * @param __K_D PID的D
  */
-void Set_K_D(Class_PID *pid, float __K_D)
+void Set_K_D(pClass_PID pid, float __K_D)
 {
     pid->K_D = __K_D;
 }
@@ -130,7 +135,7 @@ void Set_K_D(Class_PID *pid, float __K_D)
  *
  * @param __K_D 前馈
  */
-void Set_K_F(Class_PID *pid, float __K_F)
+void Set_K_F(pClass_PID pid, float __K_F)
 {
     pid->K_F = __K_F;
 }
@@ -140,7 +145,7 @@ void Set_K_F(Class_PID *pid, float __K_F)
  *
  * @param __I_Out_Max 积分限幅, 0为不限制
  */
-void Set_I_Out_Max(Class_PID *pid, float __I_Out_Max)
+void Set_I_Out_Max(pClass_PID pid, float __I_Out_Max)
 {
     pid->I_Out_Max = __I_Out_Max;
 }
@@ -150,7 +155,7 @@ void Set_I_Out_Max(Class_PID *pid, float __I_Out_Max)
  *
  * @param __Out_Max 输出限幅, 0为不限制
  */
-void Set_Out_Max(Class_PID *pid, float __Out_Max)
+void Set_Out_Max(pClass_PID pid, float __Out_Max)
 {
     pid->Out_Max = __Out_Max;
 }
@@ -160,7 +165,7 @@ void Set_Out_Max(Class_PID *pid, float __Out_Max)
  *
  * @param __I_Variable_Speed_A 定速内段阈值, 0为不限制
  */
-void Set_I_Variable_Speed_A(Class_PID *pid, float __I_Variable_Speed_A)
+void Set_I_Variable_Speed_A(pClass_PID pid, float __I_Variable_Speed_A)
 {
     pid->I_Variable_Speed_A = __I_Variable_Speed_A;
 }
@@ -170,7 +175,7 @@ void Set_I_Variable_Speed_A(Class_PID *pid, float __I_Variable_Speed_A)
  *
  * @param __I_Variable_Speed_B 变速区间, 0为不限制
  */
-void Set_I_Variable_Speed_B(Class_PID *pid, float __I_Variable_Speed_B)
+void Set_I_Variable_Speed_B(pClass_PID pid, float __I_Variable_Speed_B)
 {
     pid->I_Variable_Speed_B = __I_Variable_Speed_B;
 }
@@ -180,7 +185,7 @@ void Set_I_Variable_Speed_B(Class_PID *pid, float __I_Variable_Speed_B)
  *
  * @param __I_Separate_Threshold 积分分离阈值，需为正数, 0为不限制
  */
-void Set_I_Separate_Threshold(Class_PID *pid, float __I_Separate_Threshold)
+void Set_I_Separate_Threshold(pClass_PID pid, float __I_Separate_Threshold)
 {
     pid->I_Separate_Threshold = __I_Separate_Threshold;
 }
@@ -190,7 +195,7 @@ void Set_I_Separate_Threshold(Class_PID *pid, float __I_Separate_Threshold)
  *
  * @param __Target 目标值
  */
-void Set_Target(Class_PID *pid, float __Target)
+void Set_Target(pClass_PID pid, float __Target)
 {
     pid->Target = __Target;
 }
@@ -200,7 +205,7 @@ void Set_Target(Class_PID *pid, float __Target)
  *
  * @param __Now 当前值
  */
-void Set_Now(Class_PID *pid, float __Now)
+void Set_Now(pClass_PID pid, float __Now)
 {
     pid->Now = __Now;
 }
@@ -210,7 +215,7 @@ void Set_Now(Class_PID *pid, float __Now)
  *
  * @param __Set_Integral_Error 积分值
  */
-void Set_Integral_Error(Class_PID *pid, float __Integral_Error)
+void Set_Integral_Error(pClass_PID pid, float __Integral_Error)
 {
     pid->Integral_Error = __Integral_Error;
 }
@@ -220,7 +225,7 @@ void Set_Integral_Error(Class_PID *pid, float __Integral_Error)
  *
  * @return float 输出值
  */
-void TIM_Adjust_PeriodElapsedCallback(Class_PID *pid)
+void TIM_Adjust_PeriodElapsedCallback(pClass_PID pid)
 {
     // P输出
     float p_out = 0.0f;

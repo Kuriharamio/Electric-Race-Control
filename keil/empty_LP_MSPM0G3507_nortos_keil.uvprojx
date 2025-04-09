@@ -475,11 +475,6 @@
               <FilePath>..\User\Algorithm\drv_math.c</FilePath>
             </File>
             <File>
-              <FileName>kinematics.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Algorithm\kinematics.c</FilePath>
-            </File>
-            <File>
               <FileName>pid.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Algorithm\pid.c</FilePath>

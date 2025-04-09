@@ -208,25 +208,25 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 		 DL_GPIO_DRIVE_STRENGTH_LOW, DL_GPIO_HIZ_DISABLE);
 
     DL_GPIO_clearPins(GPIOA, MOTOR_DRV_STBY_F_PIN |
-		MOTOR_DRV_LB_IN1_PIN |
-		MOTOR_DRV_LB_IN2_PIN);
+		MOTOR_DRV_RF_IN1_PIN |
+		MOTOR_DRV_RF_IN2_PIN);
     DL_GPIO_enableOutput(GPIOA, MOTOR_DRV_STBY_F_PIN |
-		MOTOR_DRV_LB_IN1_PIN |
-		MOTOR_DRV_LB_IN2_PIN);
+		MOTOR_DRV_RF_IN1_PIN |
+		MOTOR_DRV_RF_IN2_PIN);
     DL_GPIO_clearPins(GPIOB, LED_GROUP_LED_PIN |
 		MOTOR_DRV_STBY_B_PIN |
 		MOTOR_DRV_LF_IN1_PIN |
 		MOTOR_DRV_LF_IN2_PIN |
-		MOTOR_DRV_RF_IN1_PIN |
-		MOTOR_DRV_RF_IN2_PIN |
+		MOTOR_DRV_LB_IN1_PIN |
+		MOTOR_DRV_LB_IN2_PIN |
 		MOTOR_DRV_RB_IN1_PIN |
 		MOTOR_DRV_RB_IN2_PIN);
     DL_GPIO_enableOutput(GPIOB, LED_GROUP_LED_PIN |
 		MOTOR_DRV_STBY_B_PIN |
 		MOTOR_DRV_LF_IN1_PIN |
 		MOTOR_DRV_LF_IN2_PIN |
-		MOTOR_DRV_RF_IN1_PIN |
-		MOTOR_DRV_RF_IN2_PIN |
+		MOTOR_DRV_LB_IN1_PIN |
+		MOTOR_DRV_LB_IN2_PIN |
 		MOTOR_DRV_RB_IN1_PIN |
 		MOTOR_DRV_RB_IN2_PIN);
     DL_GPIO_setLowerPinsPolarity(GPIOB, DL_GPIO_PIN_4_EDGE_RISE_FALL |
@@ -346,7 +346,7 @@ static const DL_TimerG_ClockConfig gENCODERClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * ENCODER_INST_LOAD_VALUE = (5 ms * 100000 Hz) - 1
+ * ENCODER_INST_LOAD_VALUE = (2.5 ms * 100000 Hz) - 1
  */
 static const DL_TimerG_TimerConfig gENCODERTimerConfig = {
     .period     = ENCODER_INST_LOAD_VALUE,
@@ -382,7 +382,7 @@ static const DL_TimerA_ClockConfig gPIDClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * PID_INST_LOAD_VALUE = (10 ms * 100000 Hz) - 1
+ * PID_INST_LOAD_VALUE = (5 ms * 100000 Hz) - 1
  */
 static const DL_TimerA_TimerConfig gPIDTimerConfig = {
     .period     = PID_INST_LOAD_VALUE,

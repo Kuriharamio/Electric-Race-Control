@@ -297,27 +297,35 @@ void PID_INST_IRQHandler(void)
     }
 }
 
+#include "Base_Modules/led.h"
 // 里程计中断服务函数
 void ENCODER_INST_IRQHandler(void)
 {
     switch (DL_TimerG_getPendingInterrupt(ENCODER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
+        {
+            static int cnt = 0;
+            cnt++;
+            if(cnt % 200 == 0){
+                LED(TOGGLE);
+            }
+        }
         // 计算速度
         if(_Motor_LB.is_inited){
-            _Motor_LB.Now_Speed = (float)(_Motor_LB.Total_Encoder_Tick) / (float)(_Motor_LB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LB.Radius;
+            _Motor_LB.Now_Speed = (float)(_Motor_LB.Total_Encoder_Tick) / (float)(_Motor_LB.Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * _Motor_LB.Radius;
             _Motor_LB.Total_Encoder_Tick = 0;
         }
         if(_Motor_LF.is_inited){
-            _Motor_LF.Now_Speed = (float)(_Motor_LF.Total_Encoder_Tick) / (float)(_Motor_LF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LF.Radius;
+            _Motor_LF.Now_Speed = (float)(_Motor_LF.Total_Encoder_Tick) / (float)(_Motor_LF.Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * _Motor_LF.Radius;
             _Motor_LF.Total_Encoder_Tick = 0;
         }
         if(_Motor_RB.is_inited){
-            _Motor_RB.Now_Speed = (float)(_Motor_RB.Total_Encoder_Tick) / (float)(_Motor_RB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RB.Radius;
+            _Motor_RB.Now_Speed = (float)(_Motor_RB.Total_Encoder_Tick) / (float)(_Motor_RB.Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * _Motor_RB.Radius;
             _Motor_RB.Total_Encoder_Tick = 0;
         }
         if(_Motor_RF.is_inited){
-            _Motor_RF.Now_Speed = (float)(_Motor_RF.Total_Encoder_Tick) / (float)(_Motor_RF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RF.Radius;
+            _Motor_RF.Now_Speed = (float)(_Motor_RF.Total_Encoder_Tick) / (float)(_Motor_RF.Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * _Motor_RF.Radius;
             _Motor_RF.Total_Encoder_Tick = 0;
         }
 
