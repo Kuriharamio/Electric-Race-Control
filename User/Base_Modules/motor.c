@@ -107,9 +107,11 @@ void Motor_Configure_PWM(pClass_Motor this, GPTIMER_Regs *__PWM_INST, uint32_t _
  *
  * @param __ENCODER_A_PORT 编码器A引脚端口
  * @param __ENCODER_A_PIN 编码器A引脚引脚号
+ * @note 要求AB同一个端口，否则需要修改此函数代码以及中断函数
  */
 void Motor_Configure_ENCODER_A(pClass_Motor this, GPIO_Regs *__ENCODER_A_PORT, uint32_t __ENCODER_A_PIN)
 {
+    this->ENCODER_PORT = __ENCODER_A_PORT;
     this->ENCODER_A_PORT = __ENCODER_A_PORT;
     this->ENCODER_A_PIN = __ENCODER_A_PIN;
 }
@@ -119,9 +121,11 @@ void Motor_Configure_ENCODER_A(pClass_Motor this, GPIO_Regs *__ENCODER_A_PORT, u
  *
  * @param __ENCODER_B_PORT 编码器B引脚端口
  * @param __ENCODER_B_PIN 编码器B引脚引脚号
+ * @note 要求AB同一个端口，否则需要修改此函数代码以及中断函数
  */
 void Motor_Configure_ENCODER_B(pClass_Motor this, GPIO_Regs *__ENCODER_B_PORT, uint32_t __ENCODER_B_PIN)
 {
+    this->ENCODER_PORT = __ENCODER_B_PORT;
     this->ENCODER_B_PORT = __ENCODER_B_PORT;
     this->ENCODER_B_PIN = __ENCODER_B_PIN;
 }
@@ -278,10 +282,14 @@ void PID_INST_IRQHandler(void)
     switch (DL_TimerA_getPendingInterrupt(PID_INST))
     {
     case DL_TIMER_IIDX_ZERO:
-        // _Motor_LB.TIM_PID_PeriodElapsedCallback(&_Motor_LB);
-        // _Motor_LF.TIM_PID_PeriodElapsedCallback(&_Motor_LF);
-        // _Motor_RB.TIM_PID_PeriodElapsedCallback(&_Motor_RB);
-        _Motor_RF.TIM_PID_PeriodElapsedCallback(&_Motor_RF);
+        if(_Motor_LB.is_inited)
+            _Motor_LB.TIM_PID_PeriodElapsedCallback(&_Motor_LB);
+        if(_Motor_LF.is_inited)
+            _Motor_LF.TIM_PID_PeriodElapsedCallback(&_Motor_LF);
+        if(_Motor_RB.is_inited)
+            _Motor_RB.TIM_PID_PeriodElapsedCallback(&_Motor_RB);
+        if(_Motor_RF.is_inited)
+            _Motor_RF.TIM_PID_PeriodElapsedCallback(&_Motor_RF);
         break;
 
     default:
@@ -296,17 +304,22 @@ void ENCODER_INST_IRQHandler(void)
     {
     case DL_TIMER_IIDX_ZERO:
         // 计算速度
-        // _Motor_LB.Now_Speed = (float)(_Motor_LB.Total_Encoder_Tick) / (float)(_Motor_LB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LB.Radius;
-        // _Motor_LB.Total_Encoder_Tick = 0;
-
-        // _Motor_LF.Now_Speed = (float)(_Motor_LF.Total_Encoder_Tick) / (float)(_Motor_LF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LF.Radius;
-        // _Motor_LF.Total_Encoder_Tick = 0;
-
-        // _Motor_RB.Now_Speed = (float)(_Motor_RB.Total_Encoder_Tick) / (float)(_Motor_RB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RB.Radius;
-        // _Motor_RB.Total_Encoder_Tick = 0;
-
-        _Motor_RF.Now_Speed = (float)(_Motor_RF.Total_Encoder_Tick) / (float)(_Motor_RF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RF.Radius;
-        _Motor_RF.Total_Encoder_Tick = 0;
+        if(_Motor_LB.is_inited){
+            _Motor_LB.Now_Speed = (float)(_Motor_LB.Total_Encoder_Tick) / (float)(_Motor_LB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LB.Radius;
+            _Motor_LB.Total_Encoder_Tick = 0;
+        }
+        if(_Motor_LF.is_inited){
+            _Motor_LF.Now_Speed = (float)(_Motor_LF.Total_Encoder_Tick) / (float)(_Motor_LF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_LF.Radius;
+            _Motor_LF.Total_Encoder_Tick = 0;
+        }
+        if(_Motor_RB.is_inited){
+            _Motor_RB.Now_Speed = (float)(_Motor_RB.Total_Encoder_Tick) / (float)(_Motor_RB.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RB.Radius;
+            _Motor_RB.Total_Encoder_Tick = 0;
+        }
+        if(_Motor_RF.is_inited){
+            _Motor_RF.Now_Speed = (float)(_Motor_RF.Total_Encoder_Tick) / (float)(_Motor_RF.Encoder_Num_Per_Round) / 0.005 * 2 * PI * _Motor_RF.Radius;
+            _Motor_RF.Total_Encoder_Tick = 0;
+        }
 
         // 更新里程计
 
@@ -323,32 +336,63 @@ void GROUP1_IRQHandler(void)
     /*******************************
                 编码器中断
     *******************************/
+    // 左后轮
+    uint32_t EN_LB = DL_GPIO_getEnabledInterruptStatus(_Motor_LB.ENCODER_PORT, _Motor_LB.ENCODER_A_PIN | _Motor_LB.ENCODER_B_PIN);
 
-    // uint32_t en_l = DL_GPIO_getEnabledInterruptStatus(ENCODER_L_PORT, car->wheel_L->ENCODER_A_PIN | car->wheel_L->ENCODER_B_PIN);
- 
-    // if ((en_l & car->wheel_L->ENCODER_A_PIN) == car->wheel_L->ENCODER_A_PIN)
-    // {
-    //     car->wheel_L->Encoder_Callback(car->wheel_L, 'A');
-    //     DL_GPIO_clearInterruptStatus(ENCODER_L_PORT, car->wheel_L->ENCODER_A_PIN);
-    // }
+    if ((EN_LB & _Motor_LB.ENCODER_A_PIN) == _Motor_LB.ENCODER_A_PIN)
+    {
+        _Motor_LB.Encoder_Callback(&(_Motor_LB), 'A');
+        DL_GPIO_clearInterruptStatus(_Motor_LB.ENCODER_PORT, _Motor_LB.ENCODER_A_PIN);
+    }
 
-    // if ((en_l & car->wheel_L->ENCODER_B_PIN) == car->wheel_L->ENCODER_B_PIN)
-    // {
-    //     car->wheel_L->Encoder_Callback(car->wheel_L, 'B');
-    //     DL_GPIO_clearInterruptStatus(ENCODER_L_PORT, car->wheel_L->ENCODER_B_PIN);
-    // }
+    if ((EN_LB & _Motor_LB.ENCODER_B_PIN) == _Motor_LB.ENCODER_B_PIN)
+    {
+        _Motor_LB.Encoder_Callback(&(_Motor_LB), 'B');
+        DL_GPIO_clearInterruptStatus(_Motor_LB.ENCODER_PORT, _Motor_LB.ENCODER_B_PIN);
+    }
 
-    // uint32_t en_r = DL_GPIO_getEnabledInterruptStatus(ENCODER_R_PORT, car->wheel_R->ENCODER_A_PIN | car->wheel_R->ENCODER_B_PIN);
+    // 右后轮
+    uint32_t EN_RB = DL_GPIO_getEnabledInterruptStatus(_Motor_RB.ENCODER_PORT, _Motor_RB.ENCODER_A_PIN | _Motor_RB.ENCODER_B_PIN);
 
-    // if ((en_r & car->wheel_R->ENCODER_A_PIN) == car->wheel_R->ENCODER_A_PIN)
-    // {
-    //     car->wheel_R->Encoder_Callback(car->wheel_R, 'A');
-    //     DL_GPIO_clearInterruptStatus(ENCODER_R_PORT, car->wheel_R->ENCODER_A_PIN);
-    // }
+    if ((EN_RB & _Motor_RB.ENCODER_A_PIN) == _Motor_RB.ENCODER_A_PIN)
+    {
+        _Motor_RB.Encoder_Callback(&(_Motor_RB), 'A');
+        DL_GPIO_clearInterruptStatus(_Motor_RB.ENCODER_PORT, _Motor_RB.ENCODER_A_PIN);
+    }
 
-    // if ((en_r & car->wheel_R->ENCODER_B_PIN) == car->wheel_R->ENCODER_B_PIN)
-    // {
-    //     car->wheel_R->Encoder_Callback(car->wheel_R, 'B');
-    //     DL_GPIO_clearInterruptStatus(ENCODER_R_PORT, car->wheel_R->ENCODER_B_PIN);
-    // }
+    if ((EN_RB & _Motor_RB.ENCODER_B_PIN) == _Motor_RB.ENCODER_B_PIN)
+    {
+        _Motor_RB.Encoder_Callback(&(_Motor_RB), 'B');
+        DL_GPIO_clearInterruptStatus(_Motor_RB.ENCODER_PORT, _Motor_RB.ENCODER_B_PIN);
+    }
+
+    // 左前轮
+    uint32_t EN_LF = DL_GPIO_getEnabledInterruptStatus(_Motor_LF.ENCODER_PORT, _Motor_LF.ENCODER_A_PIN | _Motor_LF.ENCODER_B_PIN);
+
+    if ((EN_LF & _Motor_LF.ENCODER_A_PIN) == _Motor_LF.ENCODER_A_PIN)
+    {
+        _Motor_LF.Encoder_Callback(&(_Motor_LF), 'A');
+        DL_GPIO_clearInterruptStatus(_Motor_LF.ENCODER_PORT, _Motor_LF.ENCODER_A_PIN);
+    }
+
+    if ((EN_LF & _Motor_LF.ENCODER_B_PIN) == _Motor_LF.ENCODER_B_PIN)
+    {
+        _Motor_LF.Encoder_Callback(&(_Motor_LF), 'B');
+        DL_GPIO_clearInterruptStatus(_Motor_LF.ENCODER_PORT, _Motor_LF.ENCODER_B_PIN);
+    }
+
+    // 右前轮
+    uint32_t EN_RF = DL_GPIO_getEnabledInterruptStatus(_Motor_RF.ENCODER_PORT, _Motor_RF.ENCODER_A_PIN | _Motor_RF.ENCODER_B_PIN);
+
+    if ((EN_RF & _Motor_RF.ENCODER_A_PIN) == _Motor_RF.ENCODER_A_PIN)
+    {
+        _Motor_RF.Encoder_Callback(&(_Motor_RF), 'A');
+        DL_GPIO_clearInterruptStatus(_Motor_RF.ENCODER_PORT, _Motor_RF.ENCODER_A_PIN);
+    }
+
+    if ((EN_RF & _Motor_RF.ENCODER_B_PIN) == _Motor_RF.ENCODER_B_PIN)
+    {
+        _Motor_RF.Encoder_Callback(&(_Motor_RF), 'B');
+        DL_GPIO_clearInterruptStatus(_Motor_RF.ENCODER_PORT, _Motor_RF.ENCODER_B_PIN);
+    }
 }

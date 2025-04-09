@@ -50,6 +50,7 @@ typedef struct Class_Motor
     GPTIMER_Regs *PWM_INST;
     uint32_t PWM_IDX;
 
+    GPIO_Regs *ENCODER_PORT;
     GPIO_Regs *ENCODER_A_PORT;
     uint32_t ENCODER_A_PIN;
     GPIO_Regs *ENCODER_B_PORT;

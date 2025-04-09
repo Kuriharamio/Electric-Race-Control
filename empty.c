@@ -17,13 +17,13 @@ int main(void)
   board_init();
 
   // 电机配置
-  pClass_Motor Motor_RF = create_motor(RIGHT_BACK);     // 创建电机对象
+  pClass_Motor Motor_RF = create_motor(RIGHT_FRONT);     // 创建电机对象
   Motor_RF->Init(Motor_RF, 0.024, 1600, 1.5, 20, 13, 4);                              // 初始化电机对象
   Motor_RF->PID_Speed->PID_Init(Motor_RF->PID_Speed, 100, 10.0, 0.0, 0.0, 800, 1600, PID_TIMER_T, 0.0, 0.0, 0.0, 0.0, PID_D_First_DISABLE); // 初始化PID参数
-  Motor_RF->Configure_IN_1(Motor_RF, MOTOR_GROUP_L_F_IN1_PORT, MOTOR_GROUP_L_F_IN1_PIN); // 配置电机引脚IN1
-  Motor_RF->Configure_IN_2(Motor_RF, MOTOR_GROUP_L_F_IN2_PORT, MOTOR_GROUP_L_F_IN2_PIN); // 配置电机引脚IN2
-  Motor_RF->Configure_ENCODER_A(Motor_RF, MOTOR_GROUP_L_F_A_PORT, MOTOR_GROUP_L_F_A_PIN); // 配置电机引脚编码器A
-  Motor_RF->Configure_ENCODER_B(Motor_RF, MOTOR_GROUP_L_F_B_PORT, MOTOR_GROUP_L_F_B_PIN); // 配置电机引脚编码器B
+  Motor_RF->Configure_IN_1(Motor_RF, MOTOR_DRV_RF_IN1_PORT, MOTOR_DRV_RF_IN1_PIN); // 配置电机引脚IN1
+  Motor_RF->Configure_IN_2(Motor_RF, MOTOR_DRV_RF_IN2_PORT, MOTOR_DRV_RF_IN2_PIN); // 配置电机引脚IN2
+  Motor_RF->Configure_ENCODER_A(Motor_RF, ENCODER_RF_PORT, ENCODER_RF_RF_A_PIN); // 配置电机引脚编码器A
+  Motor_RF->Configure_ENCODER_B(Motor_RF, ENCODER_RF_PORT, ENCODER_RF_RF_B_PIN); // 配置电机引脚编码器B
   Motor_RF->Configure_PWM(Motor_RF, PWM_MOTOR_INST, GPIO_PWM_MOTOR_C0_IDX);
   Motor_RF->Target_Speed = 0.5f;
 
