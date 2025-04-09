@@ -12,4 +12,8 @@
 #define PID_TIMER_T 0.005f
 #define ENCODER_TIMER_T 0.0025f
 
+// 小车参数
+#define WHEEL_TRACK 0.12855f // 轮距
+#define WHEEL_BASE 0.1117f // 轴距
+
 #endif // __CONFIG_H__

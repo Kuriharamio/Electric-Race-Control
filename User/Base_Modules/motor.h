@@ -47,6 +47,9 @@ typedef struct Class_Motor
     GPIO_Regs *IN_2_PORT;
     uint32_t IN_2_PIN;
 
+    GPIO_Regs *STBY_PORT;
+    uint32_t STBY_PIN;
+
     GPTIMER_Regs *PWM_INST;
     uint32_t PWM_IDX;
 
@@ -60,6 +63,7 @@ typedef struct Class_Motor
 
     void (*Configure_IN_1)(struct Class_Motor *this, GPIO_Regs *__IN_1_PORT, uint32_t __IN_1_PIN);                // 电机引脚IN1配置
     void (*Configure_IN_2)(struct Class_Motor *this, GPIO_Regs *__IN_2_PORT, uint32_t __IN_2_PIN);                // 电机引脚IN2配置
+    void (*Configure_STBY)(struct Class_Motor *this, GPIO_Regs *__STBY_PORT, uint32_t __STBY_PIN);                // 电机待机引脚配置
     void (*Configure_PWM)(struct Class_Motor *this, GPTIMER_Regs *__PWM_INST, uint32_t __PWM_IDX);                // 电机PWM配置
     void (*Configure_ENCODER_A)(struct Class_Motor *this, GPIO_Regs *__ENCODER_A_PORT, uint32_t __ENCODER_A_PIN); // 电机引脚编码器A配置
     void (*Configure_ENCODER_B)(struct Class_Motor *this, GPIO_Regs *__ENCODER_B_PORT, uint32_t __ENCODER_B_PIN); // 电机引脚编码器B配置
@@ -75,6 +79,7 @@ pClass_Motor create_motor(SIDE side);
 
 void Motor_Configure_IN_1(pClass_Motor this, GPIO_Regs *__IN_1_PORT, uint32_t __IN_1_PIN);
 void Motor_Configure_IN_2(pClass_Motor this, GPIO_Regs *__IN_2_PORT, uint32_t __IN_2_PIN);
+void Motor_Configure_STBY(pClass_Motor this, GPIO_Regs *__STBY_PORT, uint32_t __STBY_PIN);
 void Motor_Configure_PWM(pClass_Motor this, GPTIMER_Regs *__PWM_INST, uint32_t __PWM_IDX);
 void Motor_Configure_ENCODER_A(pClass_Motor this, GPIO_Regs *__ENCODER_A_PORT, uint32_t __ENCODER_A_PIN);
 void Motor_Configure_ENCODER_B(pClass_Motor this, GPIO_Regs *__ENCODER_B_PORT, uint32_t __ENCODER_B_PIN);

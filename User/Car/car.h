@@ -5,10 +5,16 @@
 
 typedef struct
 {
-    float x;
-    float y;
-    float yaw;
-}Axis;
+    float x;   // x坐标
+    float y;   // y坐标
+    float yaw; // 偏航角
+} POSITION;
+
+typedef struct
+{
+    float linear_velocity;  // 线速度
+    float angular_velocity; // 角速度
+} SPEED;
 
 typedef struct Class_Car
 {
@@ -16,35 +22,36 @@ typedef struct Class_Car
     pClass_Motor Motor_RB; // 右后轮
     pClass_Motor Motor_LB; // 左后轮
     pClass_Motor Motor_RF; // 右前轮
-    pClass_Motor Motor_LF; // 左前轮    
+    pClass_Motor Motor_LF; // 左前轮
 
     // PID对象
-    pClass_PID PID_Speed; // 速度环PID
+    pClass_PID PID_Speed;    // 速度环PID
     pClass_PID PID_Position; // 位置环PID
 
     // 里程计
-    Axis Position; // 里程计位置
+    POSITION Position; // 里程计位置
 
     // 速度
-    Axis Speed; // 线速度和角速度
+    SPEED Target_Speed; // 目标速度
+    SPEED Now_Speed;    // 实际速度
 
-    float wheel_distance_; // 轮距
-
+    bool is_inited; // 是否初始化完成
 
     void (*Init)(struct Class_Car *this);
-    void (*kinematic_forward)(struct Class_Car *this);
-    void (*kinematic_inverse)(struct Class_Car *this);
-    void (*kinematic_update_odom)(struct Class_Car *this);
+    void (*Kinematic_Forward)(struct Class_Car *this);
+    void (*Kinematic_Inverse)(struct Class_Car *this);
+    void (*Update_Odom)(struct Class_Car *this);
     void (*TIM_PID_PeriodElapsedCallback)(struct Class_Car *this);
 
 } Class_Car, *pClass_Car;
 
 pClass_Car create_car(void);
+pClass_Car Get_Car_Handle(void);
 
 void Car_Init(pClass_Car this);
-void Car_kinematic_forward(pClass_Car this);
-void Car_kinematic_inverse(pClass_Car this);
-void Car_kinematic_update_odom(pClass_Car this);
+void Car_Kinematic_Forward(pClass_Car this);
+void Car_Kinematic_Inverse(pClass_Car this);
+void Car_Update_Odom(pClass_Car this);
 void Car_TIM_PID_PeriodElapsedCallback(pClass_Car this);
 
 #endif // __CAR_H__

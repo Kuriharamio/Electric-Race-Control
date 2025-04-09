@@ -23,12 +23,17 @@ pClass_Car create_car(void)
 
     // 函数指针赋值
     car->Init = Car_Init;
-    car->kinematic_forward = Car_kinematic_forward;
-    car->kinematic_inverse = Car_kinematic_inverse;
-    car->kinematic_update_odom = Car_kinematic_update_odom;
+    car->Kinematic_Forward = Car_Kinematic_Forward;
+    car->Kinematic_Inverse = Car_Kinematic_Inverse;
+    car->Update_Odom = Car_Update_Odom;
     car->TIM_PID_PeriodElapsedCallback = Car_TIM_PID_PeriodElapsedCallback;
     
     return car;
+}
+
+pClass_Car Get_Car_Handle(void)
+{
+    return &_Car;
 }
 
 /**
@@ -48,32 +53,44 @@ void Car_Init(pClass_Car this)
 }
 
 
-void Car_kinematic_forward(pClass_Car this)
+/**
+ * @brief 小车运动学正解
+ * 
+ * @param this 
+ */
+void Car_Kinematic_Forward(pClass_Car this)
 {
-    // *linear_speed = (wheel1_speed + wheel2_speed + wheel3_speed + wheel4_speed) / 4.0;
-    // *angular_speed = (wheel1_speed - wheel2_speed + wheel3_speed - wheel4_speed) / (4.0 * wheel_distance_);
+    this->Now_Speed.linear_velocity = (this->Motor_LB->Now_Speed + this->Motor_LF->Now_Speed + this->Motor_RF->Now_Speed + this->Motor_RB->Now_Speed) / 4.0f;
+    this->Now_Speed.angular_velocity = (this->Motor_RF->Now_Speed + this->Motor_RB->Now_Speed - this->Motor_LF->Now_Speed - this->Motor_LB->Now_Speed) / (4.0f * (WHEEL_TRACK + WHEEL_BASE));
 }
 
-void Car_kinematic_inverse(pClass_Car this)
+/**
+ * @brief 小车运动学逆解
+ * 
+ * @param this 
+ */
+void Car_Kinematic_Inverse(pClass_Car this)
 {
-    // *out_wheel1_speed = linear_speed + (angular_speed * wheel_distance_) / 2.0;
-    // *out_wheel2_speed = linear_speed - (angular_speed * wheel_distance_) / 2.0;
-    // *out_wheel3_speed = linear_speed + (angular_speed * wheel_distance_) / 2.0;
-    // *out_wheel4_speed = linear_speed - (angular_speed * wheel_distance_) / 2.0;
+    this->Motor_LB->Target_Speed = this->Target_Speed.linear_velocity - this->Target_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
+    this->Motor_LF->Target_Speed = this->Target_Speed.linear_velocity - this->Target_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
+    this->Motor_RF->Target_Speed = this->Target_Speed.linear_velocity + this->Target_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
+    this->Motor_RB->Target_Speed = this->Target_Speed.linear_velocity + this->Target_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
 }
 
-void Car_kinematic_update_odom(pClass_Car this)
+/**
+ * @brief 小车里程计更新
+ * 
+ * @param this 
+ */
+void Car_Update_Odom(pClass_Car this)
 {
-    // POSITION odom_ = pos;
-    // odom_.yaw += angular_speed * dt;
+    this->Position.yaw += this->Now_Speed.angular_velocity * ENCODER_TIMER_T;
+    this->Position.yaw = TransAngleInPI(this->Position.yaw);
 
-    // odom_.yaw = TransAngleInPI(odom_.yaw);
+    float delta_distance = this->Now_Speed.linear_velocity * ENCODER_TIMER_T;
 
-    // float delta_distance = linear_speed * dt;
-
-    // odom_.x += delta_distance * cos(pos.yaw);
-    // odom_.y += delta_distance * sin(pos.yaw);
-    // return odom_;
+    this->Position.x += delta_distance * cos(this->Position.yaw);
+    this->Position.y += delta_distance * sin(this->Position.yaw);
 }
 
 /**

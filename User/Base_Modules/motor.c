@@ -31,6 +31,7 @@ pClass_Motor create_motor(SIDE side)
 
     tmp_motor_ptr->Configure_IN_1 = Motor_Configure_IN_1;
     tmp_motor_ptr->Configure_IN_2 = Motor_Configure_IN_2;
+    tmp_motor_ptr->Configure_STBY = Motor_Configure_STBY;
     tmp_motor_ptr->Configure_PWM = Motor_Configure_PWM;
     tmp_motor_ptr->Configure_ENCODER_A = Motor_Configure_ENCODER_A;
     tmp_motor_ptr->Configure_ENCODER_B = Motor_Configure_ENCODER_B;
@@ -64,7 +65,23 @@ void Motor_Init(pClass_Motor this, float __radius, float __Output_Max, float __S
     this->Target_Speed = 0.0f;
 
     this->Output_Now = 0;
+
     this->is_inited = true;
+}
+
+
+/**
+ * @brief 配置待机引脚
+ * 
+ * @param this 
+ * @param __STBY_PORT 
+ * @param __STBY_PIN 
+ */
+void Motor_Configure_STBY(pClass_Motor this, GPIO_Regs *__STBY_PORT, uint32_t __STBY_PIN)
+{
+    this->STBY_PORT = __STBY_PORT;
+    this->STBY_PIN = __STBY_PIN;
+    DL_GPIO_setPins(this->STBY_PORT, this->STBY_PIN);
 }
 
 /**
@@ -297,20 +314,13 @@ void PID_INST_IRQHandler(void)
     }
 }
 
-#include "Base_Modules/led.h"
+#include "Car/car.h"
 // 里程计中断服务函数
 void ENCODER_INST_IRQHandler(void)
 {
     switch (DL_TimerG_getPendingInterrupt(ENCODER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
-        {
-            static int cnt = 0;
-            cnt++;
-            if(cnt % 200 == 0){
-                LED(TOGGLE);
-            }
-        }
         // 计算速度
         if(_Motor_LB.is_inited){
             _Motor_LB.Now_Speed = (float)(_Motor_LB.Total_Encoder_Tick) / (float)(_Motor_LB.Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * _Motor_LB.Radius;
@@ -330,7 +340,7 @@ void ENCODER_INST_IRQHandler(void)
         }
 
         // 更新里程计
-
+        Get_Car_Handle()->Update_Odom(Get_Car_Handle());
         break;
 
     default:
