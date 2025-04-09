@@ -4,8 +4,8 @@ static Class_Car _Car = {0};
 
 /**
  * @brief 创建小车对象
- * 
- * @return Class_Car* 
+ *
+ * @return Class_Car*
  */
 pClass_Car create_car(void)
 {
@@ -18,7 +18,7 @@ pClass_Car create_car(void)
     car->Motor_LF = create_motor(LEFT_FRONT);  // 左前轮
 
     // 创建PID对象
-    car->PID_Speed = create_PID(); // 速度环PID
+    car->PID_Speed = create_PID();    // 速度环PID
     car->PID_Position = create_PID(); // 位置环PID
 
     // 函数指针赋值
@@ -27,7 +27,7 @@ pClass_Car create_car(void)
     car->Kinematic_Inverse = Car_Kinematic_Inverse;
     car->Update_Odom = Car_Update_Odom;
     car->TIM_PID_PeriodElapsedCallback = Car_TIM_PID_PeriodElapsedCallback;
-    
+
     return car;
 }
 
@@ -38,25 +38,41 @@ pClass_Car Get_Car_Handle(void)
 
 /**
  * @brief 小车初始化
- * 
- * @param this 
+ *
+ * @param this
  */
 void Car_Init(pClass_Car this)
 {
     // 参数赋值
+    this->Position.x = 0.0f;   // x坐标
+    this->Position.y = 0.0f;   // y坐标
+    this->Position.yaw = 0.0f; // 偏航角
+
+    this->Target_Speed.linear_velocity = 0.0f;  // 目标线速度
+    this->Target_Speed.angular_velocity = 0.0f; // 目标角速度
+    this->Now_Speed.linear_velocity = 0.0f;     // 实际线速度
+    this->Now_Speed.angular_velocity = 0.0f;    // 实际角速度
 
     // 初始化电机
+    this->Motor_LF->Init(this->Motor_LF, 0.024, 1600, 1.5, 20, 13, 4);                                                                                               // 初始化电机对象
+    this->Motor_LF->PID_Speed->PID_Init(this->Motor_LF->PID_Speed, 2000, 10000.0, 2000.0, 5000.0, 1500, 1600, PID_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
+    this->Motor_LF->Configure_IN_1(this->Motor_LF, MOTOR_DRV_LF_IN1_PORT, MOTOR_DRV_LF_IN1_PIN);                                                                     // 配置电机引脚IN1
+    this->Motor_LF->Configure_IN_2(this->Motor_LF, MOTOR_DRV_LF_IN2_PORT, MOTOR_DRV_LF_IN2_PIN);                                                                     // 配置电机引脚IN2
+    this->Motor_LF->Configure_ENCODER_A(this->Motor_LF, ENCODER_LF_PORT, ENCODER_LF_LF_A_PIN);                                                                       // 配置电机引脚编码器A
+    this->Motor_LF->Configure_ENCODER_B(this->Motor_LF, ENCODER_LF_PORT, ENCODER_LF_LF_B_PIN);                                                                       // 配置电机引脚编码器B
+    this->Motor_LF->Configure_PWM(this->Motor_LF, PWM_MOTOR_INST, GPIO_PWM_MOTOR_C0_IDX);                                                                            // 配置电机PWM
+    this->Motor_LF->Configure_STBY(this->Motor_LF, MOTOR_DRV_STBY_F_PORT, MOTOR_DRV_STBY_F_PIN);                                                                     // 配置电机待机引脚
 
+    
     // 初始化PID
 
     // 初始化完成标志位
 }
 
-
 /**
  * @brief 小车运动学正解
- * 
- * @param this 
+ *
+ * @param this
  */
 void Car_Kinematic_Forward(pClass_Car this)
 {
@@ -66,8 +82,8 @@ void Car_Kinematic_Forward(pClass_Car this)
 
 /**
  * @brief 小车运动学逆解
- * 
- * @param this 
+ *
+ * @param this
  */
 void Car_Kinematic_Inverse(pClass_Car this)
 {
@@ -79,8 +95,8 @@ void Car_Kinematic_Inverse(pClass_Car this)
 
 /**
  * @brief 小车里程计更新
- * 
- * @param this 
+ *
+ * @param this
  */
 void Car_Update_Odom(pClass_Car this)
 {
@@ -95,10 +111,9 @@ void Car_Update_Odom(pClass_Car this)
 
 /**
  * @brief 小车定时器回调函数
- * 
- * @param this 
- */ 
+ *
+ * @param this
+ */
 void Car_TIM_PID_PeriodElapsedCallback(pClass_Car this)
 {
-
 }
