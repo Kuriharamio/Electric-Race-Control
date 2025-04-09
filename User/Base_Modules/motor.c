@@ -307,6 +307,12 @@ void PID_INST_IRQHandler(void)
             _Motor_RB.TIM_PID_PeriodElapsedCallback(&_Motor_RB);
         if(_Motor_RF.is_inited)
             _Motor_RF.TIM_PID_PeriodElapsedCallback(&_Motor_RF);
+
+        pClass_Car car = Get_Car_Handle();
+        if (car->is_inited){
+            car->Kinematic_Forward(car);
+            car->TIM_PID_PeriodElapsedCallback(car);
+        }
         break;
 
     default:
@@ -340,7 +346,9 @@ void ENCODER_INST_IRQHandler(void)
         }
 
         // 更新里程计
-        Get_Car_Handle()->Update_Odom(Get_Car_Handle());
+        pClass_Car car = Get_Car_Handle();
+        if(car->is_inited)
+            car->Update_Odom(car);
         break;
 
     default:
