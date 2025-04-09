@@ -337,62 +337,72 @@ void GROUP1_IRQHandler(void)
                 编码器中断
     *******************************/
     // 左后轮
-    uint32_t EN_LB = DL_GPIO_getEnabledInterruptStatus(_Motor_LB.ENCODER_PORT, _Motor_LB.ENCODER_A_PIN | _Motor_LB.ENCODER_B_PIN);
+    if(_Motor_LB.is_inited){
+        uint32_t EN_LB = DL_GPIO_getEnabledInterruptStatus(_Motor_LB.ENCODER_PORT, _Motor_LB.ENCODER_A_PIN | _Motor_LB.ENCODER_B_PIN);
 
-    if ((EN_LB & _Motor_LB.ENCODER_A_PIN) == _Motor_LB.ENCODER_A_PIN)
-    {
-        _Motor_LB.Encoder_Callback(&(_Motor_LB), 'A');
-        DL_GPIO_clearInterruptStatus(_Motor_LB.ENCODER_PORT, _Motor_LB.ENCODER_A_PIN);
+        if ((EN_LB & _Motor_LB.ENCODER_A_PIN) == _Motor_LB.ENCODER_A_PIN)
+        {
+            _Motor_LB.Encoder_Callback(&(_Motor_LB), 'A');
+            DL_GPIO_clearInterruptStatus(_Motor_LB.ENCODER_PORT, _Motor_LB.ENCODER_A_PIN);
+        }
+
+        if ((EN_LB & _Motor_LB.ENCODER_B_PIN) == _Motor_LB.ENCODER_B_PIN)
+        {
+            _Motor_LB.Encoder_Callback(&(_Motor_LB), 'B');
+            DL_GPIO_clearInterruptStatus(_Motor_LB.ENCODER_PORT, _Motor_LB.ENCODER_B_PIN);
+        }
     }
-
-    if ((EN_LB & _Motor_LB.ENCODER_B_PIN) == _Motor_LB.ENCODER_B_PIN)
-    {
-        _Motor_LB.Encoder_Callback(&(_Motor_LB), 'B');
-        DL_GPIO_clearInterruptStatus(_Motor_LB.ENCODER_PORT, _Motor_LB.ENCODER_B_PIN);
-    }
-
+    
+    
     // 右后轮
-    uint32_t EN_RB = DL_GPIO_getEnabledInterruptStatus(_Motor_RB.ENCODER_PORT, _Motor_RB.ENCODER_A_PIN | _Motor_RB.ENCODER_B_PIN);
+    if(_Motor_RB.is_inited){
+        uint32_t EN_RB = DL_GPIO_getEnabledInterruptStatus(_Motor_RB.ENCODER_PORT, _Motor_RB.ENCODER_A_PIN | _Motor_RB.ENCODER_B_PIN);
 
-    if ((EN_RB & _Motor_RB.ENCODER_A_PIN) == _Motor_RB.ENCODER_A_PIN)
-    {
-        _Motor_RB.Encoder_Callback(&(_Motor_RB), 'A');
-        DL_GPIO_clearInterruptStatus(_Motor_RB.ENCODER_PORT, _Motor_RB.ENCODER_A_PIN);
+        if ((EN_RB & _Motor_RB.ENCODER_A_PIN) == _Motor_RB.ENCODER_A_PIN)
+        {
+            _Motor_RB.Encoder_Callback(&(_Motor_RB), 'A');
+            DL_GPIO_clearInterruptStatus(_Motor_RB.ENCODER_PORT, _Motor_RB.ENCODER_A_PIN);
+        }
+
+        if ((EN_RB & _Motor_RB.ENCODER_B_PIN) == _Motor_RB.ENCODER_B_PIN)
+        {
+            _Motor_RB.Encoder_Callback(&(_Motor_RB), 'B');
+            DL_GPIO_clearInterruptStatus(_Motor_RB.ENCODER_PORT, _Motor_RB.ENCODER_B_PIN);
+        }
     }
-
-    if ((EN_RB & _Motor_RB.ENCODER_B_PIN) == _Motor_RB.ENCODER_B_PIN)
-    {
-        _Motor_RB.Encoder_Callback(&(_Motor_RB), 'B');
-        DL_GPIO_clearInterruptStatus(_Motor_RB.ENCODER_PORT, _Motor_RB.ENCODER_B_PIN);
-    }
-
+    
     // 左前轮
-    uint32_t EN_LF = DL_GPIO_getEnabledInterruptStatus(_Motor_LF.ENCODER_PORT, _Motor_LF.ENCODER_A_PIN | _Motor_LF.ENCODER_B_PIN);
+    if(_Motor_LF.is_inited){
+        uint32_t EN_LF = DL_GPIO_getEnabledInterruptStatus(_Motor_LF.ENCODER_PORT, _Motor_LF.ENCODER_A_PIN | _Motor_LF.ENCODER_B_PIN);
 
-    if ((EN_LF & _Motor_LF.ENCODER_A_PIN) == _Motor_LF.ENCODER_A_PIN)
-    {
-        _Motor_LF.Encoder_Callback(&(_Motor_LF), 'A');
-        DL_GPIO_clearInterruptStatus(_Motor_LF.ENCODER_PORT, _Motor_LF.ENCODER_A_PIN);
-    }
+        if ((EN_LF & _Motor_LF.ENCODER_A_PIN) == _Motor_LF.ENCODER_A_PIN)
+        {
+            _Motor_LF.Encoder_Callback(&(_Motor_LF), 'A');
+            DL_GPIO_clearInterruptStatus(_Motor_LF.ENCODER_PORT, _Motor_LF.ENCODER_A_PIN);
+        }
 
-    if ((EN_LF & _Motor_LF.ENCODER_B_PIN) == _Motor_LF.ENCODER_B_PIN)
-    {
-        _Motor_LF.Encoder_Callback(&(_Motor_LF), 'B');
-        DL_GPIO_clearInterruptStatus(_Motor_LF.ENCODER_PORT, _Motor_LF.ENCODER_B_PIN);
+        if ((EN_LF & _Motor_LF.ENCODER_B_PIN) == _Motor_LF.ENCODER_B_PIN)
+        {
+            _Motor_LF.Encoder_Callback(&(_Motor_LF), 'B');
+            DL_GPIO_clearInterruptStatus(_Motor_LF.ENCODER_PORT, _Motor_LF.ENCODER_B_PIN);
+        }
     }
+    
 
     // 右前轮
-    uint32_t EN_RF = DL_GPIO_getEnabledInterruptStatus(_Motor_RF.ENCODER_PORT, _Motor_RF.ENCODER_A_PIN | _Motor_RF.ENCODER_B_PIN);
+    if(_Motor_RF.is_inited){
+        uint32_t EN_RF = DL_GPIO_getEnabledInterruptStatus(_Motor_RF.ENCODER_PORT, _Motor_RF.ENCODER_A_PIN | _Motor_RF.ENCODER_B_PIN);
 
-    if ((EN_RF & _Motor_RF.ENCODER_A_PIN) == _Motor_RF.ENCODER_A_PIN)
-    {
-        _Motor_RF.Encoder_Callback(&(_Motor_RF), 'A');
-        DL_GPIO_clearInterruptStatus(_Motor_RF.ENCODER_PORT, _Motor_RF.ENCODER_A_PIN);
-    }
+        if ((EN_RF & _Motor_RF.ENCODER_A_PIN) == _Motor_RF.ENCODER_A_PIN)
+        {
+            _Motor_RF.Encoder_Callback(&(_Motor_RF), 'A');
+            DL_GPIO_clearInterruptStatus(_Motor_RF.ENCODER_PORT, _Motor_RF.ENCODER_A_PIN);
+        }
 
-    if ((EN_RF & _Motor_RF.ENCODER_B_PIN) == _Motor_RF.ENCODER_B_PIN)
-    {
-        _Motor_RF.Encoder_Callback(&(_Motor_RF), 'B');
-        DL_GPIO_clearInterruptStatus(_Motor_RF.ENCODER_PORT, _Motor_RF.ENCODER_B_PIN);
+        if ((EN_RF & _Motor_RF.ENCODER_B_PIN) == _Motor_RF.ENCODER_B_PIN)
+        {
+            _Motor_RF.Encoder_Callback(&(_Motor_RF), 'B');
+            DL_GPIO_clearInterruptStatus(_Motor_RF.ENCODER_PORT, _Motor_RF.ENCODER_B_PIN);
+        }
     }
 }
