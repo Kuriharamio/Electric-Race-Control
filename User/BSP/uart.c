@@ -64,7 +64,6 @@ pClass_UART Create_UART(uint8_t index)
 	this->Init = UART_Init;					// 初始化函数
 	this->Send_Bit = UART_Send_Bit;			// 发送数据函数
 	this->Send_Datas = UART_Send_Datas;		// 发送字符串函数
-	this->Clear_Buffer = UART_Clear_Buffer; // 清空接收数据函数
 	this->UART_INST_DataProcess = NULL;		// 串口中断处理函数
 
 	return this;
@@ -75,22 +74,12 @@ pClass_UART Create_UART(uint8_t index)
  *
  * @param this
  */
-void UART_Init(pClass_UART this, UART_RX_MODE mode)
+void UART_Init(pClass_UART this)
 {
 	NVIC_ClearPendingIRQ(Get_UART_IRQN_From_Index(this->index));
 	NVIC_EnableIRQ(Get_UART_IRQN_From_Index(this->index));
 
-	this->rx_len = 0;
-	this->is_received = false;
 	this->current_byte = 0;
-	this->mode = mode; 
-
-	this->rx_len_max = Get_UART_RX_Len_Max_From_Index(this->index);
-	this->rxbuffer = (uint8_t *)malloc(this->rx_len_max * sizeof(uint8_t));
-	if (this->rxbuffer == NULL)
-	{
-		return;
-	}
 
 	this->is_inited = true;
 }
@@ -125,16 +114,6 @@ void UART_Send_Datas(pClass_UART this, uint8_t *datas, size_t size)
 	}
 }
 
-/**
- * @brief 清空接收数据函数
- *
- * @param this
- */
-void UART_Clear_Buffer(pClass_UART this)
-{
-	this->rx_len = 0;		   // 清空接收数据长度
-	this->is_received = false; // 清空接收标志位
-}
 
 /**
  * @brief 由索引号获取IRQN
@@ -174,24 +153,6 @@ UART_Regs *Get_UART_INST_From_Index(uint8_t index)
 	}
 }
 
-/**
- * @brief 由索引号获取接收数据最大长度
- *
- * @param index
- * @return int
- */
-int Get_UART_RX_Len_Max_From_Index(uint8_t index)
-{
-	switch (index)
-	{
-	case 0:
-		return RX_LEN_MAX_0;
-	case 1:
-		return RX_LEN_MAX_1;
-	default:
-		return -1;
-	}
-}
 
 /**
  * @brief 串口0中断处理函数
@@ -210,31 +171,10 @@ void UART_0_INST_IRQHandler(void)
 	{
 		// 接收发送过来的数据保存
 		receivedData = DL_UART_Main_receiveData(UART_0_INST);
-		if (_UART_0_INST.mode == PACKET) // 如果是数据包模式
+		_UART_0_INST.current_byte = receivedData; // 保存当前接收的字节
+		if (_UART_0_INST.UART_INST_DataProcess != NULL)
 		{
-			_UART_0_INST.current_byte = receivedData; // 保存当前接收的字节
-			if (_UART_0_INST.UART_INST_DataProcess != NULL)
-			{
-				_UART_0_INST.UART_INST_DataProcess(&_UART_0_INST); // 调用中断处理函数
-			}
-		}
-		else
-		{
-			// 检查缓冲区是否已满
-			if (_UART_0_INST.rx_len < RX_LEN_MAX_0 - 1)
-			{
-				_UART_0_INST.rxbuffer[_UART_0_INST.rx_len++] = receivedData;
-			}
-			else
-			{
-				_UART_0_INST.rx_len = 0;
-			}
-			// 标记接收标志
-			_UART_0_INST.is_received = true;
-			if (_UART_0_INST.UART_INST_DataProcess != NULL)
-			{
-				_UART_0_INST.UART_INST_DataProcess(&_UART_0_INST); // 调用中断处理函数
-			}
+			_UART_0_INST.UART_INST_DataProcess(&_UART_0_INST); // 调用中断处理函数
 		}
 	}
 	break;
@@ -261,30 +201,9 @@ void UART_1_INST_IRQHandler(void)
 		// 接收发送过来的数据保存
 		receivedData = DL_UART_Main_receiveData(UART_1_INST);
 		_UART_1_INST.current_byte = receivedData; // 保存当前接收的字节
-		if (_UART_1_INST.mode == PACKET)		  // 如果是数据包模式
+		if (_UART_1_INST.UART_INST_DataProcess != NULL)
 		{
-			if (_UART_1_INST.UART_INST_DataProcess != NULL)
-			{
-				_UART_1_INST.UART_INST_DataProcess(&_UART_1_INST); // 调用中断处理函数
-			}
-		}
-		else
-		{
-			// 检查缓冲区是否已满
-			if (_UART_1_INST.rx_len < RX_LEN_MAX_1 - 1)
-			{
-				_UART_1_INST.rxbuffer[_UART_1_INST.rx_len++] = receivedData;
-			}
-			else
-			{
-				_UART_1_INST.rx_len = 0;
-			}
-			// 标记接收标志
-			_UART_1_INST.is_received = true;
-			if (_UART_1_INST.UART_INST_DataProcess != NULL)
-			{
-				_UART_1_INST.UART_INST_DataProcess(&_UART_1_INST); // 调用中断处理函数
-			}
+			_UART_1_INST.UART_INST_DataProcess(&_UART_1_INST); // 调用中断处理函数
 		}
 	}
 	break;

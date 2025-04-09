@@ -26,7 +26,7 @@ void board_init(void)
 
     // 串口初始化
     pClass_UART uart_0 = Create_UART(0);
-    uart_0->Init(uart_0, STREAM); // 初始化串口0
+    uart_0->Init(uart_0); // 初始化串口0
     uart_0 = NULL;        // 释放串口0对象
 
     // TIM初始化

@@ -6,11 +6,6 @@
 #include "Base_Modules/bluetooth.h"
 #include "Base_Modules/motor.h"
 #include <stdlib.h>
-void return_data(pClass_UART this)
-{
-  this->Send_Datas(this, this->rxbuffer, this->rx_len); // 回传数据
-  this->Clear_Buffer(this);                             // 清空接收数据
-}
 
 int main(void)
 {
@@ -29,7 +24,7 @@ int main(void)
 
   // 蓝牙配置
   pClass_Bluetooth Bluetooth_Debuger = Create_Bluetooth();                                      // 创建蓝牙对象
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, 0, 4);                                             // 初始化蓝牙对象
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_UART_INDEX, 4);                          // 初始化蓝牙对象
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_0_Rx_Callback);            // 配置回调函数
   Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, WAVE);                                   // 配置调试模式
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Motor_LF->Now_Speed));          // 绑定参数0

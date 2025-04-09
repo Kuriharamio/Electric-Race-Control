@@ -15,17 +15,6 @@ uint8_t WAVE_TAIL[4] = {0x00, 0x00, 0x80, 0x7f}; // WAVE数据尾(JustFloat)
 
 static Class_Bluetooth _Bluetooth_0 = {0}; // 静态实例化蓝牙对象
 
-pClass_Bluetooth Get_Bluetooth_INST(uint8_t index)
-{
-    switch (index)
-    {
-    case 0:
-        return &_Bluetooth_0;
-    default:
-        return NULL;
-    }
-}
-
 /**
  * @brief 创建蓝牙对象
  *
@@ -33,7 +22,7 @@ pClass_Bluetooth Get_Bluetooth_INST(uint8_t index)
  */
 pClass_Bluetooth Create_Bluetooth(void)
 {
-    pClass_Bluetooth Bluetooth = &_Bluetooth_0; 
+    pClass_Bluetooth Bluetooth = &_Bluetooth_0;
 
     Bluetooth->Init = Bluetooth_Init;
     Bluetooth->Configure_Mode = Bluetooth_Configure_Mode;
@@ -72,6 +61,7 @@ void Bluetooth_Init(pClass_Bluetooth this, uint8_t uart_index, uint8_t param_len
         return;
     }
 
+    this->is_inited = true;
 }
 
 /**
@@ -113,29 +103,28 @@ void Bluetooth_Configure_Callback(pClass_Bluetooth this, void (*callback)(pClass
  * @param this 蓝牙对象
  * @param data 发送的数据(仅对STRING模式有效)
  * @param size 数据大小（仅对STRING模式有效）
- * 
+ *
  */
 void Bluetooth_Send_Datas(pClass_Bluetooth this, uint8_t *datas, size_t size)
 {
-    switch(this->mode)
+    switch (this->mode)
     {
-        case STRING:
-            this->UART_INST->Send_Datas(this->UART_INST, datas, size);
-            break;
-        case WAVE:
-            for(int i = 0; i < this->param_len; i++)
-            {
-                this->UART_INST->Send_Datas(this->UART_INST, (uint8_t *)(this->param_list[i]), sizeof(float)); // 发送浮点数参数
-            }
-            this->UART_INST->Send_Datas(this->UART_INST, (uint8_t *)WAVE_TAIL, sizeof(WAVE_TAIL)); // 发送WAVE数据尾
-            break;
-        case CUSTOM:
-            break;
-        default:    
-            break;
+    case STRING:
+        this->UART_INST->Send_Datas(this->UART_INST, datas, size);
+        break;
+    case WAVE:
+        for (int i = 0; i < this->param_len; i++)
+        {
+            this->UART_INST->Send_Datas(this->UART_INST, (uint8_t *)(this->param_list[i]), sizeof(float)); // 发送浮点数参数
+        }
+        this->UART_INST->Send_Datas(this->UART_INST, (uint8_t *)WAVE_TAIL, sizeof(WAVE_TAIL)); // 发送WAVE数据尾
+        break;
+    case CUSTOM:
+        break;
+    default:
+        break;
     }
 }
-
 
 /**
  * @brief 绑定参数
@@ -152,7 +141,6 @@ void Bluetooth_Bind_Param_With_Id(pClass_Bluetooth this, uint8_t id, float *inpu
     this->param_list[id] = input_param;
 }
 
-
 /**
  * @brief 修改浮点数参数
  *
@@ -168,7 +156,6 @@ void Bluetooth_Modify_Param_With_Id(pClass_Bluetooth this, uint8_t id, float val
     *(this->param_list[id]) = value;
 }
 
-
 /**
  * @brief 蓝牙0接收回调
  *
@@ -176,16 +163,33 @@ void Bluetooth_Modify_Param_With_Id(pClass_Bluetooth this, uint8_t id, float val
  */
 void Bluetooth_0_Rx_Callback(pClass_UART this)
 {
-    if (this->is_received)
+    static uint8_t rxbuffer[BLUETOOTH_RX_LEN_MAX] = {0};
+    static uint8_t rx_len = 0;
+
+    if (this->current_byte)
+    {
+        if (rx_len < BLUETOOTH_RX_LEN_MAX)
+        {
+            rxbuffer[rx_len++] = this->current_byte; // 接收数据
+        }
+        else
+        {
+            rx_len = 0; // 清空接收数据
+        }
+    }
+    else
     {
         int id = 0;
         float value = 0.0f;
-        sscanf((char *)(this->rxbuffer), "%d=%f", &id, &value);
-        pClass_Bluetooth bluetooth = Get_Bluetooth_INST(0); // 获取蓝牙对象实例
-        if (bluetooth == NULL)
-            return;
-        bluetooth->Modify_Param_With_Id(bluetooth, id, value); // 修改参数
-        this->Clear_Buffer(this);
+        sscanf((char *)(rxbuffer), "%d=%f", &id, &value);
+        if (_Bluetooth_0.is_inited)
+            _Bluetooth_0.Modify_Param_With_Id(&_Bluetooth_0, id, value); // 修改参数
+
+        // 清空接收数据
+        for (int i = 0; i < rx_len; i++)
+        {
+            rxbuffer[i] = 0;
+        }
+        rx_len = 0;
     }
 }
-
