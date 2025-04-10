@@ -44,7 +44,7 @@ pClass_AdcKey Create_AdcKey(void)
  *
  *@param this
  */
-void Adc_Init(pClass_AdcKey this)
+void Adc_Init(pClass_AdcKey this,pClass_Bluetooth that)
 {
 	NVIC_EnableIRQ(adckey_INST_INT_IRQN);
 	
@@ -52,6 +52,7 @@ void Adc_Init(pClass_AdcKey this)
 	this->AdcFlag = false;
 	this->Mode = Mode_None;
 	this->Adc_Value = 0;
+	this->Bluetooth=that;
 	
 	g_AdcKeyInstance = this;
 	
@@ -103,13 +104,13 @@ void Adc_Get_Mode(pClass_AdcKey this)
 }
 
 /**
- *@brief 设置按键回调函数
+*@brief 设置按键回调函数(设置回调函数里的参数是为了测试)
  *@param this 
  *@param mode
  *@param (*callback)
  *
  */
-void Adc_Set_Callback(pClass_AdcKey this, KeyMode mode, void (*callback)(void))
+void Adc_Set_Callback(pClass_AdcKey this, KeyMode mode, void (*callback)(pClass_Bluetooth this))
 {
     if (mode >= Mode_1 && mode <= Mode_5) {
         this->Callbacks[mode - 1] = callback;
@@ -126,9 +127,9 @@ void Adc_Check_And_Trigger(pClass_AdcKey this)
     this->Get_Mode(this);
 
     if (this->Mode >= Mode_1 && this->Mode <= Mode_5) {
-        void (*cb)(void) = this->Callbacks[this->Mode - 1];
+        void (*cb)(pClass_Bluetooth this) = this->Callbacks[this->Mode - 1];
         if (cb) {
-            cb();
+            cb(this->Bluetooth);
         }
     }
 }
