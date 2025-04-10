@@ -24,11 +24,6 @@ void board_init(void)
     // SYSCFG初始化
     SYSCFG_DL_init();
 
-    // 串口初始化
-    pClass_UART uart_0 = Create_UART(0);
-    uart_0->Init(uart_0); // 初始化串口0
-    //uart_0 = NULL;        // 释放串口0对象
-
     // TIM初始化
     NVIC_ClearPendingIRQ(ENCODER_INST_INT_IRQN);
     NVIC_ClearPendingIRQ(PID_MOTOR_INST_INT_IRQN);

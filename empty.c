@@ -27,10 +27,11 @@ int main(void)
   Motor_LF->Configure_STBY(Motor_LF, MOTOR_DRV_STBY_F_PORT, MOTOR_DRV_STBY_F_PIN); // 配置电机待机引脚
                                                                                    //
   // 蓝牙配置
-  pClass_Bluetooth Bluetooth_Debuger = Create_Bluetooth();                                // 创建蓝牙对象
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, 0, 3);                                       // 初始化蓝牙对象
-  Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_0_Rx_Callback);      // 配置回调函数
-  Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, WAVE);                           // 配置调试模式
+  pClass_UART Bluetooth_Debuger = Create_UART(0); // 获取蓝牙对象实例
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 3); // 初始化蓝牙对象
+  Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE); // 配置调试模式
+  Bluetooth_Debuger->Configure_Param_Len(Bluetooth_Debuger, 3); // 配置参数长度
+  Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback); // 配置回调函数
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Motor_LF->Now_Speed));    // 绑定参数0
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Motor_LF->Target_Speed)); // 绑定参数1
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Motor_LF->Output_Now));   // 绑定参数2
@@ -45,7 +46,7 @@ int main(void)
   // Adc_Button->Configure_Callback(Adc_Button, KEY_5, Button_5_Mode); // 配置按键5的回调函数
   while (1)
   {
-    Bluetooth_Debuger->Send_Datas(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
+    Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 
     // 电机响应测试 >>>
     static int t = 0;
