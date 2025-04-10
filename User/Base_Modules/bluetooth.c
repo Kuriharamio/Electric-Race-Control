@@ -142,7 +142,7 @@ void Bluetooth_Bind_Param_With_Id(pClass_Bluetooth this, uint8_t id, float *inpu
 }
 
 /**
- * @brief 修改浮点数参数
+ * @brief 修改参数
  *
  * @param this 蓝牙对象
  * @param id 参数ID

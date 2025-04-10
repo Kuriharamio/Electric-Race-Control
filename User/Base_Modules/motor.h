@@ -76,6 +76,7 @@ typedef struct Class_Motor
 } Class_Motor, *pClass_Motor;
 
 pClass_Motor create_motor(SIDE side);
+pClass_Motor Get_Motor_INST(SIDE side);
 
 void Motor_Configure_IN_1(pClass_Motor this, GPIO_Regs *__IN_1_PORT, uint32_t __IN_1_PIN);
 void Motor_Configure_IN_2(pClass_Motor this, GPIO_Regs *__IN_2_PORT, uint32_t __IN_2_PIN);

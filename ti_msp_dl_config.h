@@ -41,7 +41,6 @@
 #define ti_msp_dl_config_h
 
 #define CONFIG_LP_MSPM0G3507
-#define CONFIG_MSPM0G3507
 
 #if defined(__ti_version__) || defined(__TI_COMPILER_VERSION__)
 #define SYSCONFIG_WEAK __attribute__((weak))
@@ -111,21 +110,25 @@ extern "C" {
 
 
 /* Defines for ENCODER */
-#define ENCODER_INST                                                     (TIMG0)
-#define ENCODER_INST_IRQHandler                                 TIMG0_IRQHandler
-#define ENCODER_INST_INT_IRQN                                   (TIMG0_INT_IRQn)
+#define ENCODER_INST                                                     (TIMG6)
+#define ENCODER_INST_IRQHandler                                 TIMG6_IRQHandler
+#define ENCODER_INST_INT_IRQN                                   (TIMG6_INT_IRQn)
 #define ENCODER_INST_LOAD_VALUE                                           (249U)
-/* Defines for PID */
-#define PID_INST                                                         (TIMA1)
-#define PID_INST_IRQHandler                                     TIMA1_IRQHandler
-#define PID_INST_INT_IRQN                                       (TIMA1_INT_IRQn)
-#define PID_INST_LOAD_VALUE                                               (499U)
+/* Defines for PID_MOTOR */
+#define PID_MOTOR_INST                                                   (TIMG0)
+#define PID_MOTOR_INST_IRQHandler                               TIMG0_IRQHandler
+#define PID_MOTOR_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
+#define PID_MOTOR_INST_LOAD_VALUE                                         (499U)
+/* Defines for ADC_BUTTON */
+#define ADC_BUTTON_INST                                                  (TIMA1)
+#define ADC_BUTTON_INST_IRQHandler                              TIMA1_IRQHandler
+#define ADC_BUTTON_INST_INT_IRQN                                (TIMA1_INT_IRQn)
+#define ADC_BUTTON_INST_LOAD_VALUE                                      (49999U)
 
 
 
 /* Defines for UART_0 */
 #define UART_0_INST                                                        UART0
-#define UART_0_INST_FREQUENCY                                           32000000
 #define UART_0_INST_IRQHandler                                  UART0_IRQHandler
 #define UART_0_INST_INT_IRQN                                      UART0_INT_IRQn
 #define GPIO_UART_0_RX_PORT                                                GPIOA
@@ -141,7 +144,6 @@ extern "C" {
 #define UART_0_FBRD_32_MHZ_115200_BAUD                                      (23)
 /* Defines for UART_1 */
 #define UART_1_INST                                                        UART1
-#define UART_1_INST_FREQUENCY                                           32000000
 #define UART_1_INST_IRQHandler                                  UART1_IRQHandler
 #define UART_1_INST_INT_IRQN                                      UART1_INT_IRQn
 #define GPIO_UART_1_RX_PORT                                                GPIOA
@@ -166,7 +168,7 @@ extern "C" {
 #define adckey_INST_INT_IRQN                                     (ADC0_INT_IRQn)
 #define adckey_ADCMEM_key                                     DL_ADC12_MEM_IDX_0
 #define adckey_ADCMEM_key_REF                    DL_ADC12_REFERENCE_VOLTAGE_VDDA
-#define adckey_ADCMEM_key_REF_VOLTAGE_V                                      3.3
+#define adckey_ADCMEM_key_REF_VOLTAGE                                         -1 // VDDA cannot be determined
 #define GPIO_adckey_C0_PORT                                                GPIOA
 #define GPIO_adckey_C0_PIN                                        DL_GPIO_PIN_27
 
@@ -277,7 +279,8 @@ void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_PWM_MOTOR_init(void);
 void SYSCFG_DL_ENCODER_init(void);
-void SYSCFG_DL_PID_init(void);
+void SYSCFG_DL_PID_MOTOR_init(void);
+void SYSCFG_DL_ADC_BUTTON_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_UART_1_init(void);
 void SYSCFG_DL_adckey_init(void);

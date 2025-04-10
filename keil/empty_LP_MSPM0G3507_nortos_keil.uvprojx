@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control;..\..\my_team</IncludePath>
+              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -425,24 +425,14 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
-              <FileName>car.c</FileName>
+              <FileName>drv_math.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\Car\car.c</FilePath>
+              <FilePath>..\User\Algorithm\drv_math.c</FilePath>
             </File>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>pid.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\BSP\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\BSP\delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\BSP\uart.c</FilePath>
+              <FilePath>..\User\Algorithm\pid.c</FilePath>
             </File>
             <File>
               <FileName>adc_button.c</FileName>
@@ -470,14 +460,34 @@
               <FilePath>..\User\Base_Modules\motor.c</FilePath>
             </File>
             <File>
-              <FileName>drv_math.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\Algorithm\drv_math.c</FilePath>
+              <FilePath>..\User\BSP\board.c</FilePath>
             </File>
             <File>
-              <FileName>pid.c</FileName>
+              <FileName>delay.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\Algorithm\pid.c</FilePath>
+              <FilePath>..\User\BSP\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\BSP\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\BSP\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>car.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Car\car.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\BSP\timer.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,9 +1,8 @@
 /**
  * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
  * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
- * @cliArgs --board "/ti/boards/LP_MSPM0G3507" --product "mspm0_sdk@2.02.00.05"
- * @v2CliArgs --board "/ti/boards/LP_MSPM0G3507" --product "mspm0_sdk@2.02.00.05"
- * @versions {"tool":"1.21.1+3772"}
+ * @cliArgs --board "/ti/boards/LP_MSPM0G3507" --product "mspm0_sdk@1.30.00.03"
+ * @versions {"tool":"1.19.0+3426"}
  */
 
 /**
@@ -25,6 +24,7 @@ const SYSTICK = scripting.addModule("/ti/driverlib/SYSTICK");
 const TIMER   = scripting.addModule("/ti/driverlib/TIMER", {}, false);
 const TIMER1  = TIMER.addInstance();
 const TIMER2  = TIMER.addInstance();
+const TIMER3  = TIMER.addInstance();
 const UART    = scripting.addModule("/ti/driverlib/UART", {}, false);
 const UART1   = UART.addInstance();
 const UART2   = UART.addInstance();
@@ -211,13 +211,19 @@ TIMER1.interrupts       = ["ZERO"];
 TIMER1.timerClkPrescale = 40;
 TIMER1.timerPeriod      = "2.5 ms";
 
-TIMER2.$name            = "PID";
 TIMER2.timerClkDiv      = 8;
 TIMER2.timerClkPrescale = 40;
 TIMER2.timerMode        = "PERIODIC";
 TIMER2.timerStartTimer  = true;
 TIMER2.interrupts       = ["ZERO"];
 TIMER2.timerPeriod      = "5 ms";
+TIMER2.$name            = "PID_MOTOR";
+
+TIMER3.$name            = "ADC_BUTTON";
+TIMER3.timerClkPrescale = 32;
+TIMER3.timerPeriod      = "50 ms";
+TIMER3.timerStartTimer  = true;
+TIMER3.interrupts       = ["ZERO"];
 
 UART1.$name                    = "UART_0";
 UART1.targetBaudRate           = 115200;
@@ -262,7 +268,8 @@ GPIO6.associatedPins[6].pin.$suggestSolution = "boosterpack.29";
 GPIO6.associatedPins[7].pin.$suggestSolution = "boosterpack.30";
 GPIO6.associatedPins[8].pin.$suggestSolution = "j21_expansion.3";
 GPIO6.associatedPins[9].pin.$suggestSolution = "boosterpack.35";
-TIMER1.peripheral.$suggestSolution           = "TIMG0";
-TIMER2.peripheral.$suggestSolution           = "TIMA1";
+TIMER1.peripheral.$suggestSolution           = "TIMG6";
+TIMER2.peripheral.$suggestSolution           = "TIMG0";
+TIMER3.peripheral.$suggestSolution           = "TIMA1";
 UART1.peripheral.$suggestSolution            = "UART0";
 UART2.peripheral.txPin.$suggestSolution      = "boosterpack.28";

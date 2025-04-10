@@ -1,42 +1,35 @@
 #include "Base_Modules/adc_button.h"
-#include "BSP/delay.h"
-#include <stdlib.h>
 
-static pClass_AdcKey g_AdcKeyInstance = NULL;
+static Class_ADCButton _ADC_Button = {0};
 
-static const AdcKeyThreshold key_map[] = {
-    {4000, 5000, Mode_1},
-    {3000, 3500, Mode_2},
-    {2200, 2600, Mode_3},
-    {1200, 1700, Mode_4},
-    {500,  1000, Mode_5}
+static const AdcButtonThreshold Button_map[5] = {
+    {4000, 5000, BUTTON_1},
+    {3000, 3500, BUTTON_2},
+    {2200, 2600, BUTTON_3},
+    {1200, 1700, BUTTON_4},
+    {500, 1000, BUTTON_5}
 };
 
 /**
  *@brief 创建adc按键实例
  */
-pClass_AdcKey Create_AdcKey(void)
+pClass_ADCButton Create_AdcButton(void)
 {
-	pClass_AdcKey AdcKey = (pClass_AdcKey)malloc(sizeof(Class_AdcKey));
-	
-	if(AdcKey==NULL)
-	{
-		return NULL;
-	}
-	
-	AdcKey->Init = Adc_Init;
-	AdcKey->Get_Value = Adc_Get_Value;
-	AdcKey->Get_Mode = Adc_Get_Mode;
-	
-	AdcKey->Set_Callback = Adc_Set_Callback;
-    AdcKey->Check_And_Trigger = Adc_Check_And_Trigger;
+    pClass_ADCButton AdcButton = &_ADC_Button;
 
-    for (int i = 0; i < 5; ++i) {
-        AdcKey->Callbacks[i] = NULL;
-    }
+    AdcButton->Init = Adc_Init;
+    AdcButton->Get_Current_Value = Adc_Get_Current_Value;
+    AdcButton->Get_Current_Button = Adc_Get_Current_Button;
 
-	
-	return AdcKey;
+    AdcButton->Configure_Callback = Adc_Configure_Callback;
+    AdcButton->Check_And_Trigger = Adc_Check_And_Trigger;
+
+    return AdcButton;
+}
+
+pClass_ADCButton GET_ADCButton_INST(void)
+{
+    return &_ADC_Button;
 }
 
 /**
@@ -44,18 +37,24 @@ pClass_AdcKey Create_AdcKey(void)
  *
  *@param this
  */
-void Adc_Init(pClass_AdcKey this,pClass_Bluetooth that)
+void Adc_Init(pClass_ADCButton this, ADC12_Regs *ADC_INST, IRQn_Type ADC_INST_INT_IRQN, DL_ADC12_MEM_IDX ADCMEM_IDX)
 {
-	NVIC_EnableIRQ(adckey_INST_INT_IRQN);
-	
-	this->AdcKey_INST = adckey_INST;
-	this->AdcFlag = false;
-	this->Mode = Mode_None;
-	this->Adc_Value = 0;
-	this->Bluetooth=that;
-	
-	g_AdcKeyInstance = this;
-	
+    this->ADC_Button_INST = ADC_INST;
+    this->ADC_Button_IRQN = ADC_INST_INT_IRQN;
+    this->ADCMEM_IDX = ADCMEM_IDX;
+
+    NVIC_EnableIRQ(this->ADC_Button_IRQN);
+
+    this->ADC_Flag = false;
+    this->Current_Button = BUTTON_None;
+    this->Current_ADC_Value = 0;
+
+    for (int i = 0; i < 5; ++i)
+    {
+        this->Callbacks[i] = NULL;
+    }
+
+    this->is_inited = true;
 }
 
 /**
@@ -63,21 +62,21 @@ void Adc_Init(pClass_AdcKey this,pClass_Bluetooth that)
  *
  *@param this
  */
-void Adc_Get_Value(pClass_AdcKey this)
+void Adc_Get_Current_Value(pClass_ADCButton this)
 {
-	this->Adc_Value=0;
-	
-	DL_ADC12_enableConversions(this->AdcKey_INST);
-	DL_ADC12_startConversion(this->AdcKey_INST);
-	
-	while(this->AdcFlag==false)
-	{
-		__WFE();
-	}
-	
-	this->Adc_Value=DL_ADC12_getMemResult(adckey_INST,adckey_ADCMEM_key);
-	
-	this->AdcFlag=false;
+    this->Current_ADC_Value = 0;
+
+    DL_ADC12_enableConversions(this->ADC_Button_INST);
+    DL_ADC12_startConversion(this->ADC_Button_INST);
+
+    while (this->ADC_Flag == false)
+    {
+        __WFE();
+    }
+
+    this->Current_ADC_Value = DL_ADC12_getMemResult(this->ADC_Button_INST, this->ADCMEM_IDX); // TODO
+
+    this->ADC_Flag = false;
 }
 
 /**
@@ -85,35 +84,37 @@ void Adc_Get_Value(pClass_AdcKey this)
  *
  *@param this
  */
-void Adc_Get_Mode(pClass_AdcKey this)
+void Adc_Get_Current_Button(pClass_ADCButton this)
 {
-    this->Get_Value(this);
+    this->Get_Current_Value(this);
 
-    for (size_t i = 0; i < sizeof(key_map) / sizeof(key_map[0]); ++i) {
-        if (this->Adc_Value >= key_map[i].min_val && this->Adc_Value <= key_map[i].max_val) {
+    for (size_t i = 0; i < sizeof(Button_map) / sizeof(Button_map[0]); ++i)
+    {
+        if (this->Current_ADC_Value >= Button_map[i].min_val && this->Current_ADC_Value <= Button_map[i].max_val)
+        {
             delay_ms(10);
-            this->Get_Value(this);  // 重新采样确认
-            if (this->Adc_Value >= key_map[i].min_val && this->Adc_Value <= key_map[i].max_val) {
-                this->Mode = key_map[i].mode;
+            this->Get_Current_Value(this); // 重新采样确认
+            if (this->Current_ADC_Value >= Button_map[i].min_val && this->Current_ADC_Value <= Button_map[i].max_val)
+            {
+                this->Current_Button = Button_map[i].Button;
                 return;
             }
         }
     }
-
-    //this->Mode = Mode_None;
 }
 
 /**
-*@brief 设置按键回调函数(设置回调函数里的参数是为了测试)
- *@param this 
+ *@brief 设置按键回调函数(设置回调函数里的参数是为了测试)
+ *@param this
  *@param mode
  *@param (*callback)
  *
  */
-void Adc_Set_Callback(pClass_AdcKey this, KeyMode mode, void (*callback)(pClass_Bluetooth this))
+void Adc_Configure_Callback(pClass_ADCButton this, ButtonNum Button, void (*callback)(void))
 {
-    if (mode >= Mode_1 && mode <= Mode_5) {
-        this->Callbacks[mode - 1] = callback;
+    if (Button >= BUTTON_1 && Button <= BUTTON_5)
+    {
+        this->Callbacks[Button - 1] = callback;
     }
 }
 
@@ -122,17 +123,16 @@ void Adc_Set_Callback(pClass_AdcKey this, KeyMode mode, void (*callback)(pClass_
  *
  *@param this
  */
-void Adc_Check_And_Trigger(pClass_AdcKey this)
+void Adc_Check_And_Trigger(pClass_ADCButton this)
 {
-    this->Get_Mode(this);
+    this->Get_Current_Button(this);
 
-    if (this->Mode >= Mode_1 && this->Mode <= Mode_5) {
-        void (*cb)(pClass_Bluetooth this) = this->Callbacks[this->Mode - 1];
-        if (cb) {
-            cb(this->Bluetooth);
-        }
+    if (this->Current_Button >= BUTTON_1 && this->Current_Button <= BUTTON_5)
+    {
+        this->Callbacks[this->Current_Button - 1]();
     }
 }
+
 /**
  *@brief adc中断处理函数
  *
@@ -140,15 +140,16 @@ void Adc_Check_And_Trigger(pClass_AdcKey this)
  */
 void adckey_INST_IRQHandler(void)
 {
-    switch (DL_ADC12_getPendingInterrupt(adckey_INST)) {
-        case DL_ADC12_IIDX_MEM0_RESULT_LOADED:
-            DL_ADC12_clearInterruptStatus(adckey_INST, DL_ADC12_IIDX_MEM0_RESULT_LOADED);
-            if (g_AdcKeyInstance) {
-                g_AdcKeyInstance->AdcFlag = true;
-            }
-            break;
-        default:
-            break;
+    switch (DL_ADC12_getPendingInterrupt(adckey_INST))
+    {
+    case DL_ADC12_IIDX_MEM0_RESULT_LOADED:
+        DL_ADC12_clearInterruptStatus(adckey_INST, DL_ADC12_IIDX_MEM0_RESULT_LOADED);
+        if (_ADC_Button.is_inited)
+        {
+            _ADC_Button.ADC_Flag = true;
+        }
+        break;
+    default:
+        break;
     }
 }
-			

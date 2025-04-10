@@ -31,10 +31,10 @@ void board_init(void)
 
     // TIM初始化
     NVIC_ClearPendingIRQ(ENCODER_INST_INT_IRQN);
-    NVIC_ClearPendingIRQ(PID_INST_INT_IRQN);
-	
+    NVIC_ClearPendingIRQ(PID_MOTOR_INST_INT_IRQN);
+
     NVIC_EnableIRQ(ENCODER_INST_INT_IRQN);
-    NVIC_EnableIRQ(PID_INST_INT_IRQN);
+    NVIC_EnableIRQ(PID_MOTOR_INST_INT_IRQN);
 
     // ADC初始化
 
