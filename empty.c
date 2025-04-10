@@ -28,7 +28,7 @@ int main(void)
   // 电机配置(测试，之后移动到小车类中)
   pClass_Motor Motor_LF = create_motor(LEFT_FRONT);                                                                                                    // 创建电机对象
   Motor_LF->Init(Motor_LF, 0.024, 1600, 1.5, 20, 13, 4);                                                                                               // 初始化电机对象
-  Motor_LF->PID_Speed->PID_Init(Motor_LF->PID_Speed, 2000, 10000.0, 2000.0, 5000.0, 1500, 1600, PID_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
+  Motor_LF->PID_Speed->PID_Init(Motor_LF->PID_Speed, 2000, 10000.0, 2000.0, 5000.0, 1500, 1600, PID_MOTOR_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
   Motor_LF->Configure_IN_1(Motor_LF, MOTOR_DRV_LF_IN1_PORT, MOTOR_DRV_LF_IN1_PIN);                                                                     // 配置电机引脚IN1
   Motor_LF->Configure_IN_2(Motor_LF, MOTOR_DRV_LF_IN2_PORT, MOTOR_DRV_LF_IN2_PIN);                                                                     // 配置电机引脚IN2
   Motor_LF->Configure_ENCODER_A(Motor_LF, ENCODER_LF_PORT, ENCODER_LF_LF_A_PIN);                                                                       // 配置电机引脚编码器A
@@ -47,9 +47,9 @@ int main(void)
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Motor_LF->Output_Now));   // 绑定参数2
 
   // K230串口通信配置
-  pClass_UART Bluetooth_Debuger = Create_UART(0);                             // 获取蓝牙对象实例
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 3);        // 初始化蓝牙对象
-  Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, K230_Rx_Callback); // 配置回调函数
+  pClass_UART K230_Communicator = Create_UART(1);                             // 获取蓝牙对象实例
+  K230_Communicator->Init(K230_Communicator, K230_RX_LEN_MAX, 3);        // 初始化蓝牙对象
+  K230_Communicator->Configure_Callback(K230_Communicator, K230_Rx_Callback); // 配置回调函数
   // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Motor_LF->Now_Speed));    // 绑定参数0
   // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Motor_LF->Target_Speed)); // 绑定参数1
   // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Motor_LF->Output_Now));   // 绑定参数2

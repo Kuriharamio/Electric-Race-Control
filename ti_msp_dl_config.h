@@ -114,11 +114,11 @@ extern "C" {
 #define ENCODER_INST_IRQHandler                                 TIMG6_IRQHandler
 #define ENCODER_INST_INT_IRQN                                   (TIMG6_INT_IRQn)
 #define ENCODER_INST_LOAD_VALUE                                           (249U)
-/* Defines for PID_MOTOR */
-#define PID_MOTOR_INST                                                   (TIMG0)
-#define PID_MOTOR_INST_IRQHandler                               TIMG0_IRQHandler
-#define PID_MOTOR_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
-#define PID_MOTOR_INST_LOAD_VALUE                                         (499U)
+/* Defines for PID */
+#define PID_INST                                                         (TIMG0)
+#define PID_INST_IRQHandler                                     TIMG0_IRQHandler
+#define PID_INST_INT_IRQN                                       (TIMG0_INT_IRQn)
+#define PID_INST_LOAD_VALUE                                               (499U)
 /* Defines for ADC_BUTTON */
 #define ADC_BUTTON_INST                                                  (TIMA1)
 #define ADC_BUTTON_INST_IRQHandler                              TIMA1_IRQHandler
@@ -279,7 +279,7 @@ void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_PWM_MOTOR_init(void);
 void SYSCFG_DL_ENCODER_init(void);
-void SYSCFG_DL_PID_MOTOR_init(void);
+void SYSCFG_DL_PID_init(void);
 void SYSCFG_DL_ADC_BUTTON_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_UART_1_init(void);

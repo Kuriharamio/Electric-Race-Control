@@ -1,9 +1,9 @@
 #include "BSP/timer.h"
 
 // 电机PID定时器中断处理函数
-void PID_MOTOR_INST_IRQHandler(void)
+void PID_INST_IRQHandler(void)
 {
-    switch (DL_TimerA_getPendingInterrupt(PID_MOTOR_INST))
+    switch (DL_TimerA_getPendingInterrupt(PID_INST))
     {
     case DL_TIMER_IIDX_ZERO:
         // pClass_Motor Motor_LB = Get_Motor_INST(LEFT_BACK);

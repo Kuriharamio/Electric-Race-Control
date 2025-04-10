@@ -56,7 +56,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_SYSCTL_init();
     SYSCFG_DL_PWM_MOTOR_init();
     SYSCFG_DL_ENCODER_init();
-    SYSCFG_DL_PID_MOTOR_init();
+    SYSCFG_DL_PID_init();
     SYSCFG_DL_ADC_BUTTON_init();
     SYSCFG_DL_UART_0_init();
     SYSCFG_DL_UART_1_init();
@@ -102,7 +102,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_GPIO_reset(GPIOB);
     DL_TimerA_reset(PWM_MOTOR_INST);
     DL_TimerG_reset(ENCODER_INST);
-    DL_TimerG_reset(PID_MOTOR_INST);
+    DL_TimerG_reset(PID_INST);
     DL_TimerA_reset(ADC_BUTTON_INST);
     DL_UART_Main_reset(UART_0_INST);
     DL_UART_Main_reset(UART_1_INST);
@@ -113,7 +113,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_GPIO_enablePower(GPIOB);
     DL_TimerA_enablePower(PWM_MOTOR_INST);
     DL_TimerG_enablePower(ENCODER_INST);
-    DL_TimerG_enablePower(PID_MOTOR_INST);
+    DL_TimerG_enablePower(PID_INST);
     DL_TimerA_enablePower(ADC_BUTTON_INST);
     DL_UART_Main_enablePower(UART_0_INST);
     DL_UART_Main_enablePower(UART_1_INST);
@@ -384,7 +384,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_ENCODER_init(void) {
  * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
  *   100000 Hz = 4000000 Hz / (8 * (39 + 1))
  */
-static const DL_TimerG_ClockConfig gPID_MOTORClockConfig = {
+static const DL_TimerG_ClockConfig gPIDClockConfig = {
     .clockSel    = DL_TIMER_CLOCK_BUSCLK,
     .divideRatio = DL_TIMER_CLOCK_DIVIDE_8,
     .prescale    = 39U,
@@ -392,23 +392,23 @@ static const DL_TimerG_ClockConfig gPID_MOTORClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * PID_MOTOR_INST_LOAD_VALUE = (5 ms * 100000 Hz) - 1
+ * PID_INST_LOAD_VALUE = (5 ms * 100000 Hz) - 1
  */
-static const DL_TimerG_TimerConfig gPID_MOTORTimerConfig = {
-    .period     = PID_MOTOR_INST_LOAD_VALUE,
+static const DL_TimerG_TimerConfig gPIDTimerConfig = {
+    .period     = PID_INST_LOAD_VALUE,
     .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC,
     .startTimer = DL_TIMER_START,
 };
 
-SYSCONFIG_WEAK void SYSCFG_DL_PID_MOTOR_init(void) {
+SYSCONFIG_WEAK void SYSCFG_DL_PID_init(void) {
 
-    DL_TimerG_setClockConfig(PID_MOTOR_INST,
-        (DL_TimerG_ClockConfig *) &gPID_MOTORClockConfig);
+    DL_TimerG_setClockConfig(PID_INST,
+        (DL_TimerG_ClockConfig *) &gPIDClockConfig);
 
-    DL_TimerG_initTimerMode(PID_MOTOR_INST,
-        (DL_TimerG_TimerConfig *) &gPID_MOTORTimerConfig);
-    DL_TimerG_enableInterrupt(PID_MOTOR_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
-    DL_TimerG_enableClock(PID_MOTOR_INST);
+    DL_TimerG_initTimerMode(PID_INST,
+        (DL_TimerG_TimerConfig *) &gPIDTimerConfig);
+    DL_TimerG_enableInterrupt(PID_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
+    DL_TimerG_enableClock(PID_INST);
 
 
 

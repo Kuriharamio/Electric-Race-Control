@@ -5,7 +5,9 @@
 #include <stdlib.h>
 
 // 定时器配置
-#define PID_TIMER_T 0.005f
+#define PID_MOTOR_TIMER_T 0.005f
+#define PID_CAR_SPEED_TIMER_T 0.010f
+#define PID_CAR_POSITION_TIMER_T 0.015f
 #define ENCODER_TIMER_T 0.0025f
 
 // 小车参数
@@ -15,5 +17,9 @@
 // 蓝牙配置
 #define BLUETOOTH_UART_INDEX 0 // 蓝牙串口索引号
 #define BLUETOOTH_RX_LEN_MAX 20 // 蓝牙接收数据最大长度
+
+// K230 串口配置
+#define K230_UART_INDEX 1 // K230串口索引号
+#define K230_RX_LEN_MAX 128 // K230接收数据最大长度
 
 #endif // __CONFIG_H__

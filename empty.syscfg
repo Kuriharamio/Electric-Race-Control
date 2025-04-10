@@ -217,7 +217,7 @@ TIMER2.timerMode        = "PERIODIC";
 TIMER2.timerStartTimer  = true;
 TIMER2.interrupts       = ["ZERO"];
 TIMER2.timerPeriod      = "5 ms";
-TIMER2.$name            = "PID_MOTOR";
+TIMER2.$name            = "PID";
 
 TIMER3.$name            = "ADC_BUTTON";
 TIMER3.timerClkPrescale = 32;
