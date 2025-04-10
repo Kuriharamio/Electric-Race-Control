@@ -153,7 +153,7 @@ UART_Regs *Get_UART_INST_From_Index(uint8_t index)
 	}
 }
 
-
+#include "Base_Modules/led.h"
 /**
  * @brief 串口0中断处理函数
  *
@@ -171,6 +171,7 @@ void UART_0_INST_IRQHandler(void)
 	{
 		// 接收发送过来的数据保存
 		receivedData = DL_UART_Main_receiveData(UART_0_INST);
+		LED(TOGGLE);
 		_UART_0_INST.current_byte = receivedData; // 保存当前接收的字节
 		if (_UART_0_INST.UART_INST_DataProcess != NULL)
 		{

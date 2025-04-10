@@ -24,7 +24,7 @@ int main(void)
 
   // 蓝牙配置
   pClass_Bluetooth Bluetooth_Debuger = Create_Bluetooth();                                      // 创建蓝牙对象
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_UART_INDEX, 4);                          // 初始化蓝牙对象
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_UART_INDEX, 3);                          // 初始化蓝牙对象
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_0_Rx_Callback);            // 配置回调函数
   Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, WAVE);                                   // 配置调试模式
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Motor_LF->Now_Speed));          // 绑定参数0
@@ -42,7 +42,7 @@ int main(void)
     t++;
     if (t % 500 == 0)
     {
-      Motor_LF->Target_Speed = 1.3f;
+      Motor_LF->Target_Speed = 0.3f;
     }
     // <<< 电机响应测试
 

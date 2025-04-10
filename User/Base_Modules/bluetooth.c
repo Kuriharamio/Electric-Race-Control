@@ -166,7 +166,7 @@ void Bluetooth_0_Rx_Callback(pClass_UART this)
     static uint8_t rxbuffer[BLUETOOTH_RX_LEN_MAX] = {0};
     static uint8_t rx_len = 0;
 
-    if (this->current_byte)
+    if (this->current_byte != '?')
     {
         if (rx_len < BLUETOOTH_RX_LEN_MAX)
         {
@@ -179,6 +179,7 @@ void Bluetooth_0_Rx_Callback(pClass_UART this)
     }
     else
     {
+        rxbuffer[rx_len++] = '\0';
         int id = 0;
         float value = 0.0f;
         sscanf((char *)(rxbuffer), "%d=%f", &id, &value);
