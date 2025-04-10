@@ -1,0 +1,60 @@
+Index: UartToMSPM0.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from machine import UART\r\n\r\nfrom machine import FPIOA\r\n\r\nimport struct\r\n# 实例化FPIOA\r\nfpioa = FPIOA()\r\n\r\n# 将指定引脚配置为 UART 功能\r\nfpioa.set_function(11, FPIOA.UART2_TXD)\r\nfpioa.set_function(12, FPIOA.UART2_RXD)\r\n# 初始化UART\r\nuart = UART(UART.UART2, baudrate=115200, bits=UART.EIGHTBITS, parity=UART.PARITY_NONE, stop=UART.STOPBITS_ONE)\r\n\r\n# 定义帧头\r\nFRAME_HEADER = 0xAA\r\n\r\n# 数据包格式：帧头 + 数据长度 + 数据 + 校验位\r\ndef create_packet(data):\r\n    \"\"\"\r\n    创建一个数据包。\r\n    :param data: 要发送的原始数据（字节列表）\r\n    :return: 打包后的数据包\r\n    \"\"\"\r\n    # 计算数据长度\r\n    data_len = len(data)\r\n\r\n    # 计算BCC校验值\r\n    bcc = calculate_bcc(data)\r\n\r\n    # 按照格式打包数据包\r\n    packet = struct.pack(f\"<BB{data_len}B\", FRAME_HEADER, data_len, *data, bcc)\r\n    return packet\r\n\r\n\r\ndef calculate_bcc(data):\r\n    \"\"\"\r\n    计算BCC校验值。\r\n    :param data: 数据字节列表\r\n    :return: BCC校验值\r\n    \"\"\"\r\n    bcc = 0\r\n    for byte in data:\r\n        bcc ^= byte\r\n    return bcc\r\n\r\n\r\ndef send_packet(uart, data):\r\n    \"\"\"\r\n    发送数据包。\r\n    :param uart: UART对象\r\n    :param data: 要发送的原始数据（字节列表）\r\n    \"\"\"\r\n    packet = create_packet(data)\r\n    uart.write(packet)\r\n\r\n\r\ndef receive_packet(uart):\r\n    \"\"\"\r\n    接收并解析数据包。\r\n    :param uart: UART对象\r\n    :return: 解析后的数据（如果成功），否则返回None\r\n    \"\"\"\r\n    # 读取帧头\r\n    header = uart.read(1)\r\n    if not header or header[0] != FRAME_HEADER:\r\n        return None\r\n\r\n    # 读取数据长度\r\n    data_len_bytes = uart.read(1)\r\n    if not data_len_bytes:\r\n        return None\r\n    data_len = data_len_bytes[0]\r\n\r\n    # 读取数据部分\r\n    data = uart.read(data_len)\r\n    if not data or len(data) != data_len:\r\n        return None\r\n\r\n    # 读取校验位\r\n    bcc_received = uart.read(1)\r\n    if not bcc_received:\r\n        return None\r\n    bcc_received = bcc_received[0]\r\n\r\n    # 计算BCC校验值\r\n    bcc_calculated = calculate_bcc(data)\r\n    if bcc_received != bcc_calculated:\r\n        print(\"BCC error\")\r\n        return None\r\n\r\n    return data\r\n\r\n\r\n## 示例使用\r\n# if __name__ == \"__main__\":\r\n#     # 发送数据\r\n#     data_to_send = [0x01, 0x02, 0x03]\r\n#     send_packet(uart, data_to_send)\r\n#     print(\"Packet sent:\", data_to_send)\r\n#\r\n#     # 接收数据\r\n#     received_data = receive_packet(uart)\r\n#     if received_data:\r\n#         print(\"Packet received:\", list(received_data))\r\n
+===================================================================
+diff --git a/UartToMSPM0.py b/UartToMSPM0.py
+--- a/UartToMSPM0.py	(revision 5b6163a78e36533b7d504eaf40481c0408f09717)
++++ b/UartToMSPM0.py	(date 1744289248196)
+@@ -29,7 +29,7 @@
+     bcc = calculate_bcc(data)
+ 
+     # 按照格式打包数据包
+-    packet = struct.pack(f"<BB{data_len}B", FRAME_HEADER, data_len, *data, bcc)
++    packet = struct.pack(f"<BB{data_len}BB", FRAME_HEADER, data_len, *data, bcc)
+     return packet
+ 
+ 
+@@ -92,14 +92,14 @@
+     return data
+ 
+ 
+-## 示例使用
+-# if __name__ == "__main__":
+-#     # 发送数据
+-#     data_to_send = [0x01, 0x02, 0x03]
+-#     send_packet(uart, data_to_send)
+-#     print("Packet sent:", data_to_send)
+-#
+-#     # 接收数据
+-#     received_data = receive_packet(uart)
+-#     if received_data:
+-#         print("Packet received:", list(received_data))
++# 示例使用
++if __name__ == "__main__":
++    # 发送数据
++    data_to_send = [0x01, 0x02, 0x03]
++    send_packet(uart, data_to_send)
++    print("Packet sent:", data_to_send)
++
++    # 接收数据
++    received_data = receive_packet(uart)
++    if received_data:
++        print("Packet received:", list(received_data))
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.13\" project-jdk-type=\"Python SDK\" />\r\n</project>
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 5b6163a78e36533b7d504eaf40481c0408f09717)
++++ b/.idea/misc.xml	(date 1744127327286)
+@@ -1,4 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="Black">
++    <option name="sdkName" value="Python 3.13" />
++  </component>
+   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
