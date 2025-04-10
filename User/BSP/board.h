@@ -6,6 +6,7 @@
 #include "BSP/delay.h"
 #include "Base_Modules/led.h"
 
+void softwareReset(uint32_t resetType);
 void board_init(void);
 
 #endif // __BOARD__H__

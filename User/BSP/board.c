@@ -19,6 +19,11 @@ void _sys_exit(int x)
 }
 #endif
 
+void softwareReset(uint32_t resetType)
+{
+    DL_SYSCTL_resetDevice(SYSCTL_RESETLEVEL_LEVEL_POR);
+}
+
 void board_init(void)
 {
     // SYSCFG初始化
@@ -30,8 +35,6 @@ void board_init(void)
 
     NVIC_EnableIRQ(ENCODER_INST_INT_IRQN);
     NVIC_EnableIRQ(PID_INST_INT_IRQN);
-
-    // ADC初始化
 
     // GPIO初始化
     NVIC_EnableIRQ(GPIOA_INT_IRQn);
