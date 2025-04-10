@@ -7,7 +7,7 @@ static Class_Car _Car = {0};
  *
  * @return Class_Car*
  */
-pClass_Car create_car(void)
+pClass_Car Create_Car(void)
 {
     pClass_Car car = &_Car;
 
@@ -18,8 +18,8 @@ pClass_Car create_car(void)
     car->Motor_LF = create_motor(LEFT_FRONT);  // 左前轮
 
     // 创建PID对象
-    car->PID_Speed = create_PID();    // 速度环PID
-    car->PID_Position = create_PID(); // 位置环PID
+    car->PID_Linear = create_PID();    // 速度环PID
+    car->PID_Angular = create_PID(); // 位置环PID
 
     // 函数指针赋值
     car->Init = Car_Init;
@@ -50,6 +50,8 @@ void Car_Init(pClass_Car this)
 
     this->Target_Speed.linear_velocity = 0.0f;  // 目标线速度
     this->Target_Speed.angular_velocity = 0.0f; // 目标角速度
+    this->Output_Speed.linear_velocity = 0.0f;  // 输出线速度
+    this->Output_Speed.angular_velocity = 0.0f; // 输出角速度
     this->Now_Speed.linear_velocity = 0.0f;     // 实际线速度
     this->Now_Speed.angular_velocity = 0.0f;    // 实际角速度
 
@@ -91,10 +93,11 @@ void Car_Init(pClass_Car this)
     this->Motor_RB->Configure_STBY(this->Motor_RB, MOTOR_DRV_STBY_B_PORT, MOTOR_DRV_STBY_B_PIN);                                                                     // 配置电机待机引脚
 
     // 初始化PID
-    this->PID_Speed->PID_Init(this->PID_Speed, 1, 0.5, 0.1, 0.2, 1.3, 1.3, PID_CAR_SPEED_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
-    this->PID_Position->PID_Init(this->PID_Position, 2000, 10000.0, 2000.0, 5000.0, 1500, 1600, PID_CAR_POSITION_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
+    this->PID_Linear->PID_Init(this->PID_Linear, 1, 0.5, 0.1, 0.2, 1.3, 1.3, PID_CAR_SPEED_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
+    this->PID_Angular->PID_Init(this->PID_Angular, 1, 0.5, 0.1, 0.2, 1.3, 1.3, PID_CAR_POSITION_TIMER_T, 0.02, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
 
     // 初始化完成标志位
+    this->is_inited = true;
 }
 
 /**
@@ -115,10 +118,10 @@ void Car_Kinematic_Forward(pClass_Car this)
  */
 void Car_Kinematic_Inverse(pClass_Car this)
 {
-    this->Motor_LB->Target_Speed = this->Target_Speed.linear_velocity - this->Target_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
-    this->Motor_LF->Target_Speed = this->Target_Speed.linear_velocity - this->Target_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
-    this->Motor_RF->Target_Speed = this->Target_Speed.linear_velocity + this->Target_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
-    this->Motor_RB->Target_Speed = this->Target_Speed.linear_velocity + this->Target_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
+    this->Motor_LB->Target_Speed = this->Output_Speed.linear_velocity - this->Output_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
+    this->Motor_LF->Target_Speed = this->Output_Speed.linear_velocity - this->Output_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
+    this->Motor_RF->Target_Speed = this->Output_Speed.linear_velocity + this->Output_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
+    this->Motor_RB->Target_Speed = this->Output_Speed.linear_velocity + this->Output_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE);
 }
 
 /**
@@ -144,4 +147,16 @@ void Car_Update_Odom(pClass_Car this)
  */
 void Car_TIM_PID_PeriodElapsedCallback(pClass_Car this)
 {
+    this->PID_Linear->Set_Target(this->PID_Linear, this->Target_Speed.linear_velocity);
+    this->PID_Linear->Set_Now(this->PID_Linear, this->Now_Speed.linear_velocity);
+    this->PID_Linear->TIM_Adjust_PeriodElapsedCallback(this->PID_Linear);
+
+    this->PID_Angular->Set_Target(this->PID_Angular, this->Target_Speed.angular_velocity);
+    this->PID_Angular->Set_Now(this->PID_Angular, this->Now_Speed.angular_velocity);
+    this->PID_Angular->TIM_Adjust_PeriodElapsedCallback(this->PID_Angular);
+
+    this->Output_Speed.linear_velocity = (this->PID_Linear->Get_PID_Out(this->PID_Linear));
+    this->Output_Speed.angular_velocity = (this->PID_Angular->Get_PID_Out(this->PID_Angular));
+
+    this->Kinematic_Inverse(this);
 }

@@ -25,14 +25,15 @@ typedef struct Class_Car
     pClass_Motor Motor_LF; // 左前轮
 
     // PID对象
-    pClass_PID PID_Speed;    // 速度环PID
-    pClass_PID PID_Position; // 位置环PID
+    pClass_PID PID_Linear;    // 速度环PID
+    pClass_PID PID_Angular; // 位置环PID
 
     // 里程计
     POSITION Position; // 里程计位置
 
     // 速度
     SPEED Target_Speed; // 目标速度
+    SPEED Output_Speed; // 输出速度
     SPEED Now_Speed;    // 实际速度
 
     bool is_inited; // 是否初始化完成
@@ -45,7 +46,7 @@ typedef struct Class_Car
 
 } Class_Car, *pClass_Car;
 
-pClass_Car create_car(void);
+pClass_Car Create_Car(void);
 pClass_Car Get_Car_Handle(void);
 
 void Car_Init(pClass_Car this);
