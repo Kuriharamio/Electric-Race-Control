@@ -37,13 +37,13 @@ int main(void)
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Motor_LF->Output_Now));   // 绑定参数2
 
   // 按键配置
-  // pClass_ADCKey Adc_Button = Create_AdcKey();                        // 创建按键对象
-  // Adc_Button->Init(Adc_Button);                                      // 初始化按键对象
-  // Adc_Button->Configure_Callback(Adc_Button, KEY_1, Button_1_Mode); // 配置按键1的回调函数
-  // Adc_Button->Configure_Callback(Adc_Button, KEY_2, Button_2_Mode); // 配置按键2的回调函数
-  // Adc_Button->Configure_Callback(Adc_Button, KEY_3, Button_3_Mode); // 配置按键3的回调函数
-  // Adc_Button->Configure_Callback(Adc_Button, KEY_4, Button_4_Mode); // 配置按键4的回调函数
-  // Adc_Button->Configure_Callback(Adc_Button, KEY_5, Button_5_Mode); // 配置按键5的回调函数
+  pClass_ADCButton Adc_Button = Create_AdcButton();                        // 创建按键对象
+  Adc_Button->Init(Adc_Button, adckey_INST, adckey_INST_INT_IRQN, adckey_ADCMEM_key);                                      // 初始化按键对象
+  Adc_Button->Configure_Callback(Adc_Button, BUTTON_1, Test_Button_Event); // 配置按键1的回调函数
+  Adc_Button->Configure_Callback(Adc_Button, BUTTON_2, Test_Button_Event); // 配置按键2的回调函数
+  Adc_Button->Configure_Callback(Adc_Button, BUTTON_3, Test_Button_Event); // 配置按键3的回调函数
+  Adc_Button->Configure_Callback(Adc_Button, BUTTON_4, Test_Button_Event); // 配置按键4的回调函数
+  Adc_Button->Configure_Callback(Adc_Button, BUTTON_5, Test_Button_Event); // 配置按键5的回调函数
   while (1)
   {
     Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据

@@ -29,3 +29,13 @@ void Bluetooth_Rx_Callback(pClass_UART this)
        
     }
 }
+
+void Test_Button_Event(void)
+{
+    pClass_UART Bluetooth_Debuger = Get_UART_INST(0); // 获取蓝牙对象实例
+    pClass_ADCButton Adc_Button = GET_ADCButton_INST(); // 获取按键对象实例
+
+    char str[50];
+    sprintf(str, "Button %d Pressed with ADC value: %d \r\n", Adc_Button->Current_Button, Adc_Button->Current_ADC_Value); // 格式化字符串
+    Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)str, sizeof(str)); // 发送数据
+}
