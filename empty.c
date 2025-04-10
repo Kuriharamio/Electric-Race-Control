@@ -46,14 +46,6 @@ int main(void)
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Motor_LF->Target_Speed)); // 绑定参数1
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Motor_LF->Output_Now));   // 绑定参数2
 
-  // K230串口通信配置
-  pClass_UART Bluetooth_Debuger = Create_UART(0);                                         // 获取蓝牙对象实例
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 3);                    // 初始化蓝牙对象
-  Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, K230_Rx_Callback);             // 配置回调函数
-  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Motor_LF->Now_Speed));    // 绑定参数0
-  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Motor_LF->Target_Speed)); // 绑定参数1
-  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Motor_LF->Output_Now));   // 绑定参数2
-
   // 按键配置
   pClass_ADCButton Adc_Button = Create_AdcButton();                                   // 创建按键对象
   Adc_Button->Init(Adc_Button, adckey_INST, adckey_INST_INT_IRQN, adckey_ADCMEM_key); // 初始化按键对象
