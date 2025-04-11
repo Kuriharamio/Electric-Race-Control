@@ -281,7 +281,8 @@ SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_init(void)
 	//Low Power Mode is configured to be SLEEP0
     DL_SYSCTL_setBORThreshold(DL_SYSCTL_BOR_THRESHOLD_LEVEL_0);
 
-    DL_SYSCTL_setSYSOSCFreq(DL_SYSCTL_SYSOSC_FREQ_BASE);
+    
+	DL_SYSCTL_setSYSOSCFreq(DL_SYSCTL_SYSOSC_FREQ_BASE);
 
 }
 
@@ -379,6 +380,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_PWM_MOTOR_R_init(void) {
     
     DL_TimerA_setCCPDirection(PWM_MOTOR_R_INST , DL_TIMER_CC0_OUTPUT | DL_TIMER_CC1_OUTPUT );
 
+
 }
 
 
@@ -413,6 +415,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_ENCODER_init(void) {
         (DL_TimerG_TimerConfig *) &gENCODERTimerConfig);
     DL_TimerG_enableInterrupt(ENCODER_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
     DL_TimerG_enableClock(ENCODER_INST);
+
 
 
 
@@ -453,6 +456,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_PID_init(void) {
 
 
 
+
 }
 
 /*
@@ -485,6 +489,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_ADC_BUTTON_init(void) {
         (DL_TimerG_TimerConfig *) &gADC_BUTTONTimerConfig);
     DL_TimerG_enableInterrupt(ADC_BUTTON_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
     DL_TimerG_enableClock(ADC_BUTTON_INST);
+
 
 
 

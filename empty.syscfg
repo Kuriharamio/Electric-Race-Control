@@ -1,8 +1,9 @@
 /**
  * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
  * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
- * @cliArgs --board "/ti/boards/LP_MSPM0G3507" --product "mspm0_sdk@1.30.00.03"
- * @versions {"tool":"1.19.0+3426"}
+ * @cliArgs --board "/ti/boards/LP_MSPM0G3507" --product "mspm0_sdk@2.02.00.05"
+ * @v2CliArgs --board "/ti/boards/LP_MSPM0G3507" --product "mspm0_sdk@2.02.00.05"
+ * @versions {"tool":"1.21.1+3772"}
  */
 
 /**
@@ -258,6 +259,7 @@ UART2.$name                    = "UART_1";
 UART2.enabledInterrupts        = ["RX"];
 UART2.peripheral.$assign       = "UART1";
 UART2.peripheral.rxPin.$assign = "boosterpack.26";
+UART2.peripheral.txPin.$assign = "boosterpack.28";
 UART2.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric2";
 UART2.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric3";
 
@@ -283,4 +285,3 @@ TIMER1.peripheral.$suggestSolution           = "TIMG7";
 TIMER2.peripheral.$suggestSolution           = "TIMG6";
 TIMER3.peripheral.$suggestSolution           = "TIMG0";
 UART1.peripheral.$suggestSolution            = "UART0";
-UART2.peripheral.txPin.$suggestSolution      = "boosterpack.28";

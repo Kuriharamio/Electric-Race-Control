@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control</IncludePath>
+              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control;..\..\k230</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
