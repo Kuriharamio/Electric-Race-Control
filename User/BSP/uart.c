@@ -13,6 +13,7 @@
 
 static Class_UART _UART_0_INST = {0}; // 串口0实例
 static Class_UART _UART_1_INST = {0}; // 串口1实例
+static Class_UART _UART_2_INST = {0}; // 串口2实例
 
 static uint8_t WAVE_TAIL[4] = {0x00, 0x00, 0x80, 0x7f}; // WAVE数据尾(JustFloat)
 /**
@@ -31,6 +32,9 @@ pClass_UART Get_UART_INST(uint8_t index)
 	case 1:
 		return &_UART_1_INST;
 		break;
+	case 2:
+		return &_UART_2_INST;
+		break;
 	default:
 		return NULL;
 	}
@@ -47,6 +51,9 @@ pClass_UART Create_UART(uint8_t index)
 		break;
 	case 1:
 		this = &_UART_1_INST;
+		break;
+	case 2:
+		this = &_UART_2_INST;
 		break;
 	default:
 		return NULL;
@@ -261,6 +268,8 @@ IRQn_Type Get_UART_IRQN_From_Index(uint8_t index)
 		return UART_0_INST_INT_IRQN;
 	case 1:
 		return UART_1_INST_INT_IRQN;
+	case 2:
+		return UART_2_INST_INT_IRQN;
 	default:
 		return -1;
 	}
@@ -280,6 +289,8 @@ UART_Regs *Get_UART_INST_From_Index(uint8_t index)
 		return UART_0_INST;
 	case 1:
 		return UART_1_INST;
+	case 2:
+		return UART_2_INST;
 	default:
 		return NULL;
 	}
@@ -336,6 +347,35 @@ void UART_1_INST_IRQHandler(void)
 		if (_UART_1_INST.UART_INST_DataProcess != NULL)
 		{
 			_UART_1_INST.UART_INST_DataProcess(&_UART_1_INST); // 调用中断处理函数
+		}
+	}
+	break;
+	default:
+		break;
+	}
+}
+#include "Base_Modules/led.h"
+/**
+ * @brief 串口2中断处理函数
+ *
+ */
+void UART_2_INST_IRQHandler(void)
+{
+	if (!_UART_2_INST.is_inited)
+		return;
+		
+	uint8_t receivedData = 0;
+	// 如果产生了串口中断
+	switch (DL_UART_getPendingInterrupt(UART_2_INST))
+	{
+	case DL_UART_IIDX_RX: // 如果是接收中断
+	{
+		// 接收发送过来的数据保存
+		receivedData = DL_UART_Main_receiveData(UART_2_INST);
+		_UART_2_INST.current_byte = receivedData; // 保存当前接收的字节
+		if (_UART_2_INST.UART_INST_DataProcess != NULL)
+		{
+			_UART_2_INST.UART_INST_DataProcess(&_UART_2_INST); // 调用中断处理函数
 		}
 	}
 	break;

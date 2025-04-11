@@ -26,9 +26,8 @@ typedef struct Class_Car
 
     // PID对象
     pClass_PID PID_Straight_Position; // 直线位置PID
-    pClass_PID PID_Linear;      // 速度环PID
-    pClass_PID PID_Angular;     // 角度环PID
-    pClass_PID PID_Follow;      // 跟随PID
+    pClass_PID PID_Linear;    // 速度环PID
+    pClass_PID PID_Angular; // 角度环PID
 
     // 里程计
     POSITION Target_Position; // 目标位置

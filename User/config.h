@@ -26,4 +26,7 @@
 #define K230_UART_INDEX 1 // K230串口索引号
 #define K230_RX_LEN_MAX 128 // K230接收数据最大长度
 
+// IMU 配置
+#define IMU_RX_LEN_MAX 11 // IMU接收数据最大长度
+
 #endif // __CONFIG_H__

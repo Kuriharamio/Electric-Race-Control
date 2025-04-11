@@ -8,6 +8,7 @@
 #include "Base_Modules/led.h"
 #include "Base_Modules/bluetooth.h"
 #include "Base_Modules/k230_serial.h"
+#include "Base_Modules/imu.h"
 #include "Base_Modules/motor.h"
 #include "Base_Modules/adc_button.h"
 
@@ -49,6 +50,14 @@ int main(void)
   Adc_Button->Configure_Callback(Adc_Button, BUTTON_4, Test_Button_Event);            // 配置按键4的回调函数
   Adc_Button->Configure_Callback(Adc_Button, BUTTON_5, Test_Button_Event);            // 配置按键5的回调函数
 
+  // IMU配置
+  float yaw = 0;
+  pClass_UART IMU_Communicator = Create_UART(2);                             // 获取IMU串口对象实例
+  IMU_Communicator->Init(IMU_Communicator, IMU_RX_LEN_MAX, 1);               // 初始化IMU串口对象
+  IMU_Communicator->Configure_Mode(IMU_Communicator, DEBUG_WAVE);
+  IMU_Communicator->Configure_Callback(IMU_Communicator, IMU_Rx_Callback); // 配置IMU回调函数
+  IMU_Communicator->Bind_Param_With_Id(IMU_Communicator, 0, &(yaw)); // 绑定参数0
+
   // 蓝牙配置
   pClass_UART Bluetooth_Debuger = Create_UART(0);                                         // 获取蓝牙对象实例
   Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 3);                    // 初始化蓝牙对象
@@ -56,7 +65,8 @@ int main(void)
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback);        // 配置回调函数
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->Target_Position.x)); // 绑定参数1
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->Now_Position.x));    // 绑定参数2
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Car->Now_Speed.linear_velocity));
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &yaw);
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(IMU_Communicator->current_byte));
 
   Car->Target_Position.x = 1.0f; // 设置目标位置x坐标
 

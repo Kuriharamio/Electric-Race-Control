@@ -6,7 +6,6 @@
  */
 void Bluetooth_Rx_Callback(pClass_UART this)
 {
-
     if (this->current_byte != '?')
     {
         if (this->rx_len < BLUETOOTH_RX_LEN_MAX)
@@ -29,7 +28,6 @@ void Bluetooth_Rx_Callback(pClass_UART this)
             sscanf((char *)(this->rxbuffer), "%d=%f", &id, &value);
             this->Modify_Param_With_Id(this, id, value); // 修改参数
         }
-   
     }
 }
 
