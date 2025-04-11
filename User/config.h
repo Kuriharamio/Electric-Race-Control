@@ -13,6 +13,10 @@
 // 小车参数
 #define WHEEL_TRACK 0.12855f // 轮距
 #define WHEEL_BASE 0.1117f // 轴距
+#define WHEEL_RADIUS 0.024f // 轮子半径
+#define WHEEL_Gearbox_Rate 20.0f // 减速比
+#define WHEEL_Per_Pulse 13.0f // 每转脉冲数
+
 
 // 蓝牙配置
 #define BLUETOOTH_UART_INDEX 0 // 蓝牙串口索引号

@@ -22,12 +22,12 @@ void PID_INST_IRQHandler(void)
         if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
             Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
 
-        // pClass_Car car = Get_Car_Handle();
-        // if (car->is_inited)
-        // {
-        //     car->Kinematic_Forward(car);
-        //     car->TIM_PID_PeriodElapsedCallback(car);
-        // }
+        pClass_Car car = Get_Car_Handle();
+        if (car->is_inited)
+        {
+            car->Kinematic_Forward(car);
+            car->TIM_PID_PeriodElapsedCallback(car);
+        }
         break;
 
     default:

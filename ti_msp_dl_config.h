@@ -77,52 +77,58 @@ extern "C" {
 
 
 
-/* Defines for PWM_MOTOR */
-#define PWM_MOTOR_INST                                                     TIMA0
-#define PWM_MOTOR_INST_IRQHandler                               TIMA0_IRQHandler
-#define PWM_MOTOR_INST_INT_IRQN                                 (TIMA0_INT_IRQn)
-#define PWM_MOTOR_INST_CLK_FREQ                                         16000000
+/* Defines for PWM_MOTOR_L */
+#define PWM_MOTOR_L_INST                                                   TIMA0
+#define PWM_MOTOR_L_INST_IRQHandler                             TIMA0_IRQHandler
+#define PWM_MOTOR_L_INST_INT_IRQN                               (TIMA0_INT_IRQn)
+#define PWM_MOTOR_L_INST_CLK_FREQ                                       16000000
 /* GPIO defines for channel 0 */
-#define GPIO_PWM_MOTOR_C0_PORT                                             GPIOA
-#define GPIO_PWM_MOTOR_C0_PIN                                      DL_GPIO_PIN_8
-#define GPIO_PWM_MOTOR_C0_IOMUX                                  (IOMUX_PINCM19)
-#define GPIO_PWM_MOTOR_C0_IOMUX_FUNC                 IOMUX_PINCM19_PF_TIMA0_CCP0
-#define GPIO_PWM_MOTOR_C0_IDX                                DL_TIMER_CC_0_INDEX
+#define GPIO_PWM_MOTOR_L_C0_PORT                                           GPIOA
+#define GPIO_PWM_MOTOR_L_C0_PIN                                    DL_GPIO_PIN_8
+#define GPIO_PWM_MOTOR_L_C0_IOMUX                                (IOMUX_PINCM19)
+#define GPIO_PWM_MOTOR_L_C0_IOMUX_FUNC               IOMUX_PINCM19_PF_TIMA0_CCP0
+#define GPIO_PWM_MOTOR_L_C0_IDX                              DL_TIMER_CC_0_INDEX
 /* GPIO defines for channel 1 */
-#define GPIO_PWM_MOTOR_C1_PORT                                             GPIOA
-#define GPIO_PWM_MOTOR_C1_PIN                                      DL_GPIO_PIN_7
-#define GPIO_PWM_MOTOR_C1_IOMUX                                  (IOMUX_PINCM14)
-#define GPIO_PWM_MOTOR_C1_IOMUX_FUNC                 IOMUX_PINCM14_PF_TIMA0_CCP1
-#define GPIO_PWM_MOTOR_C1_IDX                                DL_TIMER_CC_1_INDEX
-/* GPIO defines for channel 2 */
-#define GPIO_PWM_MOTOR_C2_PORT                                             GPIOB
-#define GPIO_PWM_MOTOR_C2_PIN                                     DL_GPIO_PIN_12
-#define GPIO_PWM_MOTOR_C2_IOMUX                                  (IOMUX_PINCM29)
-#define GPIO_PWM_MOTOR_C2_IOMUX_FUNC                 IOMUX_PINCM29_PF_TIMA0_CCP2
-#define GPIO_PWM_MOTOR_C2_IDX                                DL_TIMER_CC_2_INDEX
-/* GPIO defines for channel 3 */
-#define GPIO_PWM_MOTOR_C3_PORT                                             GPIOA
-#define GPIO_PWM_MOTOR_C3_PIN                                     DL_GPIO_PIN_25
-#define GPIO_PWM_MOTOR_C3_IOMUX                                  (IOMUX_PINCM55)
-#define GPIO_PWM_MOTOR_C3_IOMUX_FUNC                 IOMUX_PINCM55_PF_TIMA0_CCP3
-#define GPIO_PWM_MOTOR_C3_IDX                                DL_TIMER_CC_3_INDEX
+#define GPIO_PWM_MOTOR_L_C1_PORT                                           GPIOA
+#define GPIO_PWM_MOTOR_L_C1_PIN                                    DL_GPIO_PIN_7
+#define GPIO_PWM_MOTOR_L_C1_IOMUX                                (IOMUX_PINCM14)
+#define GPIO_PWM_MOTOR_L_C1_IOMUX_FUNC               IOMUX_PINCM14_PF_TIMA0_CCP1
+#define GPIO_PWM_MOTOR_L_C1_IDX                              DL_TIMER_CC_1_INDEX
+
+/* Defines for PWM_MOTOR_R */
+#define PWM_MOTOR_R_INST                                                   TIMA1
+#define PWM_MOTOR_R_INST_IRQHandler                             TIMA1_IRQHandler
+#define PWM_MOTOR_R_INST_INT_IRQN                               (TIMA1_INT_IRQn)
+#define PWM_MOTOR_R_INST_CLK_FREQ                                       16000000
+/* GPIO defines for channel 0 */
+#define GPIO_PWM_MOTOR_R_C0_PORT                                           GPIOB
+#define GPIO_PWM_MOTOR_R_C0_PIN                                    DL_GPIO_PIN_2
+#define GPIO_PWM_MOTOR_R_C0_IOMUX                                (IOMUX_PINCM15)
+#define GPIO_PWM_MOTOR_R_C0_IOMUX_FUNC               IOMUX_PINCM15_PF_TIMA1_CCP0
+#define GPIO_PWM_MOTOR_R_C0_IDX                              DL_TIMER_CC_0_INDEX
+/* GPIO defines for channel 1 */
+#define GPIO_PWM_MOTOR_R_C1_PORT                                           GPIOA
+#define GPIO_PWM_MOTOR_R_C1_PIN                                   DL_GPIO_PIN_24
+#define GPIO_PWM_MOTOR_R_C1_IOMUX                                (IOMUX_PINCM54)
+#define GPIO_PWM_MOTOR_R_C1_IOMUX_FUNC               IOMUX_PINCM54_PF_TIMA1_CCP1
+#define GPIO_PWM_MOTOR_R_C1_IDX                              DL_TIMER_CC_1_INDEX
 
 
 
 /* Defines for ENCODER */
-#define ENCODER_INST                                                     (TIMG6)
-#define ENCODER_INST_IRQHandler                                 TIMG6_IRQHandler
-#define ENCODER_INST_INT_IRQN                                   (TIMG6_INT_IRQn)
+#define ENCODER_INST                                                     (TIMG7)
+#define ENCODER_INST_IRQHandler                                 TIMG7_IRQHandler
+#define ENCODER_INST_INT_IRQN                                   (TIMG7_INT_IRQn)
 #define ENCODER_INST_LOAD_VALUE                                           (249U)
 /* Defines for PID */
-#define PID_INST                                                         (TIMG0)
-#define PID_INST_IRQHandler                                     TIMG0_IRQHandler
-#define PID_INST_INT_IRQN                                       (TIMG0_INT_IRQn)
+#define PID_INST                                                         (TIMG6)
+#define PID_INST_IRQHandler                                     TIMG6_IRQHandler
+#define PID_INST_INT_IRQN                                       (TIMG6_INT_IRQn)
 #define PID_INST_LOAD_VALUE                                               (499U)
 /* Defines for ADC_BUTTON */
-#define ADC_BUTTON_INST                                                  (TIMA1)
-#define ADC_BUTTON_INST_IRQHandler                              TIMA1_IRQHandler
-#define ADC_BUTTON_INST_INT_IRQN                                (TIMA1_INT_IRQn)
+#define ADC_BUTTON_INST                                                  (TIMG0)
+#define ADC_BUTTON_INST_IRQHandler                              TIMG0_IRQHandler
+#define ADC_BUTTON_INST_INT_IRQN                                (TIMG0_INT_IRQn)
 #define ADC_BUTTON_INST_LOAD_VALUE                                      (49999U)
 
 
@@ -277,7 +283,8 @@ void SYSCFG_DL_init(void);
 void SYSCFG_DL_initPower(void);
 void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
-void SYSCFG_DL_PWM_MOTOR_init(void);
+void SYSCFG_DL_PWM_MOTOR_L_init(void);
+void SYSCFG_DL_PWM_MOTOR_R_init(void);
 void SYSCFG_DL_ENCODER_init(void);
 void SYSCFG_DL_PID_init(void);
 void SYSCFG_DL_ADC_BUTTON_init(void);

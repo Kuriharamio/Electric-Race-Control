@@ -40,9 +40,10 @@
 
 #include "ti_msp_dl_config.h"
 
-DL_TimerA_backupConfig gPWM_MOTORBackup;
+DL_TimerA_backupConfig gPWM_MOTOR_LBackup;
+DL_TimerA_backupConfig gPWM_MOTOR_RBackup;
 DL_TimerG_backupConfig gENCODERBackup;
-DL_TimerA_backupConfig gADC_BUTTONBackup;
+DL_TimerG_backupConfig gPIDBackup;
 
 /*
  *  ======== SYSCFG_DL_init ========
@@ -54,7 +55,8 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_GPIO_init();
     /* Module-Specific Initializations*/
     SYSCFG_DL_SYSCTL_init();
-    SYSCFG_DL_PWM_MOTOR_init();
+    SYSCFG_DL_PWM_MOTOR_L_init();
+    SYSCFG_DL_PWM_MOTOR_R_init();
     SYSCFG_DL_ENCODER_init();
     SYSCFG_DL_PID_init();
     SYSCFG_DL_ADC_BUTTON_init();
@@ -63,9 +65,10 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_adckey_init();
     SYSCFG_DL_SYSTICK_init();
     /* Ensure backup structures have no valid state */
-	gPWM_MOTORBackup.backupRdy 	= false;
+	gPWM_MOTOR_LBackup.backupRdy 	= false;
+	gPWM_MOTOR_RBackup.backupRdy 	= false;
 	gENCODERBackup.backupRdy 	= false;
-	gADC_BUTTONBackup.backupRdy 	= false;
+	gPIDBackup.backupRdy 	= false;
 
 
 }
@@ -77,9 +80,10 @@ SYSCONFIG_WEAK bool SYSCFG_DL_saveConfiguration(void)
 {
     bool retStatus = true;
 
-	retStatus &= DL_TimerA_saveConfiguration(PWM_MOTOR_INST, &gPWM_MOTORBackup);
+	retStatus &= DL_TimerA_saveConfiguration(PWM_MOTOR_L_INST, &gPWM_MOTOR_LBackup);
+	retStatus &= DL_TimerA_saveConfiguration(PWM_MOTOR_R_INST, &gPWM_MOTOR_RBackup);
 	retStatus &= DL_TimerG_saveConfiguration(ENCODER_INST, &gENCODERBackup);
-	retStatus &= DL_TimerA_saveConfiguration(ADC_BUTTON_INST, &gADC_BUTTONBackup);
+	retStatus &= DL_TimerG_saveConfiguration(PID_INST, &gPIDBackup);
 
     return retStatus;
 }
@@ -89,9 +93,10 @@ SYSCONFIG_WEAK bool SYSCFG_DL_restoreConfiguration(void)
 {
     bool retStatus = true;
 
-	retStatus &= DL_TimerA_restoreConfiguration(PWM_MOTOR_INST, &gPWM_MOTORBackup, false);
+	retStatus &= DL_TimerA_restoreConfiguration(PWM_MOTOR_L_INST, &gPWM_MOTOR_LBackup, false);
+	retStatus &= DL_TimerA_restoreConfiguration(PWM_MOTOR_R_INST, &gPWM_MOTOR_RBackup, false);
 	retStatus &= DL_TimerG_restoreConfiguration(ENCODER_INST, &gENCODERBackup, false);
-	retStatus &= DL_TimerA_restoreConfiguration(ADC_BUTTON_INST, &gADC_BUTTONBackup, false);
+	retStatus &= DL_TimerG_restoreConfiguration(PID_INST, &gPIDBackup, false);
 
     return retStatus;
 }
@@ -100,10 +105,11 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
 {
     DL_GPIO_reset(GPIOA);
     DL_GPIO_reset(GPIOB);
-    DL_TimerA_reset(PWM_MOTOR_INST);
+    DL_TimerA_reset(PWM_MOTOR_L_INST);
+    DL_TimerA_reset(PWM_MOTOR_R_INST);
     DL_TimerG_reset(ENCODER_INST);
     DL_TimerG_reset(PID_INST);
-    DL_TimerA_reset(ADC_BUTTON_INST);
+    DL_TimerG_reset(ADC_BUTTON_INST);
     DL_UART_Main_reset(UART_0_INST);
     DL_UART_Main_reset(UART_1_INST);
     DL_ADC12_reset(adckey_INST);
@@ -111,10 +117,11 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
 
     DL_GPIO_enablePower(GPIOA);
     DL_GPIO_enablePower(GPIOB);
-    DL_TimerA_enablePower(PWM_MOTOR_INST);
+    DL_TimerA_enablePower(PWM_MOTOR_L_INST);
+    DL_TimerA_enablePower(PWM_MOTOR_R_INST);
     DL_TimerG_enablePower(ENCODER_INST);
     DL_TimerG_enablePower(PID_INST);
-    DL_TimerA_enablePower(ADC_BUTTON_INST);
+    DL_TimerG_enablePower(ADC_BUTTON_INST);
     DL_UART_Main_enablePower(UART_0_INST);
     DL_UART_Main_enablePower(UART_1_INST);
     DL_ADC12_enablePower(adckey_INST);
@@ -125,14 +132,14 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
 SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 {
 
-    DL_GPIO_initPeripheralOutputFunction(GPIO_PWM_MOTOR_C0_IOMUX,GPIO_PWM_MOTOR_C0_IOMUX_FUNC);
-    DL_GPIO_enableOutput(GPIO_PWM_MOTOR_C0_PORT, GPIO_PWM_MOTOR_C0_PIN);
-    DL_GPIO_initPeripheralOutputFunction(GPIO_PWM_MOTOR_C1_IOMUX,GPIO_PWM_MOTOR_C1_IOMUX_FUNC);
-    DL_GPIO_enableOutput(GPIO_PWM_MOTOR_C1_PORT, GPIO_PWM_MOTOR_C1_PIN);
-    DL_GPIO_initPeripheralOutputFunction(GPIO_PWM_MOTOR_C2_IOMUX,GPIO_PWM_MOTOR_C2_IOMUX_FUNC);
-    DL_GPIO_enableOutput(GPIO_PWM_MOTOR_C2_PORT, GPIO_PWM_MOTOR_C2_PIN);
-    DL_GPIO_initPeripheralOutputFunction(GPIO_PWM_MOTOR_C3_IOMUX,GPIO_PWM_MOTOR_C3_IOMUX_FUNC);
-    DL_GPIO_enableOutput(GPIO_PWM_MOTOR_C3_PORT, GPIO_PWM_MOTOR_C3_PIN);
+    DL_GPIO_initPeripheralOutputFunction(GPIO_PWM_MOTOR_L_C0_IOMUX,GPIO_PWM_MOTOR_L_C0_IOMUX_FUNC);
+    DL_GPIO_enableOutput(GPIO_PWM_MOTOR_L_C0_PORT, GPIO_PWM_MOTOR_L_C0_PIN);
+    DL_GPIO_initPeripheralOutputFunction(GPIO_PWM_MOTOR_L_C1_IOMUX,GPIO_PWM_MOTOR_L_C1_IOMUX_FUNC);
+    DL_GPIO_enableOutput(GPIO_PWM_MOTOR_L_C1_PORT, GPIO_PWM_MOTOR_L_C1_PIN);
+    DL_GPIO_initPeripheralOutputFunction(GPIO_PWM_MOTOR_R_C0_IOMUX,GPIO_PWM_MOTOR_R_C0_IOMUX_FUNC);
+    DL_GPIO_enableOutput(GPIO_PWM_MOTOR_R_C0_PORT, GPIO_PWM_MOTOR_R_C0_PIN);
+    DL_GPIO_initPeripheralOutputFunction(GPIO_PWM_MOTOR_R_C1_IOMUX,GPIO_PWM_MOTOR_R_C1_IOMUX_FUNC);
+    DL_GPIO_enableOutput(GPIO_PWM_MOTOR_R_C1_PORT, GPIO_PWM_MOTOR_R_C1_PIN);
 
     DL_GPIO_initPeripheralOutputFunction(
         GPIO_UART_0_IOMUX_TX, GPIO_UART_0_IOMUX_TX_FUNC);
@@ -284,60 +291,93 @@ SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_init(void)
  * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
  *   16000000 Hz = 32000000 Hz / (1 * (1 + 1))
  */
-static const DL_TimerA_ClockConfig gPWM_MOTORClockConfig = {
+static const DL_TimerA_ClockConfig gPWM_MOTOR_LClockConfig = {
     .clockSel = DL_TIMER_CLOCK_BUSCLK,
     .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
     .prescale = 1U
 };
 
-static const DL_TimerA_PWMConfig gPWM_MOTORConfig = {
+static const DL_TimerA_PWMConfig gPWM_MOTOR_LConfig = {
     .pwmMode = DL_TIMER_PWM_MODE_EDGE_ALIGN_UP,
     .period = 1600,
     .isTimerWithFourCC = true,
     .startTimer = DL_TIMER_START,
 };
 
-SYSCONFIG_WEAK void SYSCFG_DL_PWM_MOTOR_init(void) {
+SYSCONFIG_WEAK void SYSCFG_DL_PWM_MOTOR_L_init(void) {
 
     DL_TimerA_setClockConfig(
-        PWM_MOTOR_INST, (DL_TimerA_ClockConfig *) &gPWM_MOTORClockConfig);
+        PWM_MOTOR_L_INST, (DL_TimerA_ClockConfig *) &gPWM_MOTOR_LClockConfig);
 
     DL_TimerA_initPWMMode(
-        PWM_MOTOR_INST, (DL_TimerA_PWMConfig *) &gPWM_MOTORConfig);
+        PWM_MOTOR_L_INST, (DL_TimerA_PWMConfig *) &gPWM_MOTOR_LConfig);
 
-    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_0_INDEX);
-    DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
+    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_L_INST, 0, DL_TIMER_CC_0_INDEX);
+    DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_L_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
 		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
 		DL_TIMERA_CAPTURE_COMPARE_0_INDEX);
 
-    DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_0_INDEX);
+    DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_L_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_0_INDEX);
 
-    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_1_INDEX);
-    DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
+    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_L_INST, 0, DL_TIMER_CC_1_INDEX);
+    DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_L_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
 		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
 		DL_TIMERA_CAPTURE_COMPARE_1_INDEX);
 
-    DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_1_INDEX);
+    DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_L_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_1_INDEX);
 
-    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_2_INDEX);
-    DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
-		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
-		DL_TIMERA_CAPTURE_COMPARE_2_INDEX);
-
-    DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_2_INDEX);
-
-    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST, 0, DL_TIMER_CC_3_INDEX);
-    DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
-		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
-		DL_TIMERA_CAPTURE_COMPARE_3_INDEX);
-
-    DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_3_INDEX);
-
-    DL_TimerA_enableClock(PWM_MOTOR_INST);
+    DL_TimerA_enableClock(PWM_MOTOR_L_INST);
 
 
     
-    DL_TimerA_setCCPDirection(PWM_MOTOR_INST , DL_TIMER_CC0_OUTPUT | DL_TIMER_CC1_OUTPUT | DL_TIMER_CC2_OUTPUT | DL_TIMER_CC3_OUTPUT );
+    DL_TimerA_setCCPDirection(PWM_MOTOR_L_INST , DL_TIMER_CC0_OUTPUT | DL_TIMER_CC1_OUTPUT );
+
+}
+/*
+ * Timer clock configuration to be sourced by  / 1 (32000000 Hz)
+ * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
+ *   16000000 Hz = 32000000 Hz / (1 * (1 + 1))
+ */
+static const DL_TimerA_ClockConfig gPWM_MOTOR_RClockConfig = {
+    .clockSel = DL_TIMER_CLOCK_BUSCLK,
+    .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
+    .prescale = 1U
+};
+
+static const DL_TimerA_PWMConfig gPWM_MOTOR_RConfig = {
+    .pwmMode = DL_TIMER_PWM_MODE_EDGE_ALIGN_UP,
+    .period = 1600,
+    .isTimerWithFourCC = false,
+    .startTimer = DL_TIMER_START,
+};
+
+SYSCONFIG_WEAK void SYSCFG_DL_PWM_MOTOR_R_init(void) {
+
+    DL_TimerA_setClockConfig(
+        PWM_MOTOR_R_INST, (DL_TimerA_ClockConfig *) &gPWM_MOTOR_RClockConfig);
+
+    DL_TimerA_initPWMMode(
+        PWM_MOTOR_R_INST, (DL_TimerA_PWMConfig *) &gPWM_MOTOR_RConfig);
+
+    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_R_INST, 0, DL_TIMER_CC_0_INDEX);
+    DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_R_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
+		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
+		DL_TIMERA_CAPTURE_COMPARE_0_INDEX);
+
+    DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_R_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_0_INDEX);
+
+    DL_TimerA_setCaptureCompareValue(PWM_MOTOR_R_INST, 0, DL_TIMER_CC_1_INDEX);
+    DL_TimerA_setCaptureCompareOutCtl(PWM_MOTOR_R_INST, DL_TIMER_CC_OCTL_INIT_VAL_LOW,
+		DL_TIMER_CC_OCTL_INV_OUT_DISABLED, DL_TIMER_CC_OCTL_SRC_FUNCVAL,
+		DL_TIMERA_CAPTURE_COMPARE_1_INDEX);
+
+    DL_TimerA_setCaptCompUpdateMethod(PWM_MOTOR_R_INST, DL_TIMER_CC_UPDATE_METHOD_IMMEDIATE, DL_TIMERA_CAPTURE_COMPARE_1_INDEX);
+
+    DL_TimerA_enableClock(PWM_MOTOR_R_INST);
+
+
+    
+    DL_TimerA_setCCPDirection(PWM_MOTOR_R_INST , DL_TIMER_CC0_OUTPUT | DL_TIMER_CC1_OUTPUT );
 
 }
 
@@ -420,7 +460,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_PID_init(void) {
  * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
  *   1000000 Hz = 32000000 Hz / (1 * (31 + 1))
  */
-static const DL_TimerA_ClockConfig gADC_BUTTONClockConfig = {
+static const DL_TimerG_ClockConfig gADC_BUTTONClockConfig = {
     .clockSel    = DL_TIMER_CLOCK_BUSCLK,
     .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
     .prescale    = 31U,
@@ -430,7 +470,7 @@ static const DL_TimerA_ClockConfig gADC_BUTTONClockConfig = {
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
  * ADC_BUTTON_INST_LOAD_VALUE = (50 ms * 1000000 Hz) - 1
  */
-static const DL_TimerA_TimerConfig gADC_BUTTONTimerConfig = {
+static const DL_TimerG_TimerConfig gADC_BUTTONTimerConfig = {
     .period     = ADC_BUTTON_INST_LOAD_VALUE,
     .timerMode  = DL_TIMER_TIMER_MODE_ONE_SHOT,
     .startTimer = DL_TIMER_START,
@@ -438,13 +478,13 @@ static const DL_TimerA_TimerConfig gADC_BUTTONTimerConfig = {
 
 SYSCONFIG_WEAK void SYSCFG_DL_ADC_BUTTON_init(void) {
 
-    DL_TimerA_setClockConfig(ADC_BUTTON_INST,
-        (DL_TimerA_ClockConfig *) &gADC_BUTTONClockConfig);
+    DL_TimerG_setClockConfig(ADC_BUTTON_INST,
+        (DL_TimerG_ClockConfig *) &gADC_BUTTONClockConfig);
 
-    DL_TimerA_initTimerMode(ADC_BUTTON_INST,
-        (DL_TimerA_TimerConfig *) &gADC_BUTTONTimerConfig);
-    DL_TimerA_enableInterrupt(ADC_BUTTON_INST , DL_TIMERA_INTERRUPT_ZERO_EVENT);
-    DL_TimerA_enableClock(ADC_BUTTON_INST);
+    DL_TimerG_initTimerMode(ADC_BUTTON_INST,
+        (DL_TimerG_TimerConfig *) &gADC_BUTTONTimerConfig);
+    DL_TimerG_enableInterrupt(ADC_BUTTON_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
+    DL_TimerG_enableClock(ADC_BUTTON_INST);
 
 
 
