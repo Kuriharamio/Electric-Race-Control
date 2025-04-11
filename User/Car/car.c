@@ -29,7 +29,8 @@ pClass_Car Create_Car(void)
     car->Motor_LF = create_motor(LEFT_FRONT);  // 左前轮
 
     // 创建PID对象
-    car->PID_Linear = create_PID();    // 速度环PID
+    car->PID_Straight_Position = create_PID(); // 直线位置PID
+    car->PID_Linear = create_PID(); // 速度环PID
     car->PID_Angular = create_PID(); // 位置环PID
 
     // 函数指针赋值
@@ -55,9 +56,13 @@ pClass_Car Get_Car_Handle(void)
 void Car_Init(pClass_Car this)
 {
     // 参数赋值
-    this->Position.x = 0.0f;   // x坐标
-    this->Position.y = 0.0f;   // y坐标
-    this->Position.yaw = 0.0f; // 偏航角
+    this->Now_Position.x = 0.0f;   // x坐标
+    this->Now_Position.y = 0.0f;   // y坐标
+    this->Now_Position.yaw = 0.0f; // 偏航角
+
+    this->Target_Position.x = 0.0f;   // 目标x坐标
+    this->Target_Position.y = 0.0f;   // 目标y坐标
+    this->Target_Position.yaw = 0.0f; // 目标偏航角
 
     this->Target_Speed.linear_velocity = 0.0f;  // 目标线速度
     this->Target_Speed.angular_velocity = 0.0f; // 目标角速度
@@ -104,6 +109,7 @@ void Car_Init(pClass_Car this)
     this->Motor_RB->Configure_STBY(this->Motor_RB, MOTOR_DRV_STBY_B_PORT, MOTOR_DRV_STBY_B_PIN);                                                                     // 配置电机待机引脚
 
     // 初始化PID
+    this->PID_Straight_Position->PID_Init(this->PID_Straight_Position, 0.01, 0.01, 0.01, 0.01, 1.3, 1.3, PID_CAR_POSITION_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
     this->PID_Linear->PID_Init(this->PID_Linear, 0.3, 15.0, 15.0, 0.5, 1.3, 1.3, PID_CAR_SPEED_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
     this->PID_Angular->PID_Init(this->PID_Angular, 0.05, 15.0, 15.0, 0.05, 1.3, 1.3, PID_CAR_POSITION_TIMER_T, 0.02, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
 
@@ -142,13 +148,13 @@ void Car_Kinematic_Inverse(pClass_Car this)
  */
 void Car_Update_Odom(pClass_Car this)
 {
-    this->Position.yaw += this->Now_Speed.angular_velocity * ENCODER_TIMER_T;
-    this->Position.yaw = TransAngleInPI(this->Position.yaw);
+    this->Now_Position.yaw += this->Now_Speed.angular_velocity * ENCODER_TIMER_T;
+    this->Now_Position.yaw = TransAngleInPI(this->Now_Position.yaw);
 
     float delta_distance = this->Now_Speed.linear_velocity * ENCODER_TIMER_T;
 
-    this->Position.x += delta_distance * cos(this->Position.yaw);
-    this->Position.y += delta_distance * sin(this->Position.yaw);
+    this->Now_Position.x += delta_distance * cos(this->Now_Position.yaw);
+    this->Now_Position.y += delta_distance * sin(this->Now_Position.yaw);
 }
 
 /**
@@ -158,6 +164,13 @@ void Car_Update_Odom(pClass_Car this)
  */
 void Car_TIM_PID_PeriodElapsedCallback(pClass_Car this)
 {
+    this->PID_Straight_Position->Set_Target(this->PID_Straight_Position, this->Target_Position.x);
+    this->PID_Straight_Position->Set_Now(this->PID_Straight_Position, this->Now_Position.x);
+    this->PID_Straight_Position->TIM_Adjust_PeriodElapsedCallback(this->PID_Straight_Position);
+
+    this->Target_Speed.linear_velocity = this->PID_Straight_Position->Get_PID_Out(this->PID_Straight_Position);
+    this->Target_Speed.angular_velocity = 0;
+
     this->PID_Linear->Set_Target(this->PID_Linear, this->Target_Speed.linear_velocity);
     this->PID_Linear->Set_Now(this->PID_Linear, this->Now_Speed.linear_velocity);
     this->PID_Linear->TIM_Adjust_PeriodElapsedCallback(this->PID_Linear);

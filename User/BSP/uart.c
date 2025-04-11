@@ -26,18 +26,10 @@ pClass_UART Get_UART_INST(uint8_t index)
 	switch (index)
 	{
 	case 0:
-		if (!_UART_0_INST.is_configured && _UART_0_INST.is_inited) // 如果没有配置过
-		{
-			_UART_0_INST.is_configured = true; // 设置为已配置
-			return &_UART_0_INST;
-		}
+		return &_UART_0_INST;
 		break;
 	case 1:
-		if (!_UART_1_INST.is_configured && _UART_1_INST.is_inited) // 如果没有配置过
-		{
-			_UART_1_INST.is_configured = true; // 设置为已配置
-			return &_UART_1_INST;
-		}
+		return &_UART_1_INST;
 		break;
 	default:
 		return NULL;

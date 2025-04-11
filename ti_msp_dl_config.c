@@ -472,7 +472,7 @@ static const DL_TimerG_ClockConfig gADC_BUTTONClockConfig = {
  */
 static const DL_TimerG_TimerConfig gADC_BUTTONTimerConfig = {
     .period     = ADC_BUTTON_INST_LOAD_VALUE,
-    .timerMode  = DL_TIMER_TIMER_MODE_ONE_SHOT,
+    .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC,
     .startTimer = DL_TIMER_START,
 };
 

@@ -25,11 +25,13 @@ typedef struct Class_Car
     pClass_Motor Motor_LF; // 左前轮
 
     // PID对象
+    pClass_PID PID_Straight_Position; // 直线位置PID
     pClass_PID PID_Linear;    // 速度环PID
     pClass_PID PID_Angular; // 位置环PID
 
     // 里程计
-    POSITION Position; // 里程计位置
+    POSITION Target_Position; // 目标位置
+    POSITION Now_Position; // 里程计位置
 
     // 速度
     SPEED Target_Speed; // 目标速度

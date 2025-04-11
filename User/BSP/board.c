@@ -32,9 +32,11 @@ void board_init(void)
     // TIM初始化
     NVIC_ClearPendingIRQ(ENCODER_INST_INT_IRQN);
     NVIC_ClearPendingIRQ(PID_INST_INT_IRQN);
+    NVIC_ClearPendingIRQ(ADC_BUTTON_INST_INT_IRQN);
 
     NVIC_EnableIRQ(ENCODER_INST_INT_IRQN);
     NVIC_EnableIRQ(PID_INST_INT_IRQN);
+    NVIC_EnableIRQ(ADC_BUTTON_INST_INT_IRQN);
 
     // GPIO初始化
     NVIC_EnableIRQ(GPIOA_INT_IRQn);

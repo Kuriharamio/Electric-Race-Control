@@ -23,7 +23,7 @@ typedef struct Class_UART
     uint8_t *rxbuffer;    // 接收数据缓冲区
 
     bool is_inited;     // 串口初始化标志位
-    bool is_configured; // 串口配置标志位
+    // bool is_configured; // 串口配置标志位
 
     uint8_t param_len;  // 参数个数
     float **param_list; // 参数列表

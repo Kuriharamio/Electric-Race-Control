@@ -96,7 +96,10 @@ void ADC_BUTTON_INST_IRQHandler(void)
     {
     case DL_TIMER_IIDX_ZERO:
         // pClass_ADCButton ADC_Button = GET_ADCButton_INST();         // 获取ADC按钮实例
-        GET_ADCButton_INST()->Check_And_Trigger(GET_ADCButton_INST()); // 检查状态并触发回调
+        if(GET_ADCButton_INST()->is_inited){
+            GET_ADCButton_INST()->Check_And_Trigger(GET_ADCButton_INST()); // 获取当前ADC值
+        }
+            
         break;
 
     default:

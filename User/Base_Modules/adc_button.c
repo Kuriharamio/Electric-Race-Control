@@ -68,13 +68,17 @@ void Adc_Get_Current_Value(pClass_ADCButton this)
 
     DL_ADC12_enableConversions(this->ADC_Button_INST);
     DL_ADC12_startConversion(this->ADC_Button_INST);
-
-    while (this->ADC_Flag == false)
+    
+    // while (this->ADC_Flag == false)
+    // {
+    //     __WFE();
+    // }
+    if(this->ADC_Flag == false)
     {
-        __WFE();
+        return;
     }
 
-    this->Current_ADC_Value = DL_ADC12_getMemResult(this->ADC_Button_INST, this->ADCMEM_IDX); // TODO
+    this->Current_ADC_Value = DL_ADC12_getMemResult(this->ADC_Button_INST, this->ADCMEM_IDX); 
 
     this->ADC_Flag = false;
 }
@@ -92,13 +96,8 @@ void Adc_Get_Current_Button(pClass_ADCButton this)
     {
         if (this->Current_ADC_Value >= Button_map[i].min_val && this->Current_ADC_Value <= Button_map[i].max_val)
         {
-            delay_ms(10);
-            this->Get_Current_Value(this); // 重新采样确认
-            if (this->Current_ADC_Value >= Button_map[i].min_val && this->Current_ADC_Value <= Button_map[i].max_val)
-            {
-                this->Current_Button = Button_map[i].Button;
-                return;
-            }
+            this->Current_Button = Button_map[i].Button;
+            return;
         }
     }
 }
@@ -130,6 +129,8 @@ void Adc_Check_And_Trigger(pClass_ADCButton this)
     if (this->Current_Button >= BUTTON_1 && this->Current_Button <= BUTTON_5)
     {
         this->Callbacks[this->Current_Button - 1]();
+        this->Current_ADC_Value = 0;
+        this->Current_Button = BUTTON_None;
     }
 }
 

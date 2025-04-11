@@ -51,23 +51,29 @@ int main(void)
 
   // 蓝牙配置
   pClass_UART Bluetooth_Debuger = Create_UART(0);                                                // 获取蓝牙对象实例
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 1);                           // 初始化蓝牙对象
-  Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE);                              // 配置调试模式
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 4);                           // 初始化蓝牙对象
+  Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_STRING);                              // 配置调试模式
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback);               // 配置回调函数
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Adc_Button->Current_ADC_Value)); // 绑定参数0
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->Motor_LB->Target_Speed)); // 绑定参数0
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->Target_Position.x)); // 绑定参数1
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Car->Now_Position.x)); // 绑定参数2
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(Adc_Button->Current_ADC_Value)); // 绑定参数3
+
+  Car->Target_Position.x = 1.0f; // 设置目标位置x坐标
 
   while (1)
   {
-    Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
+    // Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 
     // 电机响应测试 >>>
-    // static int t = 0;
+    static int t = 0;
     // Car->Motor_LB->Target_Speed = sin(0.01 * t);
     // Car->Motor_LF->Target_Speed = sin(0.01 * t);
     // Car->Motor_RB->Target_Speed = sin(0.01 * t);
     // Car->Motor_RF->Target_Speed = sin(0.01 * t);
     // Car->Target_Speed.linear_velocity = sin(0.01 * t); // 设置目标线速度
-    // t++;
+    // Car->Target_Position.x = sin(0.01 * t); // 设置目标位置x坐标
+    t++;
     // if (t % 500 == 0)
     // {
     // Car->Motor_RF->Target_Speed = 0.3f;
