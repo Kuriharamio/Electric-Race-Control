@@ -1,3 +1,14 @@
+/**
+ * @file car.c
+ * @author KuriharaMio
+ * @brief 小车类实现文件
+ * @version 0.1
+ * @date 2025-04-11
+ * @note 逆天小车，每个轮子千奇百怪，需要慢慢调试
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #include "car.h"
 
 static Class_Car _Car = {0};

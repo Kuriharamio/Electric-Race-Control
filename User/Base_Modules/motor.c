@@ -1,3 +1,13 @@
+/**
+ * @file motor.c
+ * @author KuriharaMio
+ * @brief 电机类实现文件
+ * @version 0.1
+ * @date 2025-04-11
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #include "Base_Modules/motor.h"
 
 static Class_Motor _Motor_RB = {RIGHT_BACK};

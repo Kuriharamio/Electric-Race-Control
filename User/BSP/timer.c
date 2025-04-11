@@ -1,3 +1,14 @@
+/**
+ * @file timer.c
+ * @author KuriharaMio
+ * @brief 定时器中断处理函数实现文件
+ * @note 该文件包含了电机PID定时器、编码器测速定时器和ADC按钮读取数据定时器的中断处理函数。
+ * @version 0.1
+ * @date 2025-04-11
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #include "BSP/timer.h"
 
 // 电机PID定时器中断处理函数
