@@ -7,10 +7,10 @@ import struct
 fpioa = FPIOA()
 
 # 将指定引脚配置为 UART 功能
-fpioa.set_function(11, FPIOA.UART2_TXD)
-fpioa.set_function(12, FPIOA.UART2_RXD)
+fpioa.set_function(05, FPIOA.UART2_TXD)
+fpioa.set_function(06, FPIOA.UART2_RXD)
 # 初始化UART
-uart = UART(UART.UART2, baudrate=115200, bits=UART.EIGHTBITS, parity=UART.PARITY_NONE, stop=UART.STOPBITS_ONE)
+uart = UART(UART.UART2, baudrate=9600, bits=UART.EIGHTBITS, parity=UART.PARITY_NONE, stop=UART.STOPBITS_ONE)
 
 # 定义帧头
 FRAME_HEADER = 0xAA
@@ -29,7 +29,7 @@ def create_packet(data):
     bcc = calculate_bcc(data)
 
     # 按照格式打包数据包
-    packet = struct.pack(f"<BB{data_len}B", FRAME_HEADER, data_len, *data, bcc)
+    packet = struct.pack(f"<BB{data_len}BB", FRAME_HEADER, data_len, *data, bcc)
     return packet
 
 
@@ -90,6 +90,11 @@ def receive_packet(uart):
         return None
 
     return data
+    
+    
+data_str = "0=1.9"
+data_to_send = list(data_str.encode('utf-8'))  # 转为字节列表
+send_packet(uart,data_to_send)
 
 
 ## 示例使用
