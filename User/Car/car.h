@@ -26,8 +26,9 @@ typedef struct Class_Car
 
     // PID对象
     pClass_PID PID_Straight_Position; // 直线位置PID
-    pClass_PID PID_Linear;    // 速度环PID
-    pClass_PID PID_Angular; // 位置环PID
+    pClass_PID PID_Linear;      // 速度环PID
+    pClass_PID PID_Angular;     // 角度环PID
+    pClass_PID PID_Follow;      // 跟随PID
 
     // 里程计
     POSITION Target_Position; // 目标位置
@@ -44,7 +45,8 @@ typedef struct Class_Car
     void (*Kinematic_Forward)(struct Class_Car *this);
     void (*Kinematic_Inverse)(struct Class_Car *this);
     void (*Update_Odom)(struct Class_Car *this);
-    void (*TIM_PID_PeriodElapsedCallback)(struct Class_Car *this);
+    void (*TIM_PID_Position_PeriodElapsedCallback)(struct Class_Car *this);
+    void (*TIM_PID_Speed_PeriodElapsedCallback)(struct Class_Car *this);
 
 } Class_Car, *pClass_Car;
 
@@ -55,6 +57,9 @@ void Car_Init(pClass_Car this);
 void Car_Kinematic_Forward(pClass_Car this);
 void Car_Kinematic_Inverse(pClass_Car this);
 void Car_Update_Odom(pClass_Car this);
-void Car_TIM_PID_PeriodElapsedCallback(pClass_Car this);
+
+void Car_TIM_PID_Position_PeriodElapsedCallback(pClass_Car this);
+void Car_TIM_PID_Speed_PeriodElapsedCallback(pClass_Car this);
+
 
 #endif // __CAR_H__

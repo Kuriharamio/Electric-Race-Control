@@ -14,6 +14,8 @@
 // 电机PID定时器中断处理函数
 void PID_INST_IRQHandler(void)
 {
+    static int tick = 0;
+    tick++;
     switch (DL_TimerA_getPendingInterrupt(PID_INST))
     {
     case DL_TIMER_IIDX_ZERO:
@@ -33,12 +35,24 @@ void PID_INST_IRQHandler(void)
         if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
             Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
 
-        pClass_Car car = Get_Car_Handle();
-        if (car->is_inited)
-        {
-            car->Kinematic_Forward(car);
-            car->TIM_PID_PeriodElapsedCallback(car);
+        if(tick == 2){
+            pClass_Car car = Get_Car_Handle();
+            if (car->is_inited)
+            {
+                car->Kinematic_Forward(car);
+                car->TIM_PID_Speed_PeriodElapsedCallback(car);
+            }
         }
+
+        if(tick == 3){
+            pClass_Car car = Get_Car_Handle();
+            if (car->is_inited)
+            {
+                car->TIM_PID_Position_PeriodElapsedCallback(car);
+            }
+            tick = 0;
+        }
+        
         break;
 
     default:
