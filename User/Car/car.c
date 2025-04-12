@@ -35,6 +35,7 @@ pClass_Car Create_Car(void)
     car->PID_Straight_Position = create_PID(); // 直线位置PID
     car->PID_Linear = create_PID(); // 速度环PID
     car->PID_Angular = create_PID(); // 角度环PID
+    car->PID_Follow = create_PID();
 
     // 函数指针赋值
     car->Init = Car_Init;
@@ -42,6 +43,7 @@ pClass_Car Create_Car(void)
     car->Kinematic_Inverse = Car_Kinematic_Inverse;
     car->Update_Odom = Car_Update_Odom;
     car->Upadate_Controller = Car_Upadate_Controller;
+    car->TIM_PID_Follow_PeriodElapsedCallback = Car_TIM_PID_Follow_PeriodElapsedCallback;
     car->TIM_PID_Position_PeriodElapsedCallback = Car_TIM_PID_Position_PeriodElapsedCallback;
     car->TIM_PID_Speed_PeriodElapsedCallback = Car_TIM_PID_Speed_PeriodElapsedCallback;
 
@@ -77,6 +79,7 @@ void Car_Init(pClass_Car this)
     this->Now_Speed.angular_velocity = 0.0f;    // 实际角速度
 
     this->Mode = STOP;
+    this->follow_error = 0;
 
     // 初始化电机
     this->Motor_LF->Init(this->Motor_LF, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 4);                                                                 // 初始化电机对象
@@ -122,8 +125,8 @@ void Car_Init(pClass_Car this)
     // 初始化PID
     this->PID_Straight_Position->PID_Init(this->PID_Straight_Position, 2.8, 0.0, 0.0, 0.0, MAX_LINEAR_SPEED * 0.8, MAX_LINEAR_SPEED, PID_CAR_POSITION_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_DISABLE); // 初始化PID参数
     this->PID_Linear->PID_Init(this->PID_Linear, 0.5f, 25.0f, 0.0f, 0.0f, MAX_LINEAR_SPEED * 0.8, MAX_LINEAR_SPEED, PID_CAR_SPEED_TIMER_T, 0.005f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);               // 初始化PID参数
-    this->PID_Angular->PID_Init(this->PID_Angular, 0.8f, 10.0f, 0.0f, 0.0f, MAX_ANGULAR_SPEED * 0.8, MAX_ANGULAR_SPEED, PID_CAR_SPEED_TIMER_T, 0.005f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);               // 初始化PID参数
-
+    this->PID_Angular->PID_Init(this->PID_Angular, 0.5f, .0f, 0.0f, 0.0f, MAX_ANGULAR_SPEED * 0.8, MAX_ANGULAR_SPEED, PID_CAR_SPEED_TIMER_T, 0.005f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);               // 初始化PID参数
+    this->PID_Follow->PID_Init(this->PID_Follow, 0.3f, 10.0f, 0.0f, 0.2f, MAX_ANGULAR_SPEED * 0.8, MAX_ANGULAR_SPEED, PID_CAR_SPEED_TIMER_T, 0.0f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
     // 初始化完成标志位
     this->is_inited = true;
 }
@@ -183,6 +186,18 @@ void Car_TIM_PID_Position_PeriodElapsedCallback(pClass_Car this)
     this->Target_Speed.angular_velocity = 0;
 }
 
+void Car_TIM_PID_Follow_PeriodElapsedCallback(pClass_Car this)
+{
+    this->PID_Follow->Set_Target(this->PID_Follow, 0);
+    this->PID_Follow->Set_Now(this->PID_Follow, this->follow_error);
+    this->PID_Follow->TIM_Adjust_PeriodElapsedCallback(this->PID_Follow);
+
+    this->Target_Speed.angular_velocity = this->PID_Follow->Get_PID_Out(this->PID_Follow);
+    // if(this->Target_Speed.angular_velocity)
+    this->Target_Speed.linear_velocity = 0.08f;
+    
+}
+
 void Car_Upadate_Controller(pClass_Car this)
 {
     // 启动控制
@@ -201,6 +216,7 @@ void Car_TIM_PID_Speed_PeriodElapsedCallback(pClass_Car this)
     this->PID_Angular->Set_Now(this->PID_Angular, this->Now_Speed.angular_velocity);
     this->PID_Angular->TIM_Adjust_PeriodElapsedCallback(this->PID_Angular);
 
+	
     this->Output_Speed.linear_velocity = (this->PID_Linear->Get_PID_Out(this->PID_Linear));
     this->Output_Speed.angular_velocity = (this->PID_Angular->Get_PID_Out(this->PID_Angular));
     

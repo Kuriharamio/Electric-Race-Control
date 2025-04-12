@@ -6,8 +6,8 @@
 
 // 定时器配置
 #define PID_MOTOR_TIMER_T 0.01f
-#define PID_CAR_SPEED_TIMER_T (2 * PID_MOTOR_TIMER_T)
-#define PID_CAR_POSITION_TIMER_T (3 * PID_MOTOR_TIMER_T)
+#define PID_CAR_SPEED_TIMER_T (1 * PID_MOTOR_TIMER_T)
+#define PID_CAR_POSITION_TIMER_T (1 * PID_MOTOR_TIMER_T)
 #define ENCODER_TIMER_T 0.005f
 
 // 小车参数
@@ -16,8 +16,8 @@
 #define WHEEL_RADIUS 0.024f // 轮子半径
 #define WHEEL_Gearbox_Rate 20.0f // 减速比
 #define WHEEL_Per_Pulse 13.0f // 每转脉冲数
-#define MAX_LINEAR_SPEED 0.8f
-#define MAX_ANGULAR_SPEED 1.2f
+#define MAX_LINEAR_SPEED 0.08f
+#define MAX_ANGULAR_SPEED 0.2f
 
 // 蓝牙配置
 #define BLUETOOTH_UART_INDEX 0 // 蓝牙串口索引号

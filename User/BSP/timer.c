@@ -35,22 +35,26 @@ void PID_INST_IRQHandler(void)
         if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
             Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
 
-        if(tick == 2){
+        // if(tick == 2)
+        // {
             pClass_Car car = Get_Car_Handle();
             if (car->is_inited)
             {
                 car->TIM_PID_Speed_PeriodElapsedCallback(car);
+                car->TIM_PID_Follow_PeriodElapsedCallback(car);
             }
-        }
+        // }
 
-        if(tick == 3){
-            pClass_Car car = Get_Car_Handle();
-            if (car->is_inited)
-            {
-                car->Upadate_Controller(car);
-            }
-            tick = 0;
-        }
+        // if(tick == 3)
+        // {
+            // pClass_Car car = Get_Car_Handle();
+            // if (car->is_inited)
+            // {
+                // car->Upadate_Controller(car);
+                // car->TIM_PID_Follow_PeriodElapsedCallback(car);
+            // }
+            // tick = 0;
+        // }
         
         break;
 

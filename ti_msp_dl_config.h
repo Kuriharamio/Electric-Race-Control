@@ -240,10 +240,10 @@ extern "C" {
 /* Port definition for Pin Group ENCODER_RB */
 #define ENCODER_RB_PORT                                                  (GPIOB)
 
-/* Defines for RB_A: GPIOB.10 with pinCMx 27 on package pin 62 */
-#define ENCODER_RB_RB_A_IIDX                                (DL_GPIO_IIDX_DIO10)
-#define ENCODER_RB_RB_A_PIN                                     (DL_GPIO_PIN_10)
-#define ENCODER_RB_RB_A_IOMUX                                    (IOMUX_PINCM27)
+/* Defines for RB_A: GPIOB.21 with pinCMx 49 on package pin 20 */
+#define ENCODER_RB_RB_A_IIDX                                (DL_GPIO_IIDX_DIO21)
+#define ENCODER_RB_RB_A_PIN                                     (DL_GPIO_PIN_21)
+#define ENCODER_RB_RB_A_IOMUX                                    (IOMUX_PINCM49)
 /* Defines for RB_B: GPIOB.11 with pinCMx 28 on package pin 63 */
 #define ENCODER_RB_RB_B_IIDX                                (DL_GPIO_IIDX_DIO11)
 #define ENCODER_RB_RB_B_PIN                                     (DL_GPIO_PIN_11)

@@ -264,10 +264,10 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 		DL_GPIO_PIN_13_EDGE_RISE_FALL |
 		DL_GPIO_PIN_8_EDGE_RISE_FALL |
 		DL_GPIO_PIN_9_EDGE_RISE_FALL |
-		DL_GPIO_PIN_10_EDGE_RISE_FALL |
 		DL_GPIO_PIN_11_EDGE_RISE_FALL);
     DL_GPIO_setUpperPinsPolarity(GPIOB, DL_GPIO_PIN_17_EDGE_RISE_FALL |
-		DL_GPIO_PIN_18_EDGE_RISE_FALL);
+		DL_GPIO_PIN_18_EDGE_RISE_FALL |
+		DL_GPIO_PIN_21_EDGE_RISE_FALL);
     DL_GPIO_clearInterruptStatus(GPIOB, ENCODER_LF_LF_A_PIN |
 		ENCODER_LF_LF_B_PIN |
 		ENCODER_LB_LB_A_PIN |
@@ -296,8 +296,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_init(void)
     DL_SYSCTL_setBORThreshold(DL_SYSCTL_BOR_THRESHOLD_LEVEL_0);
 
     DL_SYSCTL_setSYSOSCFreq(DL_SYSCTL_SYSOSC_FREQ_BASE);
-    /* INT_GROUP1 Priority */
-    NVIC_SetPriority(GPIOB_INT_IRQn, 0);
 
 }
 
@@ -581,10 +579,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_1_init(void)
     DL_UART_Main_enableInterrupt(UART_1_INST,
                                  DL_UART_MAIN_INTERRUPT_RX);
 
-    /* Configure FIFOs */
-    DL_UART_Main_enableFIFOs(UART_1_INST);
-    DL_UART_Main_setRXFIFOThreshold(UART_1_INST, DL_UART_RX_FIFO_LEVEL_ONE_ENTRY);
-    DL_UART_Main_setTXFIFOThreshold(UART_1_INST, DL_UART_TX_FIFO_LEVEL_3_4_EMPTY);
 
     DL_UART_Main_enable(UART_1_INST);
 }
@@ -621,9 +615,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_2_init(void)
     DL_UART_Main_enableInterrupt(UART_2_INST,
                                  DL_UART_MAIN_INTERRUPT_RX);
 
-    /* Configure FIFOs */
-    DL_UART_Main_enableFIFOs(UART_2_INST);
-    DL_UART_Main_setRXFIFOThreshold(UART_2_INST, DL_UART_RX_FIFO_LEVEL_ONE_ENTRY);
 
     DL_UART_Main_enable(UART_2_INST);
 }

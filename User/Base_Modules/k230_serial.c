@@ -1,6 +1,6 @@
 #include "Base_Modules/k230_serial.h"
 
-static RxState Rx_State = STATE_WAIT_HEADER;//接收状态标志位
+static RxState Rx_State = STATE_WAIT_HEADER_1;//接收状态标志位
 static uint8_t Rx_Data_Len = 0;//数据长度
 static uint8_t Rx_BCC = 0;//接收到的BCC校验位
 
@@ -61,13 +61,20 @@ uint8_t Calculate_BCC(uint8_t *data, uint8_t len)
  *
  * @param this 串口对象
  */
+#include "Base_Modules/reminder.h"
 void K230_Rx_Callback(pClass_UART this)
-{	
-	
+{
 	switch(Rx_State)
 	{
-		case STATE_WAIT_HEADER:
-			if (this->current_byte == FRAME_HEADER)
+		case STATE_WAIT_HEADER_1:
+			if (this->current_byte == FRAME_HEADER_1)
+			{
+				//检测到帧头将状态标志位转位STATE_WAIT_LENGTH
+				Rx_State = STATE_WAIT_HEADER_2;
+			}
+			break;
+		case STATE_WAIT_HEADER_2:
+			if (this->current_byte == FRAME_HEADER_2)
 			{
 				//检测到帧头将状态标志位转位STATE_WAIT_LENGTH
 				Rx_State = STATE_WAIT_LENGTH;
@@ -75,13 +82,12 @@ void K230_Rx_Callback(pClass_UART this)
 			break;
 		case STATE_WAIT_LENGTH:
 			Rx_Data_Len = this->current_byte;
-
 			Rx_State = STATE_WAIT_DATA;
 			this->rx_len = 0;
 			break;
 		case STATE_WAIT_DATA:
 			this->rxbuffer[this->rx_len++] = this->current_byte;
-			if (this->rx_len>=Rx_Data_Len)
+			if (this->rx_len==Rx_Data_Len)
 			{
 				//接收到规定长度数据字段将标志位转为STATE_WAIT_BCC
 				Rx_State = STATE_WAIT_BCC;
@@ -89,23 +95,26 @@ void K230_Rx_Callback(pClass_UART this)
 			break;
 		case STATE_WAIT_BCC:
 			Rx_BCC = this->current_byte;
-			if (Rx_BCC == Calculate_BCC((uint8_t *)this->rxbuffer,this->rx_len))
+			
+			if (Rx_BCC == Calculate_BCC((this->rxbuffer),this->rx_len))
 			{
-				this->rxbuffer[this->rx_len++] = '\0';
+				LED(TOGGLE);
+				// this->rxbuffer[this->rx_len++] = '\0';
 				//转化浮点数
-				if(Rx_Data_Len == 12)
+				if(Rx_Data_Len == 4)
 				{
-					float f1 = BigEndianBytesToFloat(&this->rxbuffer[0]);
-					float f2 = BigEndianBytesToFloat(&this->rxbuffer[4]);
-					float f3 = BigEndianBytesToFloat(&this->rxbuffer[8]);
+					
+					float f1 = BigEndianBytesToFloat(&(this->rxbuffer[0]));
+					// float f2 = BigEndianBytesToFloat(&(this->rxbuffer[4]));
+					// float f3 = BigEndianBytesToFloat(&(this->rxbuffer[8]));
 					this->Modify_Param_With_Id(this, 0, f1); // 修改参数
-					this->Modify_Param_With_Id(this, 1, f2); // 修改参数
-					this->Modify_Param_With_Id(this, 2, f3); // 修改参数
+					// this->Modify_Param_With_Id(this, 1, f2); // 修改参数
+					// this->Modify_Param_With_Id(this, 2, f3); // 修改参数
 				}
 			}
 			//接收完重置标志位
-			Rx_State = STATE_WAIT_HEADER;
-			this->Clear_RxBuffer(this);
+			Rx_State = STATE_WAIT_HEADER_1;
+			// this->Clear_RxBuffer(this);
 			break;
 	}
     
