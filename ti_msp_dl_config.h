@@ -191,12 +191,15 @@ extern "C" {
 
 
 
-/* Port definition for Pin Group LED_GROUP */
-#define LED_GROUP_PORT                                                   (GPIOB)
+/* Port definition for Pin Group REMINDER */
+#define REMINDER_PORT                                                    (GPIOB)
 
 /* Defines for LED: GPIOB.22 with pinCMx 50 on package pin 21 */
-#define LED_GROUP_LED_PIN                                       (DL_GPIO_PIN_22)
-#define LED_GROUP_LED_IOMUX                                      (IOMUX_PINCM50)
+#define REMINDER_LED_PIN                                        (DL_GPIO_PIN_22)
+#define REMINDER_LED_IOMUX                                       (IOMUX_PINCM50)
+/* Defines for BUZZ: GPIOB.27 with pinCMx 58 on package pin 29 */
+#define REMINDER_BUZZ_PIN                                       (DL_GPIO_PIN_27)
+#define REMINDER_BUZZ_IOMUX                                      (IOMUX_PINCM58)
 /* Port definition for Pin Group ENCODER_LF */
 #define ENCODER_LF_PORT                                                  (GPIOB)
 

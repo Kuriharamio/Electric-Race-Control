@@ -450,11 +450,6 @@
               <FilePath>..\User\Base_Modules\k230_serial.c</FilePath>
             </File>
             <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Base_Modules\led.c</FilePath>
-            </File>
-            <File>
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Base_Modules\motor.c</FilePath>
@@ -493,6 +488,11 @@
               <FileName>imu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Base_Modules\imu.c</FilePath>
+            </File>
+            <File>
+              <FileName>reminder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\reminder.c</FilePath>
             </File>
           </Files>
         </Group>

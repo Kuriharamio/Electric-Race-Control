@@ -46,12 +46,16 @@ ADC121.adcPin0Config.$name               = "ti_driverlib_gpio_GPIOPinGeneric8";
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 
-GPIO1.$name                         = "LED_GROUP";
-GPIO1.port                          = "PORTB";
-GPIO1.associatedPins[0].$name       = "LED";
-GPIO1.associatedPins[0].ioStructure = "SD";
-GPIO1.associatedPins[0].assignedPin = "22";
-GPIO1.associatedPins[0].pin.$assign = "j19_expansion.5";
+GPIO1.port                               = "PORTB";
+GPIO1.$name                              = "REMINDER";
+GPIO1.associatedPins.create(2);
+GPIO1.associatedPins[0].$name            = "LED";
+GPIO1.associatedPins[0].ioStructure      = "SD";
+GPIO1.associatedPins[0].assignedPin      = "22";
+GPIO1.associatedPins[0].pin.$assign      = "j19_expansion.5";
+GPIO1.associatedPins[1].internalResistor = "PULL_UP";
+GPIO1.associatedPins[1].$name            = "BUZZ";
+GPIO1.associatedPins[1].pin.$assign      = "j19_expansion.10";
 
 GPIO2.$name                              = "ENCODER_LF";
 GPIO2.port                               = "PORTB";

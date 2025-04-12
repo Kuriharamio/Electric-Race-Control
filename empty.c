@@ -5,7 +5,7 @@
 #include "BSP/delay.h"
 #include "BSP/timer.h"
 
-#include "Base_Modules/led.h"
+#include "Base_Modules/reminder.h"
 #include "Base_Modules/bluetooth.h"
 #include "Base_Modules/k230_serial.h"
 #include "Base_Modules/imu.h"
@@ -29,6 +29,9 @@ int main(void)
   board_init();
   float x1 = 1.0f;
   float y1 = 0.0f;
+
+  delay_ms(3000);
+  // BUZZ(BEEP);
 
   pClass_Car Car = Create_Car(); // 创建小车对象
   Car->Init(Car);                // 初始化小车对象
@@ -60,12 +63,12 @@ int main(void)
 
   // 蓝牙配置
   pClass_UART Bluetooth_Debuger = Create_UART(0);                                         // 获取蓝牙对象实例
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 3);                    // 初始化蓝牙对象
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 2);                    // 初始化蓝牙对象
   Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE);                     // 配置调试模式
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback);        // 配置回调函数
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->Target_Position.x)); // 绑定参数1
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->Now_Position.x));    // 绑定参数2
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &yaw);
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &yaw);
   // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(IMU_Communicator->current_byte));
 
   Car->Target_Position.x = 1.0f; // 设置目标位置x坐标
