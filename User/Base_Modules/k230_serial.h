@@ -13,8 +13,11 @@ typedef enum {
     STATE_WAIT_DATA,
     STATE_WAIT_BCC
 } RxState;
-	
+
+void float_to_big_endian_bytes(float value, uint8_t *bytes_out);
+float BigEndianBytesToFloat(uint8_t *bytes);
 uint8_t Calculate_BCC(uint8_t *data, uint8_t len);
 void K230_Rx_Callback(pClass_UART this);
+void K230_Transmit(pClass_UART this, float *datas, int len);
 
 #endif // __K230_SERIAL_H__

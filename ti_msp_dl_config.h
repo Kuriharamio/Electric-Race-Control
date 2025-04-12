@@ -41,6 +41,7 @@
 #define ti_msp_dl_config_h
 
 #define CONFIG_LP_MSPM0G3507
+#define CONFIG_MSPM0G3507
 
 #if defined(__ti_version__) || defined(__TI_COMPILER_VERSION__)
 #define SYSCONFIG_WEAK __attribute__((weak))
@@ -135,6 +136,7 @@ extern "C" {
 
 /* Defines for UART_0 */
 #define UART_0_INST                                                        UART0
+#define UART_0_INST_FREQUENCY                                           32000000
 #define UART_0_INST_IRQHandler                                  UART0_IRQHandler
 #define UART_0_INST_INT_IRQN                                      UART0_INT_IRQn
 #define GPIO_UART_0_RX_PORT                                                GPIOA
@@ -150,6 +152,7 @@ extern "C" {
 #define UART_0_FBRD_32_MHZ_115200_BAUD                                      (23)
 /* Defines for UART_1 */
 #define UART_1_INST                                                        UART1
+#define UART_1_INST_FREQUENCY                                           32000000
 #define UART_1_INST_IRQHandler                                  UART1_IRQHandler
 #define UART_1_INST_INT_IRQN                                      UART1_INT_IRQn
 #define GPIO_UART_1_RX_PORT                                                GPIOA
@@ -174,7 +177,7 @@ extern "C" {
 #define adckey_INST_INT_IRQN                                     (ADC0_INT_IRQn)
 #define adckey_ADCMEM_key                                     DL_ADC12_MEM_IDX_0
 #define adckey_ADCMEM_key_REF                    DL_ADC12_REFERENCE_VOLTAGE_VDDA
-#define adckey_ADCMEM_key_REF_VOLTAGE                                         -1 // VDDA cannot be determined
+#define adckey_ADCMEM_key_REF_VOLTAGE_V                                      3.3
 #define GPIO_adckey_C0_PORT                                                GPIOA
 #define GPIO_adckey_C0_PIN                                        DL_GPIO_PIN_27
 
@@ -186,6 +189,12 @@ extern "C" {
 /* Defines for LED: GPIOB.22 with pinCMx 50 on package pin 21 */
 #define LED_GROUP_LED_PIN                                       (DL_GPIO_PIN_22)
 #define LED_GROUP_LED_IOMUX                                      (IOMUX_PINCM50)
+/* Port definition for Pin Group BUZZ_GROUP */
+#define BUZZ_GROUP_PORT                                                  (GPIOB)
+
+/* Defines for BUZZ: GPIOB.3 with pinCMx 16 on package pin 51 */
+#define BUZZ_GROUP_BUZZ_PIN                                      (DL_GPIO_PIN_3)
+#define BUZZ_GROUP_BUZZ_IOMUX                                    (IOMUX_PINCM16)
 /* Port definition for Pin Group ENCODER_LF */
 #define ENCODER_LF_PORT                                                  (GPIOB)
 

@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control;..\..\k230</IncludePath>
+              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control;..\..\fixadc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -488,6 +488,11 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\BSP\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>buzz.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\buzz.c</FilePath>
             </File>
           </Files>
         </Group>
