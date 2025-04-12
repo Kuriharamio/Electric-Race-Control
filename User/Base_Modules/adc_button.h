@@ -5,6 +5,9 @@
 #include "BSP/delay.h"
 #include <stdlib.h>
 
+#define Adc_Sample_Count 5
+#define ADC_CONV_TIMEOUT 1000
+
 typedef enum
 {
 	BUTTON_None,
