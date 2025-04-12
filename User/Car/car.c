@@ -28,6 +28,9 @@ pClass_Car Create_Car(void)
     car->Motor_RF = create_motor(RIGHT_FRONT); // 右前轮
     car->Motor_LF = create_motor(LEFT_FRONT);  // 左前轮
 
+    // 创建控制器对象
+    car->PurePursuit = Create_PurePursuit();
+
     // 创建PID对象
     car->PID_Straight_Position = create_PID(); // 直线位置PID
     car->PID_Linear = create_PID(); // 速度环PID
@@ -72,6 +75,8 @@ void Car_Init(pClass_Car this)
     this->Now_Speed.linear_velocity = 0.0f;     // 实际线速度
     this->Now_Speed.angular_velocity = 0.0f;    // 实际角速度
 
+    this->Mode = STOP;
+
     // 初始化电机
     this->Motor_LF->Init(this->Motor_LF, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 4);                                                                 // 初始化电机对象
     this->Motor_LF->PID_Speed->PID_Init(this->Motor_LF->PID_Speed, 2000, 10000.0, 2000.0, 5000.0, 1500, 1600, PID_MOTOR_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
@@ -108,6 +113,9 @@ void Car_Init(pClass_Car this)
     this->Motor_RB->Configure_ENCODER_B(this->Motor_RB, ENCODER_RB_PORT, ENCODER_RB_RB_B_PIN);                                                                       // 配置电机引脚编码器B
     this->Motor_RB->Configure_PWM(this->Motor_RB, PWM_MOTOR_R_INST, GPIO_PWM_MOTOR_R_C1_IDX);                                                                            // 配置电机PWM
     this->Motor_RB->Configure_STBY(this->Motor_RB, MOTOR_DRV_STBY_B_PORT, MOTOR_DRV_STBY_B_PIN);                                                                     // 配置电机待机引脚
+
+    // 初始化控制器
+    this->PurePursuit->Init(this->PurePursuit);
 
     // 初始化PID
     this->PID_Straight_Position->PID_Init(this->PID_Straight_Position, 2.8, 0.0, 0.0, 0.0, 1.3, 1.3, PID_CAR_POSITION_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_DISABLE); // 初始化PID参数
@@ -171,6 +179,20 @@ void Car_TIM_PID_Position_PeriodElapsedCallback(pClass_Car this)
 
     this->Target_Speed.linear_velocity = this->PID_Straight_Position->Get_PID_Out(this->PID_Straight_Position);
     this->Target_Speed.angular_velocity = 0;
+}
+
+void Car_Controller_Update(pClass_Car this)
+{
+    // 更新模式
+    this->PurePursuit->Set_Mode(this->PurePursuit, this->Mode);
+    // 更新速度与控制器端里程计
+    this->PurePursuit->Update_Now_Speed(this->PurePursuit, this->Now_Speed);
+    // 启动控制
+    if(!(this->PurePursuit->Calculate_Target_Speed(this->PurePursuit))){
+        this->Mode = STOP;
+    }
+    // 更新小车目标速度
+    this->Target_Speed = this->PurePursuit->Get_Output_Speed(this->PurePursuit);
 }
 
 void Car_TIM_PID_Speed_PeriodElapsedCallback(pClass_Car this)

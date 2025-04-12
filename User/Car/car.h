@@ -2,20 +2,7 @@
 #define __CAR_H__
 
 #include "Base_Modules/motor.h"
-
-typedef struct
-{
-    float x;   // x坐标
-    float y;   // y坐标
-    float yaw; // 偏航角
-} POSITION;
-
-typedef struct
-{
-    float linear_velocity;  // 线速度
-    float angular_velocity; // 角速度
-} SPEED;
-
+#include "Algorithm/pure_pursuit.h"
 typedef struct Class_Car
 {
     // 电机对象
@@ -24,14 +11,18 @@ typedef struct Class_Car
     pClass_Motor Motor_RF; // 右前轮
     pClass_Motor Motor_LF; // 左前轮
 
+    // 控制器
+    pClass_PurePursuit PurePursuit; //  PurePursuit对象
+    CONTROL_MODE Mode;              // 控制模式
+
     // PID对象
     pClass_PID PID_Straight_Position; // 直线位置PID
-    pClass_PID PID_Linear;    // 速度环PID
-    pClass_PID PID_Angular; // 角度环PID
+    pClass_PID PID_Linear;            // 速度环PID
+    pClass_PID PID_Angular;           // 角度环PID
 
     // 里程计
     POSITION Target_Position; // 目标位置
-    POSITION Now_Position; // 里程计位置
+    POSITION Now_Position;    // 里程计位置
 
     // 速度
     SPEED Target_Speed; // 目标速度
@@ -59,6 +50,5 @@ void Car_Update_Odom(pClass_Car this);
 
 void Car_TIM_PID_Position_PeriodElapsedCallback(pClass_Car this);
 void Car_TIM_PID_Speed_PeriodElapsedCallback(pClass_Car this);
-
 
 #endif // __CAR_H__
