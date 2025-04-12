@@ -2,6 +2,7 @@
 #define _PURE_PURSUIT_H_
 
 #include "config.h"
+#include "Algorithm/drv_math.h"
 #include <math.h>
 #include <string.h>
 

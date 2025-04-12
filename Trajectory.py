@@ -47,9 +47,12 @@ def print_c_style_array(trajectory):
     - trajectory: list of (x, y) tuples
     """
     print("float trajectory[NUM_POINTS][2] = {")
+    i = 0
     for point in trajectory:
-        print(f"    {{{point[0]:.6f}, {point[1]:.6f}}},")
+        i += 1
+        print(f"    {{{point[0]:.3f}, {point[1]:.3f}}},")
     print("};")
+    print(f"size: {i}")
 
 def plot_trajectory(trajectories, labels, colors):
     """

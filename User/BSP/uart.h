@@ -40,6 +40,7 @@ typedef struct Class_UART
     void (*Configure_Mode)(struct Class_UART *this, UART_MODE mode);                                // 配置调试模式
     void (*Configure_Param_Len)(struct Class_UART *this, uint8_t param_len);                        // 配置参数长度
     void (*Configure_Callback)(struct Class_UART *this, void (*callback)(struct Class_UART *this)); // 配置回调函数
+    void (*Configure_Custom_Send_Datas)(struct Class_UART *this, void (*func)(uint8_t *datas, size_t size)); // 配置自定义发送数据函数
 
     void (*Bind_Param_With_Id)(struct Class_UART *this, uint8_t id, float *input_param); // 绑定参数
     void (*Modify_Param_With_Id)(struct Class_UART *this, uint8_t id, float value);      // 修改参数

@@ -72,6 +72,7 @@ pClass_UART Create_UART(uint8_t index)
 	this->Configure_Mode = UART_Configure_Mode;				// 配置调试模式
 	this->Configure_Param_Len = UART_Configure_Param_Len;	// 配置参数长度
 	this->Configure_Callback = UART_Configure_Callback;		// 配置回调函数
+	this->Configure_Custom_Send_Datas = UART_Configure_Custom_Send_Datas;
 	this->Bind_Param_With_Id = UART_Bind_Param_With_Id;		// 绑定参数
 	this->Modify_Param_With_Id = UART_Modify_Param_With_Id; // 修改参数
 

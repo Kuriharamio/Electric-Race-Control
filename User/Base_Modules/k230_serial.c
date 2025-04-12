@@ -119,7 +119,7 @@ void K230_Rx_Callback(pClass_UART this)
  *@param datas
  *@param len
  */
-void K230_Transmit(pClass_UART this, float *datas, int len) 
+void K230_Transmit(pClass_UART this, float *datas, uint8_t len)
 {
     int data_len = len * 4;               // 每个 float 4 字节
     int frame_len = 1 + 1 + data_len + 1; // 帧头 + 长度字段 + 数据 + 校验

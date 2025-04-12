@@ -425,6 +425,11 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
+              <FileName>car.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Car\car.c</FilePath>
+            </File>
+            <File>
               <FileName>drv_math.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Algorithm\drv_math.c</FilePath>
@@ -433,6 +438,11 @@
               <FileName>pid.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Algorithm\pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>pure_pursuit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Algorithm\pure_pursuit.c</FilePath>
             </File>
             <File>
               <FileName>adc_button.c</FileName>
@@ -445,6 +455,11 @@
               <FilePath>..\User\Base_Modules\bluetooth.c</FilePath>
             </File>
             <File>
+              <FileName>imu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\imu.c</FilePath>
+            </File>
+            <File>
               <FileName>k230_serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Base_Modules\k230_serial.c</FilePath>
@@ -453,6 +468,11 @@
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Base_Modules\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>reminder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\reminder.c</FilePath>
             </File>
             <File>
               <FileName>board.c</FileName>
@@ -470,29 +490,14 @@
               <FilePath>..\User\BSP\gpio.c</FilePath>
             </File>
             <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\BSP\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>car.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Car\car.c</FilePath>
-            </File>
-            <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\BSP\timer.c</FilePath>
             </File>
             <File>
-              <FileName>imu.c</FileName>
+              <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\Base_Modules\imu.c</FilePath>
-            </File>
-            <File>
-              <FileName>reminder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Base_Modules\reminder.c</FilePath>
+              <FilePath>..\User\BSP\uart.c</FilePath>
             </File>
           </Files>
         </Group>
