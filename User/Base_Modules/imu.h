@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "BSP/uart.h"
+#include "Algorithm/drv_math.h"
 
 void IMU_Rx_Callback(pClass_UART this);
 

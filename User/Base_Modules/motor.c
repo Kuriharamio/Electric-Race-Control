@@ -222,6 +222,8 @@ void Motor_Output(pClass_Motor this)
     if (this->Output_Now < -this->Output_Max)
         this->Output_Now = -this->Output_Max;
 
+
+
     
     if (this->Output_Now < -0.1)
     {
@@ -236,7 +238,10 @@ void Motor_Output(pClass_Motor this)
         this->Direction = BRAKE;
     }
 
-    
+    if (fabs(this->Target_Speed) < 0.05)
+    {
+        this->Direction = BRAKE;
+    }
 
     this->Control(this);
 }

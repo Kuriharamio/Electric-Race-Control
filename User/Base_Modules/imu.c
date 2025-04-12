@@ -3,13 +3,19 @@
 
 void Handle_IMU_Data_Bag(pClass_UART this)
 {
+    static float first_yaw = 0.0f;
     if(this->rxbuffer[0] == 0x55 && this->rxbuffer[1] == 0x53){
         uint8_t crc = 0;
         for (int i = 0; i < this->rx_len - 1; i++){
             crc += this->rxbuffer[i];
         }
         if(crc == this->rxbuffer[this->rx_len - 1]){
-            this->Modify_Param_With_Id(this, 0, (short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * 180.0f);
+            LED(TOGGLE);
+            if(!first_yaw){
+                first_yaw = (short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * PI;
+            }else{
+                this->Modify_Param_With_Id(this, 0, (short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * PI - first_yaw);
+            }
         }
     }
 }

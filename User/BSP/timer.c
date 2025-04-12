@@ -20,38 +20,37 @@ void PID_INST_IRQHandler(void)
     {
     case DL_TIMER_IIDX_ZERO:
         // pClass_Motor Motor_LB = Get_Motor_INST(LEFT_BACK);
-        // if (Get_Motor_INST(LEFT_BACK)->is_inited)
-        //     Get_Motor_INST(LEFT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_BACK));
+        if (Get_Motor_INST(LEFT_BACK)->is_inited)
+            Get_Motor_INST(LEFT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_BACK));
 
-        // // pClass_Motor Motor_RB = Get_Motor_INST(RIGHT_BACK);
-        // if (Get_Motor_INST(RIGHT_BACK)->is_inited)
-        //     Get_Motor_INST(RIGHT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_BACK));
+        // pClass_Motor Motor_RB = Get_Motor_INST(RIGHT_BACK);
+        if (Get_Motor_INST(RIGHT_BACK)->is_inited)
+            Get_Motor_INST(RIGHT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_BACK));
 
-        // // pClass_Motor Motor_LF = Get_Motor_INST(LEFT_FRONT);
-        // if (Get_Motor_INST(LEFT_FRONT)->is_inited)
-        //     Get_Motor_INST(LEFT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_FRONT));
+        // pClass_Motor Motor_LF = Get_Motor_INST(LEFT_FRONT);
+        if (Get_Motor_INST(LEFT_FRONT)->is_inited)
+            Get_Motor_INST(LEFT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_FRONT));
 
-        // // pClass_Motor Motor_RF = Get_Motor_INST(RIGHT_FRONT);
-        // if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
-        //     Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
+        // pClass_Motor Motor_RF = Get_Motor_INST(RIGHT_FRONT);
+        if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
+            Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
 
-        // if(tick == 2){
-        //     pClass_Car car = Get_Car_Handle();
-        //     if (car->is_inited)
-        //     {
-        //         car->TIM_PID_Speed_PeriodElapsedCallback(car);
-        //     }
-        //     tick = 0;
-        // }
+        if(tick == 2){
+            pClass_Car car = Get_Car_Handle();
+            if (car->is_inited)
+            {
+                car->TIM_PID_Speed_PeriodElapsedCallback(car);
+            }
+        }
 
-        // if(tick == 3){
-        //     pClass_Car car = Get_Car_Handle();
-        //     if (car->is_inited)
-        //     {
-        //         car->Upadate_Controller(car);
-        //     }
-        //     tick = 0;
-        // }
+        if(tick == 3){
+            pClass_Car car = Get_Car_Handle();
+            if (car->is_inited)
+            {
+                car->Upadate_Controller(car);
+            }
+            tick = 0;
+        }
         
         break;
 
@@ -93,11 +92,11 @@ void ENCODER_INST_IRQHandler(void)
         }
 
         // 更新里程计
-        pClass_Car car = Get_Car_Handle();
-        if (car->is_inited){
-            car->Kinematic_Forward(car);
-            car->Update_Odom(car);
-            car->PurePursuit->Update_Now_Speed(car->PurePursuit, car->Now_Speed);
+        if (Get_Car_Handle()->is_inited)
+        {
+            Get_Car_Handle()->Kinematic_Forward(Get_Car_Handle());
+            Get_Car_Handle()->Update_Odom(Get_Car_Handle());
+            Get_Car_Handle()->PurePursuit->Update_Now_Speed(Get_Car_Handle()->PurePursuit, Get_Car_Handle()->Now_Speed);
         }
         break;
 

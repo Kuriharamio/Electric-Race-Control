@@ -119,12 +119,12 @@ extern "C" {
 #define ENCODER_INST                                                     (TIMG7)
 #define ENCODER_INST_IRQHandler                                 TIMG7_IRQHandler
 #define ENCODER_INST_INT_IRQN                                   (TIMG7_INT_IRQn)
-#define ENCODER_INST_LOAD_VALUE                                           (249U)
+#define ENCODER_INST_LOAD_VALUE                                           (499U)
 /* Defines for PID */
 #define PID_INST                                                         (TIMG6)
 #define PID_INST_IRQHandler                                     TIMG6_IRQHandler
 #define PID_INST_INT_IRQN                                       (TIMG6_INT_IRQn)
-#define PID_INST_LOAD_VALUE                                               (499U)
+#define PID_INST_LOAD_VALUE                                               (999U)
 /* Defines for ADC_BUTTON */
 #define ADC_BUTTON_INST                                                  (TIMG0)
 #define ADC_BUTTON_INST_IRQHandler                              TIMG0_IRQHandler
@@ -203,18 +203,18 @@ extern "C" {
 /* Port definition for Pin Group ENCODER_LF */
 #define ENCODER_LF_PORT                                                  (GPIOB)
 
-/* Defines for LF_A: GPIOB.4 with pinCMx 17 on package pin 52 */
+/* Defines for LF_A: GPIOB.12 with pinCMx 29 on package pin 64 */
 // groups represented: ["ENCODER_LB","ENCODER_RF","ENCODER_RB","ENCODER_LF"]
 // pins affected: ["LB_A","LB_B","RF_A","RF_B","RB_A","RB_B","LF_A","LF_B"]
 #define GPIO_MULTIPLE_GPIOB_INT_IRQN                            (GPIOB_INT_IRQn)
 #define GPIO_MULTIPLE_GPIOB_INT_IIDX            (DL_INTERRUPT_GROUP1_IIDX_GPIOB)
-#define ENCODER_LF_LF_A_IIDX                                 (DL_GPIO_IIDX_DIO4)
-#define ENCODER_LF_LF_A_PIN                                      (DL_GPIO_PIN_4)
-#define ENCODER_LF_LF_A_IOMUX                                    (IOMUX_PINCM17)
-/* Defines for LF_B: GPIOB.5 with pinCMx 18 on package pin 53 */
-#define ENCODER_LF_LF_B_IIDX                                 (DL_GPIO_IIDX_DIO5)
-#define ENCODER_LF_LF_B_PIN                                      (DL_GPIO_PIN_5)
-#define ENCODER_LF_LF_B_IOMUX                                    (IOMUX_PINCM18)
+#define ENCODER_LF_LF_A_IIDX                                (DL_GPIO_IIDX_DIO12)
+#define ENCODER_LF_LF_A_PIN                                     (DL_GPIO_PIN_12)
+#define ENCODER_LF_LF_A_IOMUX                                    (IOMUX_PINCM29)
+/* Defines for LF_B: GPIOB.13 with pinCMx 30 on package pin 1 */
+#define ENCODER_LF_LF_B_IIDX                                (DL_GPIO_IIDX_DIO13)
+#define ENCODER_LF_LF_B_PIN                                     (DL_GPIO_PIN_13)
+#define ENCODER_LF_LF_B_IOMUX                                    (IOMUX_PINCM30)
 /* Port definition for Pin Group ENCODER_LB */
 #define ENCODER_LB_PORT                                                  (GPIOB)
 
