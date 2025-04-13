@@ -487,7 +487,10 @@ bool PurePursuit_Calculate_Target_Speed(pClass_PurePursuit this)
 
     float curvature = 2 * sin(alpha) / dist;
 
-    float target_speed = 0.4f;
+    // if(curvature > MAX_CURVATURE)
+    //     curvature = MAX_CURVATURE;
+
+    float target_speed = 0.2f;
     this->Target_Speed.linear_velocity = target_speed;
     this->Target_Speed.angular_velocity = target_speed * curvature;
 

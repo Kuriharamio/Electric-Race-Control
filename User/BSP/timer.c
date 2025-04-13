@@ -42,6 +42,7 @@ void PID_INST_IRQHandler(void)
             {
                 car->TIM_PID_Speed_PeriodElapsedCallback(car);
                 car->TIM_PID_Follow_PeriodElapsedCallback(car);
+                // car->Upadate_Controller(car);
             }
         // }
 

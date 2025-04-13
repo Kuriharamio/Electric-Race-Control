@@ -15,22 +15,16 @@ import datapack
 import find_line
 
 #显示像素大小 不改
-#显示像素大小 不改
-#显示像素大小 不改
 DISPLAY_WIDTH = ALIGN_UP(480, 16)
 DISPLAY_HEIGHT = 270
-OUT_RGB888P_WIDTH = ALIGN_UP(800, 16)
-OUT_RGB888P_HEIGH = 480
+OUT_RGB888P_WIDTH = ALIGN_UP(480, 16)
+OUT_RGB888P_HEIGH = 270
 
-#各种阈值 不必要不用改 现在只用了red
-#各种阈值 不必要不用改 现在只用了red
 #各种阈值 不必要不用改 现在只用了red
 red_threshold = [(0, 60, 17, 127, -40, 40)]
 black_threshold = [(0, 30, -30, 10, -50, 50)]
 blue_threshold = [(5, 95, -30, 30, -30, 30)]
 
-#模型位置 不改
-#模型位置 不改
 #模型位置 不改
 root_path="/sdcard/mp_deployment_source/"
 config_path=root_path+"deploy_config.json"
@@ -38,15 +32,10 @@ deploy_conf={}
 debug_mode=1
 
 #模式：负责做判断：寻红线还是目标检测
-#模式：负责做判断：寻红线还是目标检测
-# #模式：负责做判断：寻红线还是目标检测
-
 STATE_REDLINE = 0
 STATE_SIGN = 1
-state_now = 0
+state_now = 1
 
-# 计算图像缩放参数 不改
-# 计算图像缩放参数 不改
 # 计算图像缩放参数 不改
 def two_side_pad_param(input_size,output_size):
     ratio_w = output_size[0] / input_size[0]  # 宽度缩放比例
@@ -63,9 +52,6 @@ def two_side_pad_param(input_size,output_size):
     return top, bottom, left, right,ratio
 
 #读取模型配置文件 不改
-#读取模型配置文件 不改
-#读取模型配置文件 不改
-
 def read_deploy_config(config_path):
     # 打开JSON文件以进行读取deploy_config
     with open(config_path, 'r') as json_file:
@@ -76,41 +62,6 @@ def read_deploy_config(config_path):
             print("JSON 解析错误:", e)
     return config
 
-#已经find_line.py配置过了 废弃
-#已经find_line.py配置过了 废弃
-#已经find_line.py配置过了 废弃
-
-# def initialize_camera_and_display():
-#
-#     # 初始化并配置sensor
-#     sensor = Sensor(id=2, width=480, height=270)
-#     sensor.reset()
-#     # 设置水平镜像垂直镜像
-#     sensor.set_vflip(True)
-#     sensor.set_hmirror(True)
-#     # 通道0直接给到显示VO，格式为RGB565
-#     sensor.set_framesize(width = DISPLAY_WIDTH, height = DISPLAY_HEIGHT)
-#     sensor.set_pixformat(Sensor.RGB565, chn=CAM_CHN_ID_0)
-#     # 通道2给到AI做算法处理，格式为RGB888
-#     sensor.set_framesize(width = OUT_RGB888P_WIDTH , height = OUT_RGB888P_HEIGH, chn=CAM_CHN_ID_2)
-#     sensor.set_pixformat(PIXEL_FORMAT_RGB_888_PLANAR, chn=CAM_CHN_ID_2)
-#
-#
-#     # 设置为LT9611显示，默认1920x1080
-#     Display.init(Display.LT9611, to_ide = True)
-#     #创建OSD图像
-#     osd_img = image.Image(DISPLAY_WIDTH, DISPLAY_HEIGHT, image.ARGB8888)
-#     # media初始化
-#     MediaManager.init()
-#     # 启动sensor
-#     sensor.run()
-#     clock = utime.clock()
-#
-#     return sensor,osd_img,clock
-
-
-#处理目标检测得到的目标 要自己写
-#处理目标检测得到的目标 要自己写
 #处理目标检测得到的目标 要自己写
 def choose_box(det_boxes):
     #只检测到一个 直接返回
@@ -118,7 +69,8 @@ def choose_box(det_boxes):
         return det_boxes[0]
 
     #过滤易出现的值
-    filtered_boxes = [box for box in det_boxes if box[0] != "forward"]
+    # filtered_boxes = [box for box in det_boxes if box[0] != "forward"]
+    filtered_boxes = [box for box in det_boxes] 
 
     if not filtered_boxes:
         # 如果过滤后没有检测框，返回置信度最高的原始检测框
@@ -130,12 +82,8 @@ def choose_box(det_boxes):
 
 
 #主函数运行的函数
-#主函数运行的函数
 # #主函数运行的函数
 def detection():
-    #___________________________________
-    #AI模块初始化 不改
-    #AI模块初始化 不改
     #AI模块初始化 不改
     print("det_infer start")
     # 使用json读取内容初始化部署变量
@@ -174,23 +122,15 @@ def detection():
 
     # 初始化摄像头和显示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #调用外部两个py文件
-    #调用外部两个py文件
-    #调用外部两个py文件
     sensor, osd_img, clock = find_line.initialize_camera_and_display()
     uart = datapack.Uart_Init()
     # 初始化摄像头和显示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # 主循环
-    # 主循环
-    # 主循环
     while  True:
         with ScopedTiming("total",debug_mode > 0):
             # 判断目前的状态，决定执行哪部分代码
-            # 判断目前的状态，决定执行哪部分代码
-            # 判断目前的状态，决定执行哪部分代码
             if state_now == STATE_REDLINE:
-                # 寻红线代码
-                # 寻红线代码
                 # 寻红线代码
                 # 获取图像~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 # 更新当前时间（毫秒）
@@ -217,12 +157,10 @@ def detection():
 
             elif state_now == STATE_SIGN:
                 # 目标检测
-                # 目标检测
-                # 目标检测
                 # 获取图像~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 rgb888p_img = sensor.snapshot(chn=CAM_CHN_ID_2)
 
-                img_raw = sensor.snapshot(chn=CAM_CHN_ID_0).resize(800, 480)
+                img_raw = sensor.snapshot(chn=CAM_CHN_ID_0)
 
 
                 # 获取图像~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -230,8 +168,6 @@ def detection():
 
                 # 处理图像~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-                # 跑模型 不改
-                # 跑模型 不改
                 # 跑模型 不改
                 if rgb888p_img.format() == image.RGBP888:
                     ai2d_input = rgb888p_img.to_numpy_ref()
@@ -255,15 +191,11 @@ def detection():
                     # 绘制结果
                     osd_img.clear()
                     # det_boxes 是目标的框
-                    # det_boxes 是目标的框
-                    # det_boxes 是目标的框
                     if det_boxes:
 
                         #想办法消去易混绕的值 前面定义的函数
                         det_boxe = choose_box(det_boxes)
 
-                        # 画图 不改
-                        # 画图 不改
                         # 画图 不改
                         x1, y1, x2, y2 = det_boxe[2],det_boxe[3],det_boxe[4],det_boxe[5]
                         x=int(x1 * DISPLAY_WIDTH // OUT_RGB888P_WIDTH)
@@ -285,8 +217,6 @@ def detection():
                 # 处理图像~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    # 离开while 不改
-    # 离开while 不改
     # 离开while 不改
     del ai2d_input_tensor
     del ai2d_output_tensor

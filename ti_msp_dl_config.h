@@ -119,7 +119,7 @@ extern "C" {
 #define ENCODER_INST                                                     (TIMG7)
 #define ENCODER_INST_IRQHandler                                 TIMG7_IRQHandler
 #define ENCODER_INST_INT_IRQN                                   (TIMG7_INT_IRQn)
-#define ENCODER_INST_LOAD_VALUE                                           (499U)
+#define ENCODER_INST_LOAD_VALUE                                           (999U)
 /* Defines for PID */
 #define PID_INST                                                         (TIMG6)
 #define PID_INST_IRQHandler                                     TIMG6_IRQHandler

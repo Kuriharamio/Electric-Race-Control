@@ -260,14 +260,14 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 		MOTOR_DRV_RF_IN2_PIN |
 		MOTOR_DRV_RB_IN1_PIN |
 		MOTOR_DRV_RB_IN2_PIN);
-    DL_GPIO_setLowerPinsPolarity(GPIOB, DL_GPIO_PIN_12_EDGE_RISE_FALL |
-		DL_GPIO_PIN_13_EDGE_RISE_FALL |
-		DL_GPIO_PIN_8_EDGE_RISE_FALL |
+    DL_GPIO_setLowerPinsPolarity(GPIOB, DL_GPIO_PIN_12_EDGE_RISE |
+		DL_GPIO_PIN_13_EDGE_RISE |
+		DL_GPIO_PIN_8_EDGE_RISE |
 		DL_GPIO_PIN_9_EDGE_RISE_FALL |
 		DL_GPIO_PIN_11_EDGE_RISE_FALL);
-    DL_GPIO_setUpperPinsPolarity(GPIOB, DL_GPIO_PIN_17_EDGE_RISE_FALL |
-		DL_GPIO_PIN_18_EDGE_RISE_FALL |
-		DL_GPIO_PIN_21_EDGE_RISE_FALL);
+    DL_GPIO_setUpperPinsPolarity(GPIOB, DL_GPIO_PIN_17_EDGE_RISE |
+		DL_GPIO_PIN_18_EDGE_RISE |
+		DL_GPIO_PIN_21_EDGE_RISE);
     DL_GPIO_clearInterruptStatus(GPIOB, ENCODER_LF_LF_A_PIN |
 		ENCODER_LF_LF_B_PIN |
 		ENCODER_LB_LB_A_PIN |
@@ -410,7 +410,7 @@ static const DL_TimerG_ClockConfig gENCODERClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * ENCODER_INST_LOAD_VALUE = (5 ms * 100000 Hz) - 1
+ * ENCODER_INST_LOAD_VALUE = (10 ms * 100000 Hz) - 1
  */
 static const DL_TimerG_TimerConfig gENCODERTimerConfig = {
     .period     = ENCODER_INST_LOAD_VALUE,
