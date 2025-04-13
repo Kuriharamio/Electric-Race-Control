@@ -263,8 +263,8 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
     DL_GPIO_setLowerPinsPolarity(GPIOB, DL_GPIO_PIN_12_EDGE_RISE |
 		DL_GPIO_PIN_13_EDGE_RISE |
 		DL_GPIO_PIN_8_EDGE_RISE |
-		DL_GPIO_PIN_9_EDGE_RISE_FALL |
-		DL_GPIO_PIN_11_EDGE_RISE_FALL);
+		DL_GPIO_PIN_9_EDGE_RISE |
+		DL_GPIO_PIN_11_EDGE_RISE);
     DL_GPIO_setUpperPinsPolarity(GPIOB, DL_GPIO_PIN_17_EDGE_RISE |
 		DL_GPIO_PIN_18_EDGE_RISE |
 		DL_GPIO_PIN_21_EDGE_RISE);
@@ -509,7 +509,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_ADC_BUTTON_init(void) {
 
 static const DL_UART_Main_ClockConfig gUART_0ClockConfig = {
     .clockSel    = DL_UART_MAIN_CLOCK_BUSCLK,
-    .divideRatio = DL_UART_MAIN_CLOCK_DIVIDE_RATIO_6
+    .divideRatio = DL_UART_MAIN_CLOCK_DIVIDE_RATIO_1
 };
 
 static const DL_UART_Main_Config gUART_0Config = {
@@ -529,20 +529,16 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_0_init(void)
     /*
      * Configure baud rate by setting oversampling and baud rate divisors.
      *  Target baud rate: 9600
-     *  Actual baud rate: 9600.96
+     *  Actual baud rate: 9600.24
      */
     DL_UART_Main_setOversampling(UART_0_INST, DL_UART_OVERSAMPLING_RATE_16X);
-    DL_UART_Main_setBaudRateDivisor(UART_0_INST, UART_0_IBRD_5_MHZ_9600_BAUD, UART_0_FBRD_5_MHZ_9600_BAUD);
+    DL_UART_Main_setBaudRateDivisor(UART_0_INST, UART_0_IBRD_32_MHZ_9600_BAUD, UART_0_FBRD_32_MHZ_9600_BAUD);
 
 
     /* Configure Interrupts */
     DL_UART_Main_enableInterrupt(UART_0_INST,
                                  DL_UART_MAIN_INTERRUPT_RX);
 
-    /* Configure FIFOs */
-    DL_UART_Main_enableFIFOs(UART_0_INST);
-    DL_UART_Main_setRXFIFOThreshold(UART_0_INST, DL_UART_RX_FIFO_LEVEL_ONE_ENTRY);
-    DL_UART_Main_setTXFIFOThreshold(UART_0_INST, DL_UART_TX_FIFO_LEVEL_3_4_EMPTY);
 
     DL_UART_Main_enable(UART_0_INST);
 }

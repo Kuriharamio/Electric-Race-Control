@@ -14,7 +14,7 @@ void Handle_IMU_Data_Bag(pClass_UART this)
             if(!first_yaw){
                 first_yaw = (short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * PI;
             }else{
-                this->Modify_Param_With_Id(this, 0, TransAngleInPI((short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * PI - first_yaw));
+                this->Modify_Param_With_Id(this, 0, TransAngleInPI((short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * PI));
             }
         }
     }

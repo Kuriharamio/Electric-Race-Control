@@ -41,9 +41,9 @@ def Get_Line_Error(img):
     #分为9个部分获取统计数据，放在数组中
     sta = [0]*18
     sta_mean_max = 10
-    sta_mean_max_index = 9
+     = 9
     for i in range(18):
-        sta[i] = img.get_statistics(red_threshold, roi=(i*25+15, 120, 25 ,100)).mean()
+        sta[i] = img.get_statistics(red_threshold, rsta_mean_max_indexoi=(i*25+15, 120, 25 ,100)).mean()
     for i in range(18):
         if sta[i] > sta_mean_max:
             sta_mean_max = sta[i]

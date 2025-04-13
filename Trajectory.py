@@ -80,13 +80,13 @@ def plot_trajectory(trajectories, labels, colors):
 def main():
     # Example 1: Smooth Left Turn (90 degrees)
     start_left = (0, 0, 0)  # Facing right (0 radians)
-    end_left = (1, 1, np.pi/2)  # Facing up (90 degrees)
-    trajectory_left = generate_trajectory(start_left, end_left, num_points=100, scale=3.2)
+    end_left = (0.1, 0.1, np.pi/2)  # Facing up (90 degrees)
+    trajectory_left = generate_trajectory(start_left, end_left, num_points=20, scale=0.32)
 
     # Example 2: Smooth Right Turn (90 degrees)
     start_right = (0, 0, 0)  # Facing right (0 radians)
-    end_right = (1, -1, -np.pi/2)  # Facing down (-90 degrees)
-    trajectory_right = generate_trajectory(start_right, end_right, num_points=100, scale=3.2)
+    end_right = (0.1, -0.1, -np.pi/2)  # Facing down (-90 degrees)
+    trajectory_right = generate_trajectory(start_right, end_right, num_points=20, scale=0.32)
 
     # Plot trajectories
     plot_trajectory(

@@ -19,6 +19,7 @@ void PID_INST_IRQHandler(void)
     switch (DL_TimerA_getPendingInterrupt(PID_INST))
     {
     case DL_TIMER_IIDX_ZERO:
+
         // pClass_Motor Motor_LB = Get_Motor_INST(LEFT_BACK);
         if (Get_Motor_INST(LEFT_BACK)->is_inited)
             Get_Motor_INST(LEFT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_BACK));
@@ -35,15 +36,17 @@ void PID_INST_IRQHandler(void)
         if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
             Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
 
+        if (Get_Car_Handle()->is_inited)
+        {
+            Get_Car_Handle()->TIM_PID_Speed_PeriodElapsedCallback(Get_Car_Handle());
+            // Get_Car_Handle()->TIM_PID_Position_PeriodElapsedCallback(Get_Car_Handle());
+            if(Get_Car_Handle()->follow_error)
+                Get_Car_Handle()->TIM_PID_Follow_PeriodElapsedCallback(Get_Car_Handle());
+            // Get_Car_Handle()->Upadate_Controller(Get_Car_Handle());
+        }
         // if(tick == 2)
         // {
-            pClass_Car car = Get_Car_Handle();
-            if (car->is_inited)
-            {
-                car->TIM_PID_Speed_PeriodElapsedCallback(car);
-                car->TIM_PID_Follow_PeriodElapsedCallback(car);
-                // car->Upadate_Controller(car);
-            }
+
         // }
 
         // if(tick == 3)

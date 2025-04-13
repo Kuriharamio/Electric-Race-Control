@@ -78,26 +78,29 @@ void Adc_Get_Current_Value(pClass_ADCButton this)
         return;
     }
 
-    // 累加当前 ADC 样本
-    adc_sum += DL_ADC12_getMemResult(this->ADC_Button_INST, this->ADCMEM_IDX);
-    sample_count++;
+    this->Current_ADC_Value = DL_ADC12_getMemResult(this->ADC_Button_INST, this->ADCMEM_IDX);
     this->ADC_Flag = false;
 
-    // 如果还未采集足够样本，触发下一次转换
-    if (sample_count < ADC_SAMPLE_COUNT)
-    {
-        DL_ADC12_enableConversions(this->ADC_Button_INST);
-        DL_ADC12_startConversion(this->ADC_Button_INST);
+    // // 累加当前 ADC 样本
+    // adc_sum += DL_ADC12_getMemResult(this->ADC_Button_INST, this->ADCMEM_IDX);
+    // sample_count++;
+    // this->ADC_Flag = false;
 
-        return;
-    }
+    // // 如果还未采集足够样本，触发下一次转换
+    // if (sample_count < ADC_SAMPLE_COUNT)
+    // {
+    //     DL_ADC12_enableConversions(this->ADC_Button_INST);
+    //     DL_ADC12_startConversion(this->ADC_Button_INST);
 
-    // 采集完成，计算平均值
-    this->Current_ADC_Value = adc_sum / ADC_SAMPLE_COUNT;
+    //     return;
+    // }
 
-    // 重置状态，为下一次调用准备
-    adc_sum = 0;
-    sample_count = 0;
+    // // 采集完成，计算平均值
+    // this->Current_ADC_Value = adc_sum / ADC_SAMPLE_COUNT;
+
+    // // 重置状态，为下一次调用准备
+    // adc_sum = 0;
+    // sample_count = 0;
 
 }
 

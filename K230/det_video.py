@@ -69,8 +69,9 @@ def choose_box(det_boxes):
         return det_boxes[0]
 
     #过滤易出现的值
-    # filtered_boxes = [box for box in det_boxes if box[0] != "forward"]
-    filtered_boxes = [box for box in det_boxes] 
+    filtered_boxes = [box for box in det_boxes if box[0] != 0]
+    for box in det_boxes:
+        print(box[0])
 
     if not filtered_boxes:
         # 如果过滤后没有检测框，返回置信度最高的原始检测框
@@ -128,7 +129,8 @@ def detection():
 
     # 主循环
     while  True:
-        with ScopedTiming("total",debug_mode > 0):
+        state_now = uart.read(1)
+        with ScopedTiming("total", debug_mode > 0):
             # 判断目前的状态，决定执行哪部分代码
             if state_now == STATE_REDLINE:
                 # 寻红线代码
@@ -137,16 +139,16 @@ def detection():
                 clock.tick()
                 # 捕获通道0的图像
                 img_raw = sensor.snapshot(chn=CAM_CHN_ID_0)
-                img_find_redline = img_raw.copy()
+                #img_find_redline = img_raw.copy()
                 # 获取图像~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 # 处理图像~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 # 寻找红色色块并显示
-                img_raw.binary(red_threshold, invert=False)
-                Display.show_image(img_raw, 600, 600, layer = Display.LAYER_OSD0)
+                #img_raw.binary(red_threshold, invert=False)
+                #Display.show_image(img_raw, 600, 600, layer = Display.LAYER_OSD0)
                 # 用红色拟合直线并显示，得到误差数据
-                error = find_line.Get_Line_Error(img_find_redline)#find_line.py里
-                Display.show_image(img_find_redline, 600, 0, layer = Display.LAYER_OSD1)
+                error = find_line.Get_Line_Error(img_raw)#find_line.py里
+                #Display.show_image(img_find_redline, 600, 0, layer = Display.LAYER_OSD1)
                 # 处理图像~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 # --------发送数据接收数据--------

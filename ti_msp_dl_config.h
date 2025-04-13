@@ -146,8 +146,8 @@ extern "C" {
 #define GPIO_UART_0_IOMUX_RX_FUNC                       IOMUX_PINCM2_PF_UART0_RX
 #define GPIO_UART_0_IOMUX_TX_FUNC                       IOMUX_PINCM1_PF_UART0_TX
 #define UART_0_BAUD_RATE                                                  (9600)
-#define UART_0_IBRD_5_MHZ_9600_BAUD                                         (34)
-#define UART_0_FBRD_5_MHZ_9600_BAUD                                         (46)
+#define UART_0_IBRD_32_MHZ_9600_BAUD                                       (208)
+#define UART_0_FBRD_32_MHZ_9600_BAUD                                        (21)
 /* Defines for UART_1 */
 #define UART_1_INST                                                        UART1
 #define UART_1_INST_IRQHandler                                  UART1_IRQHandler
