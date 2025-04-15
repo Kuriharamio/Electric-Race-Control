@@ -73,7 +73,7 @@ extern "C" {
 
 
 
-#define CPUCLK_FREQ                                                     32000000
+#define CPUCLK_FREQ                                                     80000000
 
 
 
@@ -81,7 +81,7 @@ extern "C" {
 #define PWM_MOTOR_L_INST                                                   TIMA0
 #define PWM_MOTOR_L_INST_IRQHandler                             TIMA0_IRQHandler
 #define PWM_MOTOR_L_INST_INT_IRQN                               (TIMA0_INT_IRQn)
-#define PWM_MOTOR_L_INST_CLK_FREQ                                       16000000
+#define PWM_MOTOR_L_INST_CLK_FREQ                                       40000000
 /* GPIO defines for channel 0 */
 #define GPIO_PWM_MOTOR_L_C0_PORT                                           GPIOA
 #define GPIO_PWM_MOTOR_L_C0_PIN                                    DL_GPIO_PIN_8
@@ -99,7 +99,7 @@ extern "C" {
 #define PWM_MOTOR_R_INST                                                   TIMA1
 #define PWM_MOTOR_R_INST_IRQHandler                             TIMA1_IRQHandler
 #define PWM_MOTOR_R_INST_INT_IRQN                               (TIMA1_INT_IRQn)
-#define PWM_MOTOR_R_INST_CLK_FREQ                                       16000000
+#define PWM_MOTOR_R_INST_CLK_FREQ                                       40000000
 /* GPIO defines for channel 0 */
 #define GPIO_PWM_MOTOR_R_C0_PORT                                           GPIOB
 #define GPIO_PWM_MOTOR_R_C0_PIN                                    DL_GPIO_PIN_2
@@ -119,17 +119,17 @@ extern "C" {
 #define ENCODER_INST                                                     (TIMG7)
 #define ENCODER_INST_IRQHandler                                 TIMG7_IRQHandler
 #define ENCODER_INST_INT_IRQN                                   (TIMG7_INT_IRQn)
-#define ENCODER_INST_LOAD_VALUE                                           (999U)
+#define ENCODER_INST_LOAD_VALUE                                          (2499U)
 /* Defines for PID */
 #define PID_INST                                                         (TIMG6)
 #define PID_INST_IRQHandler                                     TIMG6_IRQHandler
 #define PID_INST_INT_IRQN                                       (TIMG6_INT_IRQn)
-#define PID_INST_LOAD_VALUE                                               (999U)
+#define PID_INST_LOAD_VALUE                                              (2499U)
 /* Defines for ADC_BUTTON */
 #define ADC_BUTTON_INST                                                  (TIMG0)
 #define ADC_BUTTON_INST_IRQHandler                              TIMG0_IRQHandler
 #define ADC_BUTTON_INST_INT_IRQN                                (TIMG0_INT_IRQn)
-#define ADC_BUTTON_INST_LOAD_VALUE                                      (49999U)
+#define ADC_BUTTON_INST_LOAD_VALUE                                      (62499U)
 
 
 
@@ -146,8 +146,8 @@ extern "C" {
 #define GPIO_UART_0_IOMUX_RX_FUNC                       IOMUX_PINCM2_PF_UART0_RX
 #define GPIO_UART_0_IOMUX_TX_FUNC                       IOMUX_PINCM1_PF_UART0_TX
 #define UART_0_BAUD_RATE                                                  (9600)
-#define UART_0_IBRD_32_MHZ_9600_BAUD                                       (208)
-#define UART_0_FBRD_32_MHZ_9600_BAUD                                        (21)
+#define UART_0_IBRD_40_MHZ_9600_BAUD                                       (260)
+#define UART_0_FBRD_40_MHZ_9600_BAUD                                        (27)
 /* Defines for UART_1 */
 #define UART_1_INST                                                        UART1
 #define UART_1_INST_IRQHandler                                  UART1_IRQHandler
@@ -161,8 +161,8 @@ extern "C" {
 #define GPIO_UART_1_IOMUX_RX_FUNC                      IOMUX_PINCM20_PF_UART1_RX
 #define GPIO_UART_1_IOMUX_TX_FUNC                      IOMUX_PINCM39_PF_UART1_TX
 #define UART_1_BAUD_RATE                                                  (9600)
-#define UART_1_IBRD_32_MHZ_9600_BAUD                                       (208)
-#define UART_1_FBRD_32_MHZ_9600_BAUD                                        (21)
+#define UART_1_IBRD_40_MHZ_9600_BAUD                                       (260)
+#define UART_1_FBRD_40_MHZ_9600_BAUD                                        (27)
 /* Defines for UART_2 */
 #define UART_2_INST                                                        UART3
 #define UART_2_INST_IRQHandler                                  UART3_IRQHandler
@@ -172,8 +172,8 @@ extern "C" {
 #define GPIO_UART_2_IOMUX_RX                                     (IOMUX_PINCM16)
 #define GPIO_UART_2_IOMUX_RX_FUNC                      IOMUX_PINCM16_PF_UART3_RX
 #define UART_2_BAUD_RATE                                                  (9600)
-#define UART_2_IBRD_32_MHZ_9600_BAUD                                       (208)
-#define UART_2_FBRD_32_MHZ_9600_BAUD                                        (21)
+#define UART_2_IBRD_80_MHZ_9600_BAUD                                       (520)
+#define UART_2_FBRD_80_MHZ_9600_BAUD                                        (53)
 
 
 

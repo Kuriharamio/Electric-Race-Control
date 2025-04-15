@@ -39,8 +39,7 @@ void PID_INST_IRQHandler(void)
         if (Get_Car_Handle()->is_inited)
         {
             Get_Car_Handle()->TIM_PID_Speed_PeriodElapsedCallback(Get_Car_Handle());
-            // Get_Car_Handle()->TIM_PID_Position_PeriodElapsedCallback(Get_Car_Handle());
-            if(Get_Car_Handle()->follow_error)
+            if (Get_Car_Handle()->follow_error)
                 Get_Car_Handle()->TIM_PID_Follow_PeriodElapsedCallback(Get_Car_Handle());
             // Get_Car_Handle()->Upadate_Controller(Get_Car_Handle());
         }

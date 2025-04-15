@@ -33,6 +33,8 @@ typedef struct Class_Car
     SPEED Now_Speed;    // 实际速度
 
     float follow_error;
+    float imu_yaw;
+    float Target_imu_yaw;
 
     bool is_inited; // 是否初始化完成
 

@@ -53,20 +53,20 @@ int main(void)
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 8, &(Car->Target_Position.yaw));
 
   // 按键配置
-  pClass_ADCButton Adc_Button = Create_AdcButton();                                   // 创建按键对象
-  Adc_Button->Init(Adc_Button, adckey_INST, adckey_INST_INT_IRQN, adckey_ADCMEM_key); // 初始化按键对象
-  Adc_Button->Configure_Callback(Adc_Button, BUTTON_1, Change_Mode_0);                // 配置按键1的回调函数
-  Adc_Button->Configure_Callback(Adc_Button, BUTTON_2, Change_Mode_1);                // 配置按键2的回调函数
+  // pClass_ADCButton Adc_Button = Create_AdcButton();                                   // 创建按键对象
+  // Adc_Button->Init(Adc_Button, adckey_INST, adckey_INST_INT_IRQN, adckey_ADCMEM_key); // 初始化按键对象
+  // Adc_Button->Configure_Callback(Adc_Button, BUTTON_1, Change_Mode_0);                // 配置按键1的回调函数
+  // Adc_Button->Configure_Callback(Adc_Button, BUTTON_2, Change_Mode_1);                // 配置按键2的回调函数
   // Adc_Button->Configure_Callback(Adc_Button, BUTTON_3, Test_Button_Event);            // 配置按键3的回调函数
   // Adc_Button->Configure_Callback(Adc_Button, BUTTON_4, Test_Button_Event);            // 配置按键4的回调函数
   // Adc_Button->Configure_Callback(Adc_Button, BUTTON_5, Test_Button_Event);            // 配置按键5的回调函数
 
   // IMU配置
-  pClass_UART IMU_Communicator = Create_UART(2);                             // 获取IMU串口对象实例
-  IMU_Communicator->Init(IMU_Communicator, IMU_RX_LEN_MAX, 1);               // 初始化IMU串口对象
-  IMU_Communicator->Configure_Mode(IMU_Communicator, DEBUG_WAVE);
-  IMU_Communicator->Configure_Callback(IMU_Communicator, IMU_Rx_Callback); // 配置IMU回调函数
-  IMU_Communicator->Bind_Param_With_Id(IMU_Communicator, 0, &(Car->Now_Position.yaw)); // 绑定参数0
+  // pClass_UART IMU_Communicator = Create_UART(2);                             // 获取IMU串口对象实例
+  // IMU_Communicator->Init(IMU_Communicator, IMU_RX_LEN_MAX, 1);               // 初始化IMU串口对象
+  // IMU_Communicator->Configure_Mode(IMU_Communicator, DEBUG_WAVE);
+  // IMU_Communicator->Configure_Callback(IMU_Communicator, IMU_Rx_Callback); // 配置IMU回调函数
+  // IMU_Communicator->Bind_Param_With_Id(IMU_Communicator, 0, &(Car->imu_yaw)); // 绑定参数0
 
   // K230串口通信配置
   pClass_UART K230_Communicator = Create_UART(K230_UART_INDEX);   // 获取K230串口对象实例
@@ -78,8 +78,6 @@ int main(void)
   K230_Communicator->Bind_Param_With_Id(K230_Communicator, 0, &(Car->follow_error));            // 绑定参数0
   // K230_Communicator->Bind_Param_With_Id(K230_Communicator, 1, &y);            // 绑定参数1
   // K230_Communicator->Bind_Param_With_Id(K230_Communicator, 2, &z);            // 绑定参数2
-
-
 
   // delay_ms(3000);
   // BUZZ(BEEP);
