@@ -1,16 +1,15 @@
 #include "Base_Modules/adc_button.h"
 
+// <<<<<<<<<   实例声明     <<<<<<<<<<<
 static Class_ADCButton _ADC_Button = {0};
-
-#define ADC_SAMPLE_COUNT 3 // 采样次数，用于消抖
+// >>>>>>>>>   实例声明     >>>>>>>>>>>
 
 static const AdcButtonThreshold Button_map[5] = {
     {4000, 5000, BUTTON_1},
     {3000, 3500, BUTTON_2},
     {2200, 2600, BUTTON_3},
     {1200, 1700, BUTTON_4},
-    {500, 1000, BUTTON_5}
-};
+    {500, 1000, BUTTON_5}};
 
 /**
  *@brief 创建adc按键实例
@@ -68,8 +67,8 @@ void Adc_Get_Current_Value(pClass_ADCButton this)
 {
     static uint32_t adc_sum = 0;
     static uint8_t sample_count = 0;
-	
-	DL_ADC12_enableConversions(this->ADC_Button_INST);
+
+    DL_ADC12_enableConversions(this->ADC_Button_INST);
     DL_ADC12_startConversion(this->ADC_Button_INST);
 
     // 如果 ADC 转换未完成，直接返回
@@ -80,28 +79,6 @@ void Adc_Get_Current_Value(pClass_ADCButton this)
 
     this->Current_ADC_Value = DL_ADC12_getMemResult(this->ADC_Button_INST, this->ADCMEM_IDX);
     this->ADC_Flag = false;
-
-    // // 累加当前 ADC 样本
-    // adc_sum += DL_ADC12_getMemResult(this->ADC_Button_INST, this->ADCMEM_IDX);
-    // sample_count++;
-    // this->ADC_Flag = false;
-
-    // // 如果还未采集足够样本，触发下一次转换
-    // if (sample_count < ADC_SAMPLE_COUNT)
-    // {
-    //     DL_ADC12_enableConversions(this->ADC_Button_INST);
-    //     DL_ADC12_startConversion(this->ADC_Button_INST);
-
-    //     return;
-    // }
-
-    // // 采集完成，计算平均值
-    // this->Current_ADC_Value = adc_sum / ADC_SAMPLE_COUNT;
-
-    // // 重置状态，为下一次调用准备
-    // adc_sum = 0;
-    // sample_count = 0;
-
 }
 
 /**

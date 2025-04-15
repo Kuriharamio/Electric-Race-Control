@@ -7,7 +7,8 @@
 #define FRAME_HEADER_2 0x5A
 
 // 接收数据状态机，用于判断当前数据接收到哪一步
-typedef enum {
+typedef enum
+{
     STATE_WAIT_HEADER_1,
     STATE_WAIT_HEADER_2,
     STATE_WAIT_LENGTH,

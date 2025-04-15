@@ -92,4 +92,4 @@ void Motor_TIM_PID_PeriodElapsedCallback(pClass_Motor this);
 void Motor_Control(pClass_Motor this);
 void Motor_Output(pClass_Motor this);
 
-#endif  // __MOTOR_H__
+#endif // __MOTOR_H__

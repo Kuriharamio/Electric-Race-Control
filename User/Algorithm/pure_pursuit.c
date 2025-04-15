@@ -1,5 +1,9 @@
 #include "Algorithm/pure_pursuit.h"
+
+// <<<<<<<< 实例声明 <<<<<<<<
 static Class_PurePursuit _PURE_PURSUIT = {};
+// >>>>>>>> 实例声明 >>>>>>>>
+
 // Smooth Left Turn Trajectory Points
 static const float trajectory_left[POINTS_NUM][2] = {
     {0.000, 0.000},
@@ -285,6 +289,7 @@ bool PurePursuit_Calculate_Target_Speed(pClass_PurePursuit this)
         this->Now_Position.yaw = 0.0f;
         this->Target_Speed.linear_velocity = 0.0f;
         this->Target_Speed.angular_velocity = 0.0f;
+        this->Control_Dir = STOP;
         return false;
     }
 

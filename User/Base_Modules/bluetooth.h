@@ -5,5 +5,4 @@
 #include "BSP/board.h"
 void Bluetooth_Rx_Callback(pClass_UART this);
 
-
 #endif // __BLUETOOTH_H__

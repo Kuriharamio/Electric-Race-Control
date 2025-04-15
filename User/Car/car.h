@@ -42,10 +42,13 @@ typedef struct Class_Car
     void (*Kinematic_Forward)(struct Class_Car *this);
     void (*Kinematic_Inverse)(struct Class_Car *this);
     void (*Update_Odom)(struct Class_Car *this);
+
     void (*Upadate_Controller)(struct Class_Car *this);
-    void (*TIM_PID_Follow_PeriodElapsedCallback)(struct Class_Car *this);
-    void (*TIM_PID_Position_PeriodElapsedCallback)(struct Class_Car *this);
-    void (*TIM_PID_Speed_PeriodElapsedCallback)(struct Class_Car *this);
+
+    void (*Update_Follow_PID)(struct Class_Car *this);
+    void (*Update_Straight_Position_PID)(struct Class_Car *this);
+    void (*Update_Angle_Position_PID)(struct Class_Car *this);
+    void (*Update_Speed_PID)(struct Class_Car *this);
 
 } Class_Car, *pClass_Car;
 
@@ -57,9 +60,10 @@ void Car_Kinematic_Forward(pClass_Car this);
 void Car_Kinematic_Inverse(pClass_Car this);
 void Car_Update_Odom(pClass_Car this);
 
-void Car_TIM_PID_Follow_PeriodElapsedCallback(pClass_Car this);
-void Car_TIM_PID_Position_PeriodElapsedCallback(pClass_Car this);
-void Car_TIM_PID_Speed_PeriodElapsedCallback(pClass_Car this);
+void Car_Update_Follow_PID(pClass_Car this);
+void Car_Update_Straight_Position_PID(pClass_Car this);
+void Car_Update_Angle_Position_PID(pClass_Car this);
+void Car_Update_Speed_PID(pClass_Car this);
 void Car_Upadate_Controller(pClass_Car this);
 
 #endif // __CAR_H__

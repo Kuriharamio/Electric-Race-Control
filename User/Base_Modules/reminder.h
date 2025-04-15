@@ -4,12 +4,13 @@
 #include "ti_msp_dl_config.h"
 #include "BSP/delay.h"
 
-typedef enum{
+typedef enum
+{
     ON,
     OFF,
     TOGGLE,
     BEEP,
-}REMINDER_STATE;
+} REMINDER_STATE;
 
 void LED(REMINDER_STATE state);
 void BUZZ(REMINDER_STATE state);

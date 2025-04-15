@@ -4,9 +4,9 @@
  * @brief 电机类实现文件
  * @version 0.1
  * @date 2025-04-11
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 #include "Base_Modules/motor.h"
 
@@ -222,9 +222,6 @@ void Motor_Output(pClass_Motor this)
     if (this->Output_Now < -this->Output_Max)
         this->Output_Now = -this->Output_Max;
 
-
-
-    
     if (this->Output_Now < -0.1)
     {
         this->Direction = BACKWARD;
@@ -333,6 +330,3 @@ void Motor_TIM_PID_PeriodElapsedCallback(pClass_Motor this)
 
     this->Output(this);
 }
-
-
-

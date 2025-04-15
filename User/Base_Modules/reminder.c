@@ -2,23 +2,24 @@
 
 /**
  * @brief 控制LED灯的状态
- * 
- * @param state 
+ *
+ * @param state
  */
 void LED(REMINDER_STATE state)
 {
-    switch (state) {
-        case ON:
-            DL_GPIO_setPins(REMINDER_PORT, REMINDER_LED_PIN);
-            break;
-        case OFF:
-            DL_GPIO_clearPins(REMINDER_PORT, REMINDER_LED_PIN);
-            break;
-        case TOGGLE:
-            DL_GPIO_togglePins(REMINDER_PORT, REMINDER_LED_PIN);
-            break;
-        default:
-            break;
+    switch (state)
+    {
+    case ON:
+        DL_GPIO_setPins(REMINDER_PORT, REMINDER_LED_PIN);
+        break;
+    case OFF:
+        DL_GPIO_clearPins(REMINDER_PORT, REMINDER_LED_PIN);
+        break;
+    case TOGGLE:
+        DL_GPIO_togglePins(REMINDER_PORT, REMINDER_LED_PIN);
+        break;
+    default:
+        break;
     }
 }
 
