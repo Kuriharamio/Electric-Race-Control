@@ -16,7 +16,7 @@ typedef struct Class_Servo
      * @param this 舵机结构体指针
      * @param angle 初始角度
      */
-    void (*Init)(struct Class_Servo *this, float angle);
+    void (*Init)(struct Class_Servo *this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uint32_t ARR, float angle_max);
 
     /**
      * @brief 将角度转换为CCR
