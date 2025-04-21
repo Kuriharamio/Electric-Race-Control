@@ -4,36 +4,55 @@
 #include "ti_msp_dl_config.h"
 #include <stdlib.h>
 
-// 定时器配置
+//! 定时器配置
+//* PID 配置
+#define USE_TIMER_0
 #define PID_MOTOR_TIMER_T 0.01f
 #define PID_CAR_SPEED_TIMER_T (1 * PID_MOTOR_TIMER_T)
 #define PID_CAR_POSITION_TIMER_T (1 * PID_MOTOR_TIMER_T)
+
+#define USE_TIMER_1
 #define ENCODER_TIMER_T 0.01f
 
-// 小车参数
-#define WHEEL_TRACK (0.12855f / 2.0f) // 轮距
-#define WHEEL_BASE (0.1117f / 2.0f) // 轴距
-#define WHEEL_RADIUS 0.024f // 轮子半径
-#define WHEEL_Gearbox_Rate 20.0f // 减速比
-#define WHEEL_Per_Pulse 13.0f // 每转脉冲数
 
-#define FOLLOW_SPEED 0.15f
-#define MAX_LINEAR_SPEED 0.5f
-#define MAX_ANGULAR_SPEED (FOLLOW_SPEED / (WHEEL_BASE + WHEEL_TRACK) * 1.0f)
-// #define MAX_ANGULAR_SPEED 2.5f
-
-// 蓝牙配置
+//! 串口配置
+//* 蓝牙配置
+#define USE_UART_0
+#define USE_BLUETOOTH
 #define BLUETOOTH_UART_INDEX 0 // 蓝牙串口索引号
 #define BLUETOOTH_RX_LEN_MAX 20 // 蓝牙接收数据最大长度
 
-// K230 串口配置
+//* K230 串口配置
+#define USE_UART_1
 #define K230_UART_INDEX 1 // K230串口索引号
 #define K230_RX_LEN_MAX 20 // K230接收数据最大长度
 
-// IMU 配置
+//* IMU 配置
+#define USE_UART_2
+#define IMU_UART_INDEX 2
 #define IMU_RX_LEN_MAX 11 // IMU接收数据最大长度
 
-// PurePursuit 配置
+//! 其他配置
+//* 小车配置
+#define WHEEL_TRACK (0.12855f / 2.0f) // 轮距
+#define WHEEL_BASE (0.1117f / 2.0f)   // 轴距
+#define WHEEL_RADIUS 0.024f           // 轮子半径
+#define WHEEL_Gearbox_Rate 20.0f      // 减速比
+#define WHEEL_Per_Pulse 13.0f         // 每转脉冲数
+#define WHEEL_Ferq_Rate 4
+
+#define FOLLOW_SPEED 0.15f
+#define MAX_LINEAR_SPEED 0.2f
+#define MAX_ANGULAR_SPEED 2.0f
+
+//* 提示配置
+#define USE_BUZZER
+#define USE_LED
+
+//* 按键配置
+// #define USE_ADC_BUTTON
+
+//* PurePursuit 配置
 #define POINTS_NUM 20
 #define MAX_LOOKAHEAD_DISTANCE 1.5f    // 最大前视距离
 #define MIN_LOOKAHEAD_DISTANCE 0.01f    // 最小前视距离
@@ -42,5 +61,6 @@
 #define LOOKAHEAD_DISTANCE_FACTOR 0.5f // 前视距离与速度的比例因子
 #define K_STANLEY_HEADING 1.0f         // Stanley方法中航向误差权重
 #define K_STANLEY_CROSSTRACK 1.0f      // Stanley方法中横向误差权重
+
 
 #endif // __CONFIG_H__

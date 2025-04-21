@@ -17,7 +17,7 @@ void LED(REMINDER_STATE state);
 #endif
 
 #ifdef USE_BUZZER
-void BUZZ(REMINDER_STATE state);
+void BUZZER(REMINDER_STATE state);
 #endif
 
 #endif // __LED_H__

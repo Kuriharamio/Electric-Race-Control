@@ -26,6 +26,8 @@ typedef struct Class_Car
     // 里程计
     POSITION Target_Position; // 目标位置
     POSITION Now_Position;    // 里程计位置
+    float imu_yaw;
+    float Target_imu_yaw;
 
     // 速度
     SPEED Target_Speed; // 目标速度
@@ -33,8 +35,7 @@ typedef struct Class_Car
     SPEED Now_Speed;    // 实际速度
 
     float follow_error;
-    float imu_yaw;
-    float Target_imu_yaw;
+
 
     bool is_inited; // 是否初始化完成
 

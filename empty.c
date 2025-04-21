@@ -30,27 +30,23 @@ int main(void)
 {
   board_init();
 
-  float x = 1.0f;
-  float y = 0.1f;
-  float	z = 0.0f;
-	
   pClass_Car Car = Create_Car(); // 创建小车对象
   Car->Init(Car);                // 初始化小车对象
 
   // 蓝牙配置
-  pClass_UART Bluetooth_Debuger = Create_UART(0);                                                 // 获取蓝牙对象实例
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 9);                            // 初始化蓝牙对象
+  pClass_UART Bluetooth_Debuger = Create_UART(BLUETOOTH_UART_INDEX);                                                 // 获取蓝牙对象实例
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 1);                            // 初始化蓝牙对象
   Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE);                               // 配置调试模式
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback);                // 配置回调函数
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->Now_Speed.linear_velocity)); // 绑定参数1
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->Target_Speed.linear_velocity));
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Car->Now_Speed.angular_velocity));
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(Car->Target_Speed.angular_velocity));
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 4, &(Car->follow_error)); 
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 5, &(Car->Now_Position.x));
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 6, &(Car->Now_Position.y));
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 7, &(Car->Now_Position.yaw));
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 8, &(Car->Target_Position.yaw));
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->imu_yaw)); // 绑定参数1
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->Target_Speed.linear_velocity));
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Car->Now_Speed.angular_velocity));
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(Car->Target_Speed.angular_velocity));
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 4, &(Car->follow_error)); 
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 5, &(Car->Now_Position.x));
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 6, &(Car->Now_Position.y));
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 7, &(Car->Now_Position.yaw));
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 8, &(Car->Target_Position.yaw));
 
   // 按键配置
   // pClass_ADCButton Adc_Button = Create_AdcButton();                                   // 创建按键对象
@@ -62,58 +58,27 @@ int main(void)
   // Adc_Button->Configure_Callback(Adc_Button, BUTTON_5, Test_Button_Event);            // 配置按键5的回调函数
 
   // IMU配置
-  // pClass_UART IMU_Communicator = Create_UART(2);                             // 获取IMU串口对象实例
-  // IMU_Communicator->Init(IMU_Communicator, IMU_RX_LEN_MAX, 1);               // 初始化IMU串口对象
-  // IMU_Communicator->Configure_Mode(IMU_Communicator, DEBUG_WAVE);
-  // IMU_Communicator->Configure_Callback(IMU_Communicator, IMU_Rx_Callback); // 配置IMU回调函数
-  // IMU_Communicator->Bind_Param_With_Id(IMU_Communicator, 0, &(Car->imu_yaw)); // 绑定参数0
+  pClass_UART IMU_Communicator = Create_UART(IMU_UART_INDEX);                             // 获取IMU串口对象实例
+  IMU_Communicator->Init(IMU_Communicator, IMU_RX_LEN_MAX, 1);               // 初始化IMU串口对象
+  IMU_Communicator->Configure_Mode(IMU_Communicator, DEBUG_WAVE);
+  IMU_Communicator->Configure_Callback(IMU_Communicator, IMU_Rx_Callback); // 配置IMU回调函数
+  IMU_Communicator->Bind_Param_With_Id(IMU_Communicator, 0, &(Car->imu_yaw)); // 绑定参数0
 
   // K230串口通信配置
   pClass_UART K230_Communicator = Create_UART(K230_UART_INDEX);   // 获取K230串口对象实例
   K230_Communicator->Init(K230_Communicator, K230_RX_LEN_MAX, 1); // 初始化K230串口对象
   K230_Communicator->Configure_Mode(K230_Communicator, DEBUG_WAVE);   // 配置调试模式
-  // K230_Communicator->Configure_Param_Len(K230_Communicator, 1);
   K230_Communicator->Configure_Callback(K230_Communicator, K230_Rx_Callback); // 配置回调函数
-  // K230_Communicator->Configure_Custom_Send_Datas(K230_Communicator, K230_Transmit);
   K230_Communicator->Bind_Param_With_Id(K230_Communicator, 0, &(Car->follow_error));            // 绑定参数0
-  // K230_Communicator->Bind_Param_With_Id(K230_Communicator, 1, &y);            // 绑定参数1
-  // K230_Communicator->Bind_Param_With_Id(K230_Communicator, 2, &z);            // 绑定参数2
+
 
   // delay_ms(3000);
-  // BUZZ(BEEP);
-  // Car->Motor_LB->Target_Speed = 0.3;
-
-  // Car->Target_Speed.linear_velocity = 0.1f;
-  // Car->Target_Speed.angular_velocity = 2.0f;
-  
-  // Car->PurePursuit->Set_Mode(Car->PurePursuit, TURN_LEFT);
-  // Car->Target_Position.x = 0.1f;
+  // BUZZER(BEEP);
 
 
   while (1)
   {
     Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
-    // static int tick = 0;
-    // tick++;
-    // if(tick == 200){
-    //   Car->Target_Position.yaw = Car->Now_Position.yaw + PI / 2;
-    // }
-    // if(tick < 50){
-    //   K230_Communicator->Send_Bit(K230_Communicator, 0);
-    // }else if(tick < 100){
-    //   K230_Communicator->Send_Bit(K230_Communicator, 1);
-    // }  
-    // if(tick >= 100){
-    //   tick = 0;
-    // }
-    // Bluetooth_Debuger->Send_Datas(Bluetooth_Debuger, (uint8_t *)(Car->follow_error), sizeof(float));
-
-    // Car->Target_Speed.angular_velocity = 3.0f;
-    // {
-    //   static int tick = 0;
-    //   tick++;
-    //   Car->Motor_LB->Target_Speed = 0.3 * sin(5 * 0.01f * tick);
-    // }
 
     delay_ms(10);
   }

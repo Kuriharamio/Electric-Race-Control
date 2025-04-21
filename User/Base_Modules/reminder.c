@@ -25,13 +25,13 @@ void LED(REMINDER_STATE state)
 }
 #endif
 
-#ifdef USE_BUZZ
+#ifdef USE_BUZZER
 /**
  * @brief 控制BUZZ的状态
  *
  * @param state
  */
-void BUZZ(REMINDER_STATE state)
+void BUZZER(REMINDER_STATE state)
 {
     switch (state)
     {

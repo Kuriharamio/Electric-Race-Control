@@ -95,6 +95,7 @@ void ENCODER_INST_IRQHandler(void)
     }
 }
 
+#ifdef USE_ADC_BUTTON
 // ADC按钮读取数据定时器中断处理函数
 void ADC_BUTTON_INST_IRQHandler(void)
 {
@@ -112,3 +113,4 @@ void ADC_BUTTON_INST_IRQHandler(void)
         break;
     }
 }
+#endif
