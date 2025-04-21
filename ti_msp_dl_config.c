@@ -34,7 +34,7 @@
  *  ============ ti_msp_dl_config.c =============
  *  Configured MSPM0 DriverLib module definitions
  *
- *  DO NOT EDIT - This file is generated for the LP_MSPM0G3507
+ *  DO NOT EDIT - This file is generated for the MSPM0G350X
  *  by the SysConfig tool.
  */
 

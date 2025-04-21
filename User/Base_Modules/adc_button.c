@@ -1,5 +1,6 @@
 #include "Base_Modules/adc_button.h"
 
+#ifdef USE_ADC_BUTTON
 // <<<<<<<<<   实例声明     <<<<<<<<<<<
 static Class_ADCButton _ADC_Button = {0};
 // >>>>>>>>>   实例声明     >>>>>>>>>>>
@@ -152,3 +153,4 @@ void adckey_INST_IRQHandler(void)
         break;
     }
 }
+#endif

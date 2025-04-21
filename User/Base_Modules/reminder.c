@@ -1,5 +1,6 @@
 #include "Base_Modules/reminder.h"
 
+#ifdef USE_LED
 /**
  * @brief 控制LED灯的状态
  *
@@ -22,7 +23,9 @@ void LED(REMINDER_STATE state)
         break;
     }
 }
+#endif
 
+#ifdef USE_BUZZ
 /**
  * @brief 控制BUZZ的状态
  *
@@ -49,3 +52,4 @@ void BUZZ(REMINDER_STATE state)
         break;
     }
 }
+#endif

@@ -1,4 +1,6 @@
 #include "Base_Modules/bluetooth.h"
+
+#ifdef USE_BLUETOOTH
 /**
  * @brief 蓝牙接收回调
  *
@@ -33,3 +35,4 @@ void Bluetooth_Rx_Callback(pClass_UART this)
         }
     }
 }
+#endif

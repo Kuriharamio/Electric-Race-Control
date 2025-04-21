@@ -1,9 +1,7 @@
 #ifndef __ADC_BUTTON_H
 #define __ADC_BUTTON_H
 
-#include "ti_msp_dl_config.h"
-#include "BSP/delay.h"
-#include <stdlib.h>
+#include "config.h"
 
 #define Adc_Sample_Count 5
 #define ADC_CONV_TIMEOUT 1000

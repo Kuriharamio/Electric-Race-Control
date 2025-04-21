@@ -11,9 +11,15 @@
 
 #include "BSP/uart.h"
 
+#ifdef USE_UART_0
 static Class_UART _UART_0_INST = {0}; // 串口0实例
-static Class_UART _UART_2_INST = {0}; // 串口2实例
-static Class_UART _UART_1_INST = {0}; // 串口1实例
+#endif
+#ifdef USE_UART_1
+static Class_UART _UART_1_INST = {0}; // 串口2实例
+#endif
+#ifdef USE_UART_2
+static Class_UART _UART_2_INST = {0}; // 串口1实例
+#endif
 
 static uint8_t WAVE_TAIL[4] = {0x00, 0x00, 0x80, 0x7f}; // WAVE数据尾(JustFloat)
 /**
@@ -26,15 +32,21 @@ pClass_UART Get_UART_INST(uint8_t index)
 {
 	switch (index)
 	{
+#ifdef USE_UART_0
 	case 0:
 		return &_UART_0_INST;
 		break;
+#endif
+#ifdef USE_UART_1
 	case 1:
 		return &_UART_1_INST;
 		break;
+#endif
+#ifdef USE_UART_2
 	case 2:
 		return &_UART_2_INST;
 		break;
+#endif
 	default:
 		return NULL;
 	}
@@ -46,15 +58,21 @@ pClass_UART Create_UART(uint8_t index)
 	pClass_UART this = NULL;
 	switch (index)
 	{
+#ifdef USE_UART_0
 	case 0:
 		this = &_UART_0_INST;
 		break;
+#endif
+#ifdef USE_UART_1
 	case 1:
 		this = &_UART_1_INST;
 		break;
+#endif
+#ifdef USE_UART_2
 	case 2:
 		this = &_UART_2_INST;
 		break;
+#endif
 	default:
 		return NULL;
 	}
@@ -265,12 +283,18 @@ IRQn_Type Get_UART_IRQN_From_Index(uint8_t index)
 {
 	switch (index)
 	{
+#ifdef UART_0_INST
 	case 0:
 		return UART_0_INST_INT_IRQN;
+#endif
+#ifdef UART_1_INST
 	case 1:
 		return UART_1_INST_INT_IRQN;
+#endif
+#ifdef UART_2_INST
 	case 2:
 		return UART_2_INST_INT_IRQN;
+#endif
 	default:
 		return -1;
 	}
@@ -286,17 +310,24 @@ UART_Regs *Get_UART_INST_From_Index(uint8_t index)
 {
 	switch (index)
 	{
+#ifdef UART_0_INST
 	case 0:
 		return UART_0_INST;
+#endif
+#ifdef UART_1_INST
 	case 1:
 		return UART_1_INST;
+#endif
+#ifdef UART_2_INST
 	case 2:
 		return UART_2_INST;
+#endif
 	default:
 		return NULL;
 	}
 }
 
+#ifdef UART_0_INST
 /**
  * @brief 串口0中断处理函数
  *
@@ -325,7 +356,8 @@ void UART_0_INST_IRQHandler(void)
 		break;
 	}
 }
-
+#endif
+#ifdef UART_1_INST
 /**
  * @brief 串口1中断处理函数
  *
@@ -354,7 +386,8 @@ void UART_1_INST_IRQHandler(void)
 		break;
 	}
 }
-
+#endif
+#ifdef UART_2_INST
 /**
  * @brief 串口2中断处理函数
  *
@@ -383,3 +416,4 @@ void UART_2_INST_IRQHandler(void)
 		break;
 	}
 }
+#endif

@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control;..\..\fixadc</IncludePath>
+              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
