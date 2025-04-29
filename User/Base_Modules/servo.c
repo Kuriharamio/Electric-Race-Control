@@ -61,16 +61,19 @@ pClass_Servo Get_Servo_INST(uint8_t index)
  * @param this 舵机实例指针
  * @param angle 初始角度
  */
-void Servo_Init(pClass_Servo this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uint32_t ARR, float Angle_Max)
+void Servo_Init(pClass_Servo this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uint32_t ARR, float Angle_Max, float Begin_Angle)
 {
     this->PWM_INST = PWM_INST;
     this->PWM_IDX = PWM_IDX;
     this->ARR = ARR;
+
     this->Angle_Max = Angle_Max;
+    this->Now_Angle = Begin_Angle;
+    this->Begin_Angle = Begin_Angle;
+    
+    this->PID->PID_Init(this->PID, 0.05f, 0.1f, 0.00f, 0.00f, this->Angle_Max / 2.0f, this->Angle_Max / 2.0f, PID_DELTA_T, 0.00f, 0.00f, 0.00f, 0.00f, PID_D_First_DISABLE);
 
-    this->PID->PID_Init(this->PID, 0.0f, 1.0f, 0.00f, 0.00f, this->Angle_Max / 2.0f, this->Angle_Max / 2.0f, PID_DELTA_T, 0.00f, 0.00f, 0.00f, 0.00f, PID_D_First_DISABLE);
-
-    this->Set_Angle(this, 90.0f);
+    this->Set_Angle(this, this->Now_Angle);
 
     this->is_inited = true;
 }
@@ -84,6 +87,7 @@ void Servo_Set_Angle(pClass_Servo this, float angle)
 {
     if (angle >= 0 && angle <= this->Angle_Max)
     {
+        this->Now_Angle = angle;
         DL_TimerG_setCaptureCompareValue(this->PWM_INST, this->angle_to_CCR(this, angle), this->PWM_IDX);
     }
 }
@@ -109,10 +113,12 @@ uint32_t Servo_angle_to_CCR(pClass_Servo this, float angle)
  */
 void Servo_Update_PID(pClass_Servo this)
 {
+    if(this->STOP) return;
+
     this->PID->Set_Target(this->PID, 0);
     this->PID->Set_Now(this->PID, this->Error);
     this->PID->TIM_Adjust_PeriodElapsedCallback(this->PID);
 
-    float output = this->PID->Get_PID_Out(this->PID) + this->Angle_Max / 2.0f;
+    float output = this->PID->Get_PID_Out(this->PID) + this->Begin_Angle;
     this->Set_Angle(this, output);
 }

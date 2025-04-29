@@ -12,11 +12,11 @@
 #include "BSP/timer.h"
 // 计数器定时器中断处理函数
 
-#ifdef USE_PID_TIMER
+#ifdef USE_PID
 // 电机PID定时器中断处理函数
-void PID_INST_IRQHandler(void)
+void PID_TIMER_INST_IRQHandler(void)
 {
-    switch (DL_TimerA_getPendingInterrupt(PID_INST))
+    switch (DL_TimerA_getPendingInterrupt(PID_TIMER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
 
@@ -57,7 +57,7 @@ void PID_INST_IRQHandler(void)
 }
 #endif
 
-#ifdef USE_ENCODER_TIMER
+#ifdef USE_ENCODER
 // 编码器测速定时器中断处理函数
 void ENCODER_INST_IRQHandler(void)
 {
@@ -107,12 +107,12 @@ void ENCODER_INST_IRQHandler(void)
 
 #ifdef USE_ADC_BUTTON
 // ADC按钮读取数据定时器中断处理函数
-void ADC_BUTTON_INST_IRQHandler(void)
+void ADC_BUTTON_TIMER_INST_IRQHandler(void)
 {
-    switch (DL_TimerG_getPendingInterrupt(ADC_BUTTON_INST))
+
+    switch (DL_TimerG_getPendingInterrupt(ADC_BUTTON_TIMER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
-        // pClass_ADCButton ADC_Button = GET_ADCButton_INST();         // 获取ADC按钮实例
         if(GET_ADCButton_INST()->is_inited){
             GET_ADCButton_INST()->Check_And_Trigger(GET_ADCButton_INST()); // 获取当前ADC值
         }

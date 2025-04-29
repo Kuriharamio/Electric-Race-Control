@@ -5,29 +5,29 @@
 static Class_ADCButton _ADC_Button = {0};
 // >>>>>>>>>   实例声明     >>>>>>>>>>>
 
-static const ButtonThreshold Button_map[5] = {
-    {4000, 5000, BUTTON_1, BUTTON_IDLE},
-    {3000, 3500, BUTTON_2, BUTTON_IDLE},
-    {2200, 2600, BUTTON_3, BUTTON_IDLE},
-    {1200, 1700, BUTTON_4, BUTTON_IDLE},
-    {500, 1000, BUTTON_5, BUTTON_IDLE}
+static Button Button_map[5] = {
+    {2600, 2900, BUTTON_1, false, BUTTON_IDLE, 0}, // 2719 upup
+    {1950, 2250, BUTTON_2, false, BUTTON_IDLE, 0}, // 2160 up
+    {1500, 1850, BUTTON_3, false, BUTTON_IDLE, 0}, // 1626 left
+    {400, 700, BUTTON_4, false, BUTTON_IDLE, 0}, // 550 right
+    {950, 1250, BUTTON_5, false, BUTTON_IDLE, 0}   // 1080 down
 };
 
 /**
  *@brief 创建adc按键实例
  */
-pClass_ADCButton Create_AdcButton(void)
+pClass_ADCButton Create_ADCButton(void)
 {
-    pClass_ADCButton AdcButton = &_ADC_Button;
+    pClass_ADCButton ADC_Button = &_ADC_Button;
 
-    AdcButton->Init = Adc_Init;
-    AdcButton->Get_Current_Value = Adc_Get_Current_Value;
-    AdcButton->Get_Current_Button = Adc_Get_Current_Button;
+    ADC_Button->Init = ADC_Init;
+    ADC_Button->Get_Current_Value = ADC_Get_Current_Value;
+    ADC_Button->Get_Current_Button = ADC_Get_Current_Button;
 
-    AdcButton->Configure_Callback = Adc_Configure_Callback;
-    AdcButton->Check_And_Trigger = Adc_Check_And_Trigger;
+    ADC_Button->Configure_Callback = ADC_Configure_Callback;
+    ADC_Button->Check_And_Trigger = ADC_Check_And_Trigger;
 
-    return AdcButton;
+    return ADC_Button;
 }
 
 pClass_ADCButton GET_ADCButton_INST(void)
@@ -40,21 +40,23 @@ pClass_ADCButton GET_ADCButton_INST(void)
  *
  *@param this
  */
-void Adc_Init(pClass_ADCButton this, ADC12_Regs *ADC_INST, IRQn_Type ADC_INST_INT_IRQN, DL_ADC12_MEM_IDX ADCMEM_IDX)
+void ADC_Init(pClass_ADCButton this, ADC12_Regs *ADC_INST, IRQn_Type ADC_INST_INT_IRQN, DL_ADC12_MEM_IDX ADCMEM_IDX)
 {
     this->ADC_Button_INST = ADC_INST;
     this->ADC_Button_IRQN = ADC_INST_INT_IRQN;
     this->ADCMEM_IDX = ADCMEM_IDX;
 
+    NVIC_ClearPendingIRQ(this->ADC_Button_IRQN);
     NVIC_EnableIRQ(this->ADC_Button_IRQN);
 
     this->ADC_Flag = false;
-    this->Current_Button = BUTTON_None;
     this->Current_ADC_Value = 0;
 
     for (int i = 0; i < 5; ++i)
     {
-        this->Callbacks[i] = NULL;
+        this->Short_Callbacks[i] = NULL;
+        this->Long_Callbacks[i] = NULL;
+        this->Long_Continuous_Callback[i] = NULL;
     }
 
     this->is_inited = true;
@@ -65,11 +67,8 @@ void Adc_Init(pClass_ADCButton this, ADC12_Regs *ADC_INST, IRQn_Type ADC_INST_IN
  *
  *@param this
  */
-void Adc_Get_Current_Value(pClass_ADCButton this)
+void ADC_Get_Current_Value(pClass_ADCButton this)
 {
-    static uint32_t adc_sum = 0;
-    static uint8_t sample_count = 0;
-
     DL_ADC12_enableConversions(this->ADC_Button_INST);
     DL_ADC12_startConversion(this->ADC_Button_INST);
 
@@ -88,7 +87,7 @@ void Adc_Get_Current_Value(pClass_ADCButton this)
  *
  *@param this
  */
-void Adc_Get_Current_Button(pClass_ADCButton this)
+void ADC_Get_Current_Button(pClass_ADCButton this)
 {
     this->Get_Current_Value(this);
 
@@ -96,8 +95,11 @@ void Adc_Get_Current_Button(pClass_ADCButton this)
     {
         if (this->Current_ADC_Value >= Button_map[i].min_val && this->Current_ADC_Value <= Button_map[i].max_val)
         {
-            this->Current_Button = Button_map[i].Button_Num;
-            return;
+            Button_map[i].Is_Being_Pressed = true;
+        }
+        else
+        {
+            Button_map[i].Is_Being_Pressed = false;
         }
     }
 }
@@ -109,11 +111,13 @@ void Adc_Get_Current_Button(pClass_ADCButton this)
  *@param (*callback)
  *
  */
-void Adc_Configure_Callback(pClass_ADCButton this, ButtonNum Button, void (*callback)(void))
+void ADC_Configure_Callback(pClass_ADCButton this, ButtonNum Button, void (*short_callback)(void), void (*long_callback)(void), void (*long_continuous_callback)(void))
 {
     if (Button >= BUTTON_1 && Button <= BUTTON_5)
     {
-        this->Callbacks[Button - 1] = callback;
+        this->Short_Callbacks[Button] = short_callback;
+        this->Long_Callbacks[Button] = long_callback;
+        this->Long_Continuous_Callback[Button] = long_continuous_callback;
     }
 }
 
@@ -122,15 +126,75 @@ void Adc_Configure_Callback(pClass_ADCButton this, ButtonNum Button, void (*call
  *
  *@param this
  */
-void Adc_Check_And_Trigger(pClass_ADCButton this)
+void ADC_Check_And_Trigger(pClass_ADCButton this)
 {
     this->Get_Current_Button(this);
 
-    if (this->Current_Button >= BUTTON_1 && this->Current_Button <= BUTTON_5)
-    {
-        this->Callbacks[this->Current_Button - 1]();
-        this->Current_ADC_Value = 0;
-        this->Current_Button = BUTTON_None;
+    for(int i = 0; i < 5; ++i){
+        switch (Button_map[i].State)
+        {
+        case BUTTON_IDLE:
+        {
+            if(Button_map[i].Is_Being_Pressed){
+                Button_map[i].State = BUTTON_DEBOUNCE;
+                Button_map[i].Timer = 0;
+            }         
+        }
+        break;
+        case BUTTON_DEBOUNCE:
+        {
+            if (Button_map[i].Is_Being_Pressed)
+            {
+                Button_map[i].Timer++;
+                if (Button_map[i].Timer >= 5)
+                {
+                    Button_map[i].State = BUTTON_PRESSED;
+                }
+            }
+            else
+            {
+                Button_map[i].State = BUTTON_IDLE;
+            }
+        }
+        break;
+        case BUTTON_PRESSED:
+        {
+            if (Button_map[i].Is_Being_Pressed)
+            {
+                Button_map[i].Timer++;
+                if (Button_map[i].Timer >= LONG_PRESS_TIME / BUTTON_DELTA_T)
+                {
+                    Button_map[i].State = BUTTON_LONG_PRESSED;
+                }
+            }
+            else
+            {
+                if (this->Short_Callbacks[i] != NULL)
+                {
+                    this->Short_Callbacks[i]();
+                }
+                Button_map[i].State = BUTTON_IDLE;
+            }
+        }
+        break;
+        case BUTTON_LONG_PRESSED:
+        {
+            if(this->Long_Continuous_Callback[i] != NULL){
+                this->Long_Continuous_Callback[i]();
+            }
+            if (!Button_map[i].Is_Being_Pressed)
+            {
+                if (this->Long_Callbacks[i] != NULL)
+                {
+                    this->Long_Callbacks[i]();
+                }
+                Button_map[i].State = BUTTON_IDLE;
+            }
+        }
+        break;
+        default:
+            break;
+        }
     }
 }
 
@@ -139,7 +203,7 @@ void Adc_Check_And_Trigger(pClass_ADCButton this)
  *
  *
  */
-void adckey_INST_IRQHandler(void)
+void ADC_BUTTON_INST_IRQHandler(void)
 {
     switch (DL_ADC12_getPendingInterrupt(ADC_BUTTON_INST))
     {
@@ -154,4 +218,85 @@ void adckey_INST_IRQHandler(void)
         break;
     }
 }
+
+// /*********************
+//  *   自定义按键回调  *
+//  *********************/
+// #include "Base_Modules/servo.h"
+//  //* 短按
+//  void Button_1_Short_Callback(void)
+//  {
+//  }
+
+//  void Button_2_Short_Callback(void)
+//  {
+//  }
+
+//  void Button_3_Short_Callback(void)
+//  {
+//  }
+
+//  void Button_4_Short_Callback(void)
+//  {
+//  }
+
+//  void Button_5_Short_Callback(void)
+//  {
+//  }
+
+
+//  //* 长按
+//  void Button_1_Long_Callback(void)
+//  {
+//  }
+
+//  void Button_2_Long_Callback(void)
+//  {
+//  }
+
+//  void Button_3_Long_Callback(void)
+//  {
+//  }
+
+//  void Button_4_Long_Callback(void)
+//  {
+//  }
+
+//  void Button_5_Long_Callback(void)
+//  {
+//  }
+
+//  //* 长按连续
+// void Button_1_Long_Continuous_Callback(void)
+// {
+// }
+
+// void Button_2_Long_Continuous_Callback(void)
+// {
+//     pClass_Servo servo = create_Servo(SERVO_UP_INDEX);
+//     if (servo->is_inited)
+//         servo->Set_Angle(servo, servo->Now_Angle - 0.1);
+// }
+
+// void Button_3_Long_Continuous_Callback(void)
+// {
+//     pClass_Servo servo = create_Servo(SERVO_DOWN_INDEX);
+//     if (servo->is_inited)
+//         servo->Set_Angle(servo, servo->Now_Angle + 0.1);
+// }
+
+// void Button_4_Long_Continuous_Callback(void)
+// {
+//     pClass_Servo servo = create_Servo(SERVO_DOWN_INDEX);
+//     if (servo->is_inited)
+//         servo->Set_Angle(servo, servo->Now_Angle - 0.1);
+// }
+
+// void Button_5_Long_Continuous_Callback(void)
+// {
+//     pClass_Servo servo = create_Servo(SERVO_UP_INDEX);
+//     if (servo->is_inited)
+//         servo->Set_Angle(servo, servo->Now_Angle + 0.1);
+// }
+
 #endif

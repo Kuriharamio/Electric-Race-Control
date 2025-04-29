@@ -6,6 +6,7 @@
 
 //* 声光提示配置
 #define USE_LED
+#define USE_BUZZ
 
 //* 串口配置
 #define USE_UART_0
@@ -17,14 +18,16 @@
 #define SERVO_DOWN_INDEX 1
 
 //* ADC 按钮配置
-#define USE_ADC_BUTTON
+// #define USE_ADC_BUTTON
+#define LONG_PRESS_TIME 0.6f       // 长按时间阈值（秒）
+#define BUTTON_DELTA_T 0.01f    // 按钮检测时间间隔（秒）
 
 //* K230 串口配置
 #define K230_UART_INDEX 0 // K230串口索引号
 #define K230_RX_LEN_MAX 20 // K230接收数据最大长度
 
-//* TIMER 配置
-#define USE_PID_TIMER
-#define PID_DELTA_T 0.1f
+//* PID 配置
+#define USE_PID
+#define PID_DELTA_T 0.05f
 
 #endif // __CONFIG_H__

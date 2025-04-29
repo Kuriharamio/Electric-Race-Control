@@ -6,18 +6,20 @@
 
 typedef enum
 {
-    ON,
     OFF,
+    ON,
     TOGGLE,
     BEEP,
 } REMINDER_STATE;
 
 #ifdef USE_LED
 void LED(REMINDER_STATE state);
+extern REMINDER_STATE LED_STATE;
 #endif
 
-#ifdef USE_BUZZER
+#ifdef USE_BUZZ
 void BUZZ(REMINDER_STATE state);
+extern REMINDER_STATE BUZZ_STATE;
 #endif
 
 #endif // __LED_H__

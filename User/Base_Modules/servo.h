@@ -10,9 +10,13 @@ typedef struct Class_Servo
     GPTIMER_Regs *PWM_INST;
     uint32_t PWM_IDX;
     float Angle_Max;
+    float Now_Angle;
+    float Begin_Angle;
 
     pClass_PID PID;
     float Error;
+
+    bool STOP;
 
     bool is_inited;
 
@@ -22,7 +26,7 @@ typedef struct Class_Servo
      * @param this 舵机结构体指针
      * @param angle 初始角度
      */
-    void (*Init)(struct Class_Servo *this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uint32_t ARR, float Angle_Max);
+    void (*Init)(struct Class_Servo *this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uint32_t ARR, float Angle_Max, float Begin_Angle);
 
     /**
      * @brief 将角度转换为CCR
@@ -51,9 +55,11 @@ typedef struct Class_Servo
 pClass_Servo create_Servo(uint8_t index);
 pClass_Servo Get_Servo_INST(uint8_t index);
 
-void Servo_Init(pClass_Servo this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uint32_t ARR, float Angle_Max);
+void Servo_Init(pClass_Servo this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uint32_t ARR, float Angle_Max, float Begin_Angle);
 void Servo_Set_Angle(pClass_Servo this, float angle);
 uint32_t Servo_angle_to_CCR(pClass_Servo this, float angle);
 void Servo_Update_PID(pClass_Servo this);
+
+
 
 #endif

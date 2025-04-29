@@ -30,17 +30,21 @@ void board_init(void)
     SYSCFG_DL_init();
 
     // TIM初始化
-    // NVIC_ClearPendingIRQ(ENCODER_INST_INT_IRQN);
-#ifdef USE_PID_TIMER
-    NVIC_ClearPendingIRQ(PID_INST_INT_IRQN);
-    NVIC_EnableIRQ(PID_INST_INT_IRQN);
+#ifdef USE_PID
+    NVIC_ClearPendingIRQ(PID_TIMER_INST_INT_IRQN);
+    NVIC_EnableIRQ(PID_TIMER_INST_INT_IRQN);
 #endif
-    // NVIC_ClearPendingIRQ(ADC_BUTTON_INST_INT_IRQN);
-
-    // NVIC_EnableIRQ(ENCODER_INST_INT_IRQN);
-    // NVIC_EnableIRQ(ADC_BUTTON_INST_INT_IRQN);
-
+#ifdef USE_ENCODER
+    NVIC_ClearPendingIRQ(ENCODER_TIMER_INST_INT_IRQN);
+    NVIC_EnableIRQ(ENCODER_TIMER_INST_INT_IRQN);
     // GPIO初始化
-    // NVIC_EnableIRQ(GPIOA_INT_IRQn);
-    // NVIC_EnableIRQ(GPIOB_INT_IRQn);
+    NVIC_EnableIRQ(GPIOA_INT_IRQn);
+    NVIC_EnableIRQ(GPIOB_INT_IRQn);
+#endif
+
+#ifdef USE_ADC_BUTTON
+    NVIC_ClearPendingIRQ(ADC_BUTTON_TIMER_INST_INT_IRQN);
+    NVIC_EnableIRQ(ADC_BUTTON_TIMER_INST_INT_IRQN);
+#endif
+
 }

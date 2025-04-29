@@ -97,11 +97,16 @@ extern "C" {
 
 
 
-/* Defines for PID */
-#define PID_INST                                                         (TIMA1)
-#define PID_INST_IRQHandler                                     TIMA1_IRQHandler
-#define PID_INST_INT_IRQN                                       (TIMA1_INT_IRQn)
-#define PID_INST_LOAD_VALUE                                              (9999U)
+/* Defines for PID_TIMER */
+#define PID_TIMER_INST                                                   (TIMG0)
+#define PID_TIMER_INST_IRQHandler                               TIMG0_IRQHandler
+#define PID_TIMER_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
+#define PID_TIMER_INST_LOAD_VALUE                                        (2499U)
+/* Defines for ADC_BUTTON_TIMER */
+#define ADC_BUTTON_TIMER_INST                                            (TIMA1)
+#define ADC_BUTTON_TIMER_INST_IRQHandler                        TIMA1_IRQHandler
+#define ADC_BUTTON_TIMER_INST_INT_IRQN                          (TIMA1_INT_IRQn)
+#define ADC_BUTTON_TIMER_INST_LOAD_VALUE                                  (999U)
 
 
 
@@ -143,6 +148,9 @@ extern "C" {
 /* Defines for LED: GPIOA.14 with pinCMx 36 on package pin 7 */
 #define REMINDER_LED_PIN                                        (DL_GPIO_PIN_14)
 #define REMINDER_LED_IOMUX                                       (IOMUX_PINCM36)
+/* Defines for BUZZ: GPIOA.2 with pinCMx 7 on package pin 42 */
+#define REMINDER_BUZZ_PIN                                        (DL_GPIO_PIN_2)
+#define REMINDER_BUZZ_IOMUX                                       (IOMUX_PINCM7)
 
 
 
@@ -153,7 +161,8 @@ void SYSCFG_DL_initPower(void);
 void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_PWM_SERVO_init(void);
-void SYSCFG_DL_PID_init(void);
+void SYSCFG_DL_PID_TIMER_init(void);
+void SYSCFG_DL_ADC_BUTTON_TIMER_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_ADC_BUTTON_init(void);
 
