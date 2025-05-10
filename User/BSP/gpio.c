@@ -13,7 +13,7 @@
 
 void GROUP1_IRQHandler(void)
 {
-
+#ifdef USE_ENCODER
     /*******************************
                 编码器中断
     *******************************/
@@ -92,4 +92,5 @@ void GROUP1_IRQHandler(void)
             DL_GPIO_clearInterruptStatus(Motor_RF->ENCODER_PORT, Motor_RF->ENCODER_B_PIN);
         }
     }
+#endif
 }

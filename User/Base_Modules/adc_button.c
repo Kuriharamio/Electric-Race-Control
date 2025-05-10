@@ -2,15 +2,23 @@
 
 #ifdef USE_ADC_BUTTON
 // <<<<<<<<<   实例声明     <<<<<<<<<<<
-static Class_ADCButton _ADC_Button = {0};
+Class_ADCButton _ADC_Button = {0};
 // >>>>>>>>>   实例声明     >>>>>>>>>>>
 
+// static Button Button_map[5] = {
+//     {2600, 2900, BUTTON_1, false, BUTTON_IDLE, 0}, // 2719 upup
+//     {1950, 2250, BUTTON_2, false, BUTTON_IDLE, 0}, // 2160 up
+//     {1500, 1850, BUTTON_3, false, BUTTON_IDLE, 0}, // 1626 left
+//     {400, 700, BUTTON_4, false, BUTTON_IDLE, 0}, // 550 right
+//     {950, 1250, BUTTON_5, false, BUTTON_IDLE, 0}   // 1080 down
+// };
+
 static Button Button_map[5] = {
-    {2600, 2900, BUTTON_1, false, BUTTON_IDLE, 0}, // 2719 upup
-    {1950, 2250, BUTTON_2, false, BUTTON_IDLE, 0}, // 2160 up
-    {1500, 1850, BUTTON_3, false, BUTTON_IDLE, 0}, // 1626 left
-    {400, 700, BUTTON_4, false, BUTTON_IDLE, 0}, // 550 right
-    {950, 1250, BUTTON_5, false, BUTTON_IDLE, 0}   // 1080 down
+    {2500, 2900, BUTTON_1, false, BUTTON_IDLE, 0}, //  upup AAA 2730
+    {1900, 2300, BUTTON_2, false, BUTTON_IDLE, 0}, //  up 866 2150
+    {1400, 1800, BUTTON_3, false, BUTTON_IDLE, 0}, //  left 649  1609
+    {400, 700, BUTTON_4, false, BUTTON_IDLE, 0},   //  right 217 535
+    {800, 1200, BUTTON_5, false, BUTTON_IDLE, 0}   //  down 414  1044
 };
 
 /**

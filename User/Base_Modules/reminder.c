@@ -59,4 +59,22 @@ void BUZZ(REMINDER_STATE state)
         break;
     }
 }
+
+void software_pwm(int duty_cycle)
+{
+    // 假设系统时钟足够快，下面的延时需要根据实际硬件调整
+    for (int i = 0; i < 100; i++)
+    { // 控制PWM周期
+        if (i < duty_cycle)
+        {
+            BUZZ(ON); // 高电平时间（占空比）
+        }
+        else
+        {
+            BUZZ(OFF); // 低电平时间
+        }
+        delay_us(10); // 微秒级延时，需要根据实际需求调整
+    }
+}
+
 #endif

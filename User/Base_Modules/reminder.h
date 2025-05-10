@@ -19,6 +19,7 @@ extern REMINDER_STATE LED_STATE;
 
 #ifdef USE_BUZZ
 void BUZZ(REMINDER_STATE state);
+void software_pwm(int duty_cycle);
 extern REMINDER_STATE BUZZ_STATE;
 #endif
 

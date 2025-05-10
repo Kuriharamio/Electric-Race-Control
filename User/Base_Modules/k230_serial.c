@@ -1,5 +1,7 @@
 #include "Base_Modules/k230_serial.h"
 
+// #ifdef USE_K230
+
 static RxState Rx_State = STATE_WAIT_HEADER_1; // 接收状态标志位
 static uint8_t Rx_Data_Len = 0;				   // 数据长度
 static uint8_t Rx_BCC = 0;					   // 接收到的BCC校验位
@@ -145,3 +147,5 @@ void K230_Transmit(pClass_UART this, float *datas, uint8_t len)
 	// 发送完整帧
 	this->Send_Datas(this, buffer, frame_len);
 }
+
+// #endif

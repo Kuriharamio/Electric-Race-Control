@@ -480,6 +480,11 @@
               <FileType>1</FileType>
               <FilePath>..\User\BSP\timer.c</FilePath>
             </File>
+            <File>
+              <FileName>config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\config.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

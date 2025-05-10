@@ -8,6 +8,7 @@
 
 #include "Algorithm/drv_math.h"
 #include "stdlib.h"
+#include "config.h"
 
 /**
  * @brief 微分先行

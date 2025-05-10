@@ -77,23 +77,29 @@ extern "C" {
 
 
 
-/* Defines for PWM_SERVO */
-#define PWM_SERVO_INST                                                     TIMA0
-#define PWM_SERVO_INST_IRQHandler                               TIMA0_IRQHandler
-#define PWM_SERVO_INST_INT_IRQN                                 (TIMA0_INT_IRQn)
-#define PWM_SERVO_INST_CLK_FREQ                                          2500000
+/* Defines for PWM_SERVO_DOWN */
+#define PWM_SERVO_DOWN_INST                                                TIMA0
+#define PWM_SERVO_DOWN_INST_IRQHandler                          TIMA0_IRQHandler
+#define PWM_SERVO_DOWN_INST_INT_IRQN                            (TIMA0_INT_IRQn)
+#define PWM_SERVO_DOWN_INST_CLK_FREQ                                     2500000
 /* GPIO defines for channel 0 */
-#define GPIO_PWM_SERVO_C0_PORT                                             GPIOA
-#define GPIO_PWM_SERVO_C0_PIN                                      DL_GPIO_PIN_8
-#define GPIO_PWM_SERVO_C0_IOMUX                                  (IOMUX_PINCM19)
-#define GPIO_PWM_SERVO_C0_IOMUX_FUNC                 IOMUX_PINCM19_PF_TIMA0_CCP0
-#define GPIO_PWM_SERVO_C0_IDX                                DL_TIMER_CC_0_INDEX
-/* GPIO defines for channel 1 */
-#define GPIO_PWM_SERVO_C1_PORT                                             GPIOA
-#define GPIO_PWM_SERVO_C1_PIN                                      DL_GPIO_PIN_9
-#define GPIO_PWM_SERVO_C1_IOMUX                                  (IOMUX_PINCM20)
-#define GPIO_PWM_SERVO_C1_IOMUX_FUNC                 IOMUX_PINCM20_PF_TIMA0_CCP1
-#define GPIO_PWM_SERVO_C1_IDX                                DL_TIMER_CC_1_INDEX
+#define GPIO_PWM_SERVO_DOWN_C0_PORT                                        GPIOA
+#define GPIO_PWM_SERVO_DOWN_C0_PIN                                 DL_GPIO_PIN_8
+#define GPIO_PWM_SERVO_DOWN_C0_IOMUX                             (IOMUX_PINCM19)
+#define GPIO_PWM_SERVO_DOWN_C0_IOMUX_FUNC             IOMUX_PINCM19_PF_TIMA0_CCP0
+#define GPIO_PWM_SERVO_DOWN_C0_IDX                           DL_TIMER_CC_0_INDEX
+
+/* Defines for PWM_SERVO_UP */
+#define PWM_SERVO_UP_INST                                                  TIMG8
+#define PWM_SERVO_UP_INST_IRQHandler                            TIMG8_IRQHandler
+#define PWM_SERVO_UP_INST_INT_IRQN                              (TIMG8_INT_IRQn)
+#define PWM_SERVO_UP_INST_CLK_FREQ                                       1250000
+/* GPIO defines for channel 0 */
+#define GPIO_PWM_SERVO_UP_C0_PORT                                          GPIOA
+#define GPIO_PWM_SERVO_UP_C0_PIN                                   DL_GPIO_PIN_7
+#define GPIO_PWM_SERVO_UP_C0_IOMUX                               (IOMUX_PINCM14)
+#define GPIO_PWM_SERVO_UP_C0_IOMUX_FUNC              IOMUX_PINCM14_PF_TIMG8_CCP0
+#define GPIO_PWM_SERVO_UP_C0_IDX                             DL_TIMER_CC_0_INDEX
 
 
 
@@ -101,7 +107,7 @@ extern "C" {
 #define PID_TIMER_INST                                                   (TIMG0)
 #define PID_TIMER_INST_IRQHandler                               TIMG0_IRQHandler
 #define PID_TIMER_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
-#define PID_TIMER_INST_LOAD_VALUE                                        (2499U)
+#define PID_TIMER_INST_LOAD_VALUE                                        (5999U)
 /* Defines for ADC_BUTTON_TIMER */
 #define ADC_BUTTON_TIMER_INST                                            (TIMA1)
 #define ADC_BUTTON_TIMER_INST_IRQHandler                        TIMA1_IRQHandler
@@ -160,7 +166,8 @@ void SYSCFG_DL_init(void);
 void SYSCFG_DL_initPower(void);
 void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
-void SYSCFG_DL_PWM_SERVO_init(void);
+void SYSCFG_DL_PWM_SERVO_DOWN_init(void);
+void SYSCFG_DL_PWM_SERVO_UP_init(void);
 void SYSCFG_DL_PID_TIMER_init(void);
 void SYSCFG_DL_ADC_BUTTON_TIMER_init(void);
 void SYSCFG_DL_UART_0_init(void);

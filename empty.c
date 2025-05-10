@@ -53,9 +53,9 @@ void Servo_DOWN_RIGHT(void)
         
 }
 
+bool stop = false;
 void Set_Servo_STOP(void){
-    BUZZ(ON);
-    static bool stop = false;
+    // BUZZ(ON);
     stop = !stop;
     Get_Servo_INST(SERVO_UP_INDEX)->STOP = stop;
     Get_Servo_INST(SERVO_DOWN_INDEX)->STOP = stop;
@@ -81,7 +81,7 @@ void Set_Problem_1(void)
     pClass_UART K230_UART = Get_UART_INST(K230_UART_INDEX);
     K230_UART->Send_Bit(K230_UART, 1);
     Now_Problem = Problem_1;
-    BUZZ(ON);
+    // BUZZ(ON);
 }
 
 void Process_Problem_1(void)
@@ -95,7 +95,7 @@ void Set_Problem_2(void)
     pClass_UART K230_UART = Get_UART_INST(K230_UART_INDEX);
     K230_UART->Send_Bit(K230_UART, 2);
     Now_Problem = Problem_2;
-    BUZZ(ON);
+    // BUZZ(ON);
 }
 
 void Process_Problem_2(void)
@@ -109,7 +109,7 @@ void Set_Problem_3(void)
     pClass_UART K230_UART = Get_UART_INST(K230_UART_INDEX);
     K230_UART->Send_Bit(K230_UART, 3);
     Now_Problem = Problem_3;
-    BUZZ(ON);
+    // BUZZ(ON);
 }
 
 void Process_Problem_3(void)
@@ -123,7 +123,7 @@ void Set_Problem_4(void)
     pClass_UART K230_UART = Get_UART_INST(K230_UART_INDEX);
     K230_UART->Send_Bit(K230_UART, 4);
     Now_Problem = Problem_4;
-    BUZZ(ON);
+    // BUZZ(ON);
 }
 
 
@@ -131,39 +131,47 @@ int main(void)
 {
     board_init();
 
+    // float pid_reinit_last = -1.0f;
+    // float pid_reinit = -1.0f;
+
     pClass_Servo servo_up = create_Servo(SERVO_UP_INDEX);
-    servo_up->Init(servo_up, PWM_SERVO_INST, GPIO_PWM_SERVO_C0_IDX, 50000, 180, 90);
+    servo_up->Init(servo_up, PWM_SERVO_UP_INST, GPIO_PWM_SERVO_UP_C0_IDX, 25000, 180, 80);
 
     pClass_Servo servo_down = create_Servo(SERVO_DOWN_INDEX);
-    servo_down->Init(servo_down, PWM_SERVO_INST, GPIO_PWM_SERVO_C1_IDX, 50000, 270, 135);
+    servo_down->Init(servo_down, PWM_SERVO_DOWN_INST, GPIO_PWM_SERVO_DOWN_C0_IDX, 50000, 270, 135);
 
-
+    float buzzer = 0.0f;
+    int buzzer_cnt = 0;
     pClass_UART K230_UART = Create_UART(K230_UART_INDEX);
-    K230_UART->Init(K230_UART, K230_RX_LEN_MAX, 6);
+    K230_UART->Init(K230_UART, K230_RX_LEN_MAX, 7);
     K230_UART->Configure_Callback(K230_UART, K230_Rx_Callback);
+    // K230_UART->Bind_Param_With_Id(K230_UART, 0, &(pid_reinit));
     K230_UART->Bind_Param_With_Id(K230_UART, 0, &(servo_up->PID->K_P));
     K230_UART->Bind_Param_With_Id(K230_UART, 1, &(servo_up->PID->K_I));
     K230_UART->Bind_Param_With_Id(K230_UART, 2, &(servo_up->Error));
     K230_UART->Bind_Param_With_Id(K230_UART, 3, &(servo_down->PID->K_P));
     K230_UART->Bind_Param_With_Id(K230_UART, 4, &(servo_down->PID->K_I));
     K230_UART->Bind_Param_With_Id(K230_UART, 5, &(servo_down->Error));
+    K230_UART->Bind_Param_With_Id(K230_UART, 6, &(buzzer));
 
     // 按键配置
-    // pClass_ADCButton ADC_Button = Create_ADCButton();
-    // ADC_Button->Init(ADC_Button, ADC_BUTTON_INST, ADC_BUTTON_INST_INT_IRQN, ADC_BUTTON_ADCMEM_0);
-    // ADC_Button->Configure_Callback(ADC_Button, BUTTON_1, Set_Servo_STOP, NULL, NULL);
-    // ADC_Button->Configure_Callback(ADC_Button, BUTTON_2, Set_Problem_1, NULL, Servo_UP_UP);
-    // ADC_Button->Configure_Callback(ADC_Button, BUTTON_3, Set_Problem_2, NULL, Servo_DOWN_LEFT);
-    // ADC_Button->Configure_Callback(ADC_Button, BUTTON_4, Set_Problem_3, NULL, Servo_DOWN_RIGHT);
-    // ADC_Button->Configure_Callback(ADC_Button, BUTTON_5, Set_Problem_4, NULL, Servo_UP_DOWN);
+    pClass_ADCButton ADC_Button = Create_ADCButton();
+    ADC_Button->Init(ADC_Button, ADC_BUTTON_INST, ADC_BUTTON_INST_INT_IRQN, ADC_BUTTON_ADCMEM_0);
+    ADC_Button->Configure_Callback(ADC_Button, BUTTON_1, Set_Servo_STOP, softwareReset, NULL);
+    ADC_Button->Configure_Callback(ADC_Button, BUTTON_2, Set_Problem_1, NULL, Servo_UP_UP);
+    ADC_Button->Configure_Callback(ADC_Button, BUTTON_3, Set_Problem_2, NULL, Servo_DOWN_LEFT);
+    ADC_Button->Configure_Callback(ADC_Button, BUTTON_4, Set_Problem_3, NULL, Servo_DOWN_RIGHT);
+    ADC_Button->Configure_Callback(ADC_Button, BUTTON_5, Set_Problem_4, NULL, Servo_UP_DOWN);
 
     while (1)
-    {
+    {   
+        if(buzzer){
+            BUZZ(ON);
+        }
         if(BUZZ_STATE == ON){
-            delay_ms(100);
+            delay_ms(10);
             BUZZ(OFF);
         }
-
         switch(Now_Problem){
             case Problem_1:
                 Process_Problem_1();
@@ -178,7 +186,8 @@ int main(void)
                 Now_Problem = Problem_None;
                 break;
             default:
-                LED(TOGGLE);
+                if(!stop)
+                    LED(TOGGLE);
                 break;
         }
         delay_ms(100);

@@ -19,7 +19,7 @@ void PID_TIMER_INST_IRQHandler(void)
     switch (DL_TimerA_getPendingInterrupt(PID_TIMER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
-
+#ifdef USE_CAR
         // // pClass_Motor Motor_LB = Get_Motor_INST(LEFT_BACK);
         // if (Get_Motor_INST(LEFT_BACK)->is_inited)
         //     Get_Motor_INST(LEFT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_BACK));
@@ -38,7 +38,9 @@ void PID_TIMER_INST_IRQHandler(void)
         //     if (Get_Car_Handle()->follow_error)
         //         Get_Car_Handle()->Update_Follow_PID(Get_Car_Handle());
         // }
+#endif
 
+#ifdef USE_SERVO
         // pClass_Servo servo_up = Get_Servo_INST(SERVO_UP_INDEX);
         if (Get_Servo_INST(SERVO_UP_INDEX)->is_inited)
         {
@@ -49,6 +51,7 @@ void PID_TIMER_INST_IRQHandler(void)
         {
             Get_Servo_INST(SERVO_DOWN_INDEX)->Update_PID(Get_Servo_INST(SERVO_DOWN_INDEX));
         }
+#endif
         break;
 
     default:

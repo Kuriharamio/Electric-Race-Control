@@ -11,6 +11,7 @@
  */
 #include "car.h"
 
+#ifdef USE_CAR
 static Class_Car _Car = {0};
 
 /**
@@ -265,3 +266,4 @@ void Car_Upadate_Controller(pClass_Car this)
     // 更新小车目标速度
     this->Target_Speed = this->PurePursuit->Get_Output_Speed(this->PurePursuit);
 }
+#endif

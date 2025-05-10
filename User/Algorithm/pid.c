@@ -5,6 +5,8 @@
 
 #include "Algorithm/pid.h"
 
+#ifdef USE_PID
+
 /**
  * @brief 创建一个PID对象
  *
@@ -337,3 +339,5 @@ void TIM_Adjust_PeriodElapsedCallback(pClass_PID pid)
     pid->Pre_Out = pid->Out;
     pid->Pre_Error = error;
 }
+
+#endif

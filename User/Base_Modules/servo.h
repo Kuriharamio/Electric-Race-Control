@@ -14,6 +14,7 @@ typedef struct Class_Servo
     float Begin_Angle;
 
     pClass_PID PID;
+    float Last_KI;
     float Error;
 
     bool STOP;

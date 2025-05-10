@@ -1,5 +1,6 @@
 #include "Base_Modules/imu.h"
 
+#ifdef USE_IMU
 void Handle_IMU_Data_Bag(pClass_UART this)
 {
     static float first_yaw = 0.0f;
@@ -53,3 +54,5 @@ void IMU_Rx_Callback(pClass_UART this)
         find_bag = false;
     }
 }
+
+#endif

@@ -19,7 +19,7 @@ void _sys_exit(int x)
 }
 #endif
 
-void softwareReset(uint32_t resetType)
+void softwareReset(void)
 {
     DL_SYSCTL_resetDevice(SYSCTL_RESETLEVEL_LEVEL_POR);
 }

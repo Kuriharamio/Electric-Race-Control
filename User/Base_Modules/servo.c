@@ -1,5 +1,7 @@
 #include "Base_Modules/servo.h"
 
+#ifdef USE_SERVO
+
 // <<<<<<<<<   实例声明     <<<<<<<<<<<
 static Class_Servo _Servo_0 = {0};
 static Class_Servo _Servo_1 = {0};
@@ -70,8 +72,9 @@ void Servo_Init(pClass_Servo this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uin
     this->Angle_Max = Angle_Max;
     this->Now_Angle = Begin_Angle;
     this->Begin_Angle = Begin_Angle;
-    
-    this->PID->PID_Init(this->PID, 0.05f, 0.1f, 0.00f, 0.00f, this->Angle_Max / 2.0f, this->Angle_Max / 2.0f, PID_DELTA_T, 0.00f, 0.00f, 0.00f, 0.00f, PID_D_First_DISABLE);
+    this->Last_KI = 0.0f;
+
+    this->PID->PID_Init(this->PID, 0.0f, 0.0f, 0.0f, 0.0f, this->Angle_Max / 2.0f, this->Angle_Max / 2.0f, PID_DELTA_T, 5.00f, 0.00f, 0.00f, 0.00f, PID_D_First_DISABLE);
 
     this->Set_Angle(this, this->Now_Angle);
 
@@ -115,10 +118,23 @@ void Servo_Update_PID(pClass_Servo this)
 {
     if(this->STOP) return;
 
+    if(this->Last_KI != this->PID->K_I){
+        this->Begin_Angle = this->Now_Angle;
+        this->PID->Set_Integral_Error(this->PID, 0.0f);
+        this->PID->Pre_Now = 0.0f;
+        this->PID->Pre_Target = 0.0f;
+        this->PID->Pre_Out = 0.0f;
+        this->PID->Pre_Error = 0.0f;
+        this->Last_KI = this->PID->K_I;
+    }
+
     this->PID->Set_Target(this->PID, 0);
     this->PID->Set_Now(this->PID, this->Error);
     this->PID->TIM_Adjust_PeriodElapsedCallback(this->PID);
-
+    
     float output = this->PID->Get_PID_Out(this->PID) + this->Begin_Angle;
+
     this->Set_Angle(this, output);
 }
+
+#endif
