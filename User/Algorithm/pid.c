@@ -269,15 +269,15 @@ void TIM_Adjust_PeriodElapsedCallback(pClass_PID pid)
     else
     {
         // 变速积分
-        if (abs_error <= pid->I_Variable_Speed_B)
+        if (abs_error <= pid->I_Variable_Speed_A)
         {
             speed_ratio = 1.0f;
         }
-        else if (pid->I_Variable_Speed_B < abs_error && abs_error < pid->I_Variable_Speed_A + pid->I_Variable_Speed_B)
+        else if (pid->I_Variable_Speed_A < abs_error && abs_error < pid->I_Variable_Speed_A + pid->I_Variable_Speed_B)
         {
-            speed_ratio = (pid->I_Variable_Speed_A + pid->I_Variable_Speed_B - abs_error) / pid->I_Variable_Speed_A;
+            speed_ratio = (pid->I_Variable_Speed_A + pid->I_Variable_Speed_B - abs_error) / pid->I_Variable_Speed_B;
         }
-        if (abs_error >= pid->I_Variable_Speed_B)
+        else if (abs_error > pid->I_Variable_Speed_A)
         {
             speed_ratio = 0.0f;
         }

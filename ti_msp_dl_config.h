@@ -107,7 +107,7 @@ extern "C" {
 #define PID_TIMER_INST                                                   (TIMG0)
 #define PID_TIMER_INST_IRQHandler                               TIMG0_IRQHandler
 #define PID_TIMER_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
-#define PID_TIMER_INST_LOAD_VALUE                                        (5999U)
+#define PID_TIMER_INST_LOAD_VALUE                                        (2999U)
 /* Defines for ADC_BUTTON_TIMER */
 #define ADC_BUTTON_TIMER_INST                                            (TIMA1)
 #define ADC_BUTTON_TIMER_INST_IRQHandler                        TIMA1_IRQHandler

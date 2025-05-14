@@ -42,7 +42,7 @@
 
 //* PID 配置
 #define USE_PID           // 启用PID
-#define PID_DELTA_T 0.12f // PID 时间间隔（秒）
+#define PID_DELTA_T 0.06f // PID 时间间隔（秒）
 
 //* 编码器配置
 // #define USE_ENCODER           // 启用编码器

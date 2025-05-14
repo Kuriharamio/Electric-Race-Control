@@ -131,9 +131,6 @@ int main(void)
 {
     board_init();
 
-    // float pid_reinit_last = -1.0f;
-    // float pid_reinit = -1.0f;
-
     pClass_Servo servo_up = create_Servo(SERVO_UP_INDEX);
     servo_up->Init(servo_up, PWM_SERVO_UP_INST, GPIO_PWM_SERVO_UP_C0_IDX, 25000, 180, 80);
 
@@ -162,6 +159,8 @@ int main(void)
     ADC_Button->Configure_Callback(ADC_Button, BUTTON_3, Set_Problem_2, NULL, Servo_DOWN_LEFT);
     ADC_Button->Configure_Callback(ADC_Button, BUTTON_4, Set_Problem_3, NULL, Servo_DOWN_RIGHT);
     ADC_Button->Configure_Callback(ADC_Button, BUTTON_5, Set_Problem_4, NULL, Servo_UP_DOWN);
+
+    Set_Servo_STOP();
 
     while (1)
     {   

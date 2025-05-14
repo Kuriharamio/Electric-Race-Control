@@ -111,7 +111,7 @@ TIMER1.timerStartTimer   = true;
 TIMER1.timerClkDiv       = 8;
 TIMER1.$name             = "PID_TIMER";
 TIMER1.timerClkPrescale  = 100;
-TIMER1.timerPeriod       = "120 ms";
+TIMER1.timerPeriod       = "60 ms";
 
 TIMER2.$name            = "ADC_BUTTON_TIMER";
 TIMER2.timerClkDiv      = 8;
