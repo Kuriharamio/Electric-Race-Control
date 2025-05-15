@@ -131,18 +131,17 @@ int main(void)
 {
     board_init();
 
+    float buzzer = 0.0f;
+
     pClass_Servo servo_up = create_Servo(SERVO_UP_INDEX);
     servo_up->Init(servo_up, PWM_SERVO_UP_INST, GPIO_PWM_SERVO_UP_C0_IDX, 25000, 180, 80);
 
     pClass_Servo servo_down = create_Servo(SERVO_DOWN_INDEX);
     servo_down->Init(servo_down, PWM_SERVO_DOWN_INST, GPIO_PWM_SERVO_DOWN_C0_IDX, 50000, 270, 135);
 
-    float buzzer = 0.0f;
-    int buzzer_cnt = 0;
     pClass_UART K230_UART = Create_UART(K230_UART_INDEX);
     K230_UART->Init(K230_UART, K230_RX_LEN_MAX, 7);
     K230_UART->Configure_Callback(K230_UART, K230_Rx_Callback);
-    // K230_UART->Bind_Param_With_Id(K230_UART, 0, &(pid_reinit));
     K230_UART->Bind_Param_With_Id(K230_UART, 0, &(servo_up->PID->K_P));
     K230_UART->Bind_Param_With_Id(K230_UART, 1, &(servo_up->PID->K_I));
     K230_UART->Bind_Param_With_Id(K230_UART, 2, &(servo_up->Error));
@@ -171,6 +170,7 @@ int main(void)
             delay_ms(10);
             BUZZ(OFF);
         }
+        
         switch(Now_Problem){
             case Problem_1:
                 Process_Problem_1();

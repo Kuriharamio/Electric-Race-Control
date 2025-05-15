@@ -118,16 +118,6 @@ void Servo_Update_PID(pClass_Servo this)
 {
     if(this->STOP) return;
 
-    if(this->Last_KI != this->PID->K_I){
-        this->Begin_Angle = this->Now_Angle;
-        this->PID->Set_Integral_Error(this->PID, 0.0f);
-        this->PID->Pre_Now = 0.0f;
-        this->PID->Pre_Target = 0.0f;
-        this->PID->Pre_Out = 0.0f;
-        this->PID->Pre_Error = 0.0f;
-        this->Last_KI = this->PID->K_I;
-    }
-
     this->PID->Set_Target(this->PID, 0);
     this->PID->Set_Now(this->PID, this->Error);
     this->PID->TIM_Adjust_PeriodElapsedCallback(this->PID);
