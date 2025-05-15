@@ -10,6 +10,8 @@
  */
 #include "Base_Modules/motor.h"
 
+#ifdef USE_CAR
+
 static Class_Motor _Motor_RB = {RIGHT_BACK};
 static Class_Motor _Motor_LB = {LEFT_BACK};
 static Class_Motor _Motor_RF = {RIGHT_FRONT};
@@ -330,3 +332,5 @@ void Motor_TIM_PID_PeriodElapsedCallback(pClass_Motor this)
 
     this->Output(this);
 }
+
+#endif

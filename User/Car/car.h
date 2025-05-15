@@ -3,6 +3,7 @@
 
 #include "Base_Modules/motor.h"
 #include "Algorithm/pure_pursuit.h"
+
 typedef struct Class_Car
 {
     // 电机对象
@@ -19,15 +20,13 @@ typedef struct Class_Car
     pClass_PID PID_Straight_Position; // 直线位置PID
     pClass_PID PID_Angle_Position;
 
-    pClass_PID PID_Linear;            // 速度环PID
-    pClass_PID PID_Angular;           // 角度环PID
+    pClass_PID PID_Linear;  // 速度环PID
+    pClass_PID PID_Angular; // 角度环PID
     pClass_PID PID_Follow;
 
     // 里程计
     POSITION Target_Position; // 目标位置
     POSITION Now_Position;    // 里程计位置
-    float imu_yaw;
-    float Target_imu_yaw;
 
     // 速度
     SPEED Target_Speed; // 目标速度
@@ -35,7 +34,8 @@ typedef struct Class_Car
     SPEED Now_Speed;    // 实际速度
 
     float follow_error;
-
+    float imu_yaw;
+    float Target_imu_yaw;
 
     bool is_inited; // 是否初始化完成
 

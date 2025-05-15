@@ -1,5 +1,4 @@
-#include "ti_msp_dl_config.h"
-#include <stdlib.h>
+#include "User/config.h"
 
 #include "BSP/board.h"
 #include "BSP/delay.h"
@@ -15,16 +14,8 @@
 
 #include "Car/car.h"
 
-void Change_Mode_0(void)
-{
-  pClass_UART K230 = Get_UART_INST(K230_UART_INDEX);
-  K230->Send_Bit(K230, 0); // 发送数据
-}
-void Change_Mode_1(void)
-{
-  pClass_UART K230 = Get_UART_INST(K230_UART_INDEX);
-  K230->Send_Bit(K230, 1); // 发送数据
-}
+#include "problem.h"
+
 
 int main(void)
 {

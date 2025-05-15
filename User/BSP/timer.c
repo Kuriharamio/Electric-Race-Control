@@ -5,50 +5,62 @@
  * @note 该文件包含了电机PID定时器、编码器测速定时器和ADC按钮读取数据定时器的中断处理函数。
  * @version 0.1
  * @date 2025-04-11
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 #include "BSP/timer.h"
+// 计数器定时器中断处理函数
 
+#ifdef USE_PID
 // 电机PID定时器中断处理函数
-void PID_INST_IRQHandler(void)
+void PID_TIMER_INST_IRQHandler(void)
 {
-    switch (DL_TimerA_getPendingInterrupt(PID_INST))
+    switch (DL_TimerA_getPendingInterrupt(PID_TIMER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
+#ifdef USE_CAR
+        // // pClass_Motor Motor_LB = Get_Motor_INST(LEFT_BACK);
+        // if (Get_Motor_INST(LEFT_BACK)->is_inited)
+        //     Get_Motor_INST(LEFT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_BACK));
+        // // pClass_Motor Motor_RB = Get_Motor_INST(RIGHT_BACK);
+        // if (Get_Motor_INST(RIGHT_BACK)->is_inited)
+        //     Get_Motor_INST(RIGHT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_BACK));
+        // // pClass_Motor Motor_LF = Get_Motor_INST(LEFT_FRONT);
+        // if (Get_Motor_INST(LEFT_FRONT)->is_inited)
+        //     Get_Motor_INST(LEFT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_FRONT));
+        // // pClass_Motor Motor_RF = Get_Motor_INST(RIGHT_FRONT);
+        // if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
+        //     Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
+        // if (Get_Car_Handle()->is_inited)
+        // {
+        //     Get_Car_Handle()->Update_Speed_PID(Get_Car_Handle());
+        //     if (Get_Car_Handle()->follow_error)
+        //         Get_Car_Handle()->Update_Follow_PID(Get_Car_Handle());
+        // }
+#endif
 
-        // pClass_Motor Motor_LB = Get_Motor_INST(LEFT_BACK);
-        if (Get_Motor_INST(LEFT_BACK)->is_inited)
-            Get_Motor_INST(LEFT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_BACK));
-
-        // pClass_Motor Motor_RB = Get_Motor_INST(RIGHT_BACK);
-        if (Get_Motor_INST(RIGHT_BACK)->is_inited)
-            Get_Motor_INST(RIGHT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_BACK));
-
-        // pClass_Motor Motor_LF = Get_Motor_INST(LEFT_FRONT);
-        if (Get_Motor_INST(LEFT_FRONT)->is_inited)
-            Get_Motor_INST(LEFT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_FRONT));
-
-        // pClass_Motor Motor_RF = Get_Motor_INST(RIGHT_FRONT);
-        if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
-            Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
-
-        if (Get_Car_Handle()->is_inited)
+#ifdef USE_SERVO
+        // pClass_Servo servo_up = Get_Servo_INST(SERVO_UP_INDEX);
+        if (Get_Servo_INST(SERVO_UP_INDEX)->is_inited)
         {
-            Get_Car_Handle()->Update_Speed_PID(Get_Car_Handle());
-            if (Get_Car_Handle()->follow_error)
-                Get_Car_Handle()->Update_Follow_PID(Get_Car_Handle());
+            Get_Servo_INST(SERVO_UP_INDEX)->Update_PID(Get_Servo_INST(SERVO_UP_INDEX));
         }
-
-        
+        // pClass_Servo servo_down = Get_Servo_INST(SERVO_DOWN_INDEX);
+        if (Get_Servo_INST(SERVO_DOWN_INDEX)->is_inited)
+        {
+            Get_Servo_INST(SERVO_DOWN_INDEX)->Update_PID(Get_Servo_INST(SERVO_DOWN_INDEX));
+        }
+#endif
         break;
 
     default:
         break;
     }
 }
+#endif
 
+#ifdef USE_ENCODER
 // 编码器测速定时器中断处理函数
 void ENCODER_INST_IRQHandler(void)
 {
@@ -94,19 +106,21 @@ void ENCODER_INST_IRQHandler(void)
         break;
     }
 }
+#endif
 
 #ifdef USE_ADC_BUTTON
 // ADC按钮读取数据定时器中断处理函数
-void ADC_BUTTON_INST_IRQHandler(void)
+void ADC_BUTTON_TIMER_INST_IRQHandler(void)
 {
-    switch (DL_TimerG_getPendingInterrupt(ADC_BUTTON_INST))
+
+    switch (DL_TimerG_getPendingInterrupt(ADC_BUTTON_TIMER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
-        // pClass_ADCButton ADC_Button = GET_ADCButton_INST();         // 获取ADC按钮实例
-        if(GET_ADCButton_INST()->is_inited){
+        if (GET_ADCButton_INST()->is_inited)
+        {
             GET_ADCButton_INST()->Check_And_Trigger(GET_ADCButton_INST()); // 获取当前ADC值
         }
-            
+
         break;
 
     default:

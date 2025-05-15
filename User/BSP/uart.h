@@ -22,24 +22,24 @@ typedef struct Class_UART
     uint8_t rx_len;       // 接收数据长度
     uint8_t *rxbuffer;    // 接收数据缓冲区
 
-    bool is_inited;     // 串口初始化标志位
+    bool is_inited; // 串口初始化标志位
     // bool is_configured; // 串口配置标志位
 
     uint8_t param_len;  // 参数个数
     float **param_list; // 参数列表
 
-    void (*Init)(struct Class_UART *this, uint8_t rx_max_len, uint8_t param_len);    // 初始化函数
-    void (*Send_Bit)(struct Class_UART *this, uint8_t data);                         // 发送数据函数
-    void (*Send_Datas)(struct Class_UART *this, uint8_t *datas, size_t size);        // 发送字符串函数
-    void (*Clear_RxBuffer)(struct Class_UART *this);                                 // 清除接收缓冲区
+    void (*Init)(struct Class_UART *this, uint8_t rx_max_len, uint8_t param_len); // 初始化函数
+    void (*Send_Bit)(struct Class_UART *this, uint8_t data);                      // 发送数据函数
+    void (*Send_Datas)(struct Class_UART *this, uint8_t *datas, size_t size);     // 发送字符串函数
+    void (*Clear_RxBuffer)(struct Class_UART *this);                              // 清除接收缓冲区
 
     void (*Custom_Send_Datas)(uint8_t *datas, size_t size); // 自定义发送数据函数
 
     void (*Send)(struct Class_UART *this, uint8_t *datas, size_t size); // 发送数据函数
 
-    void (*Configure_Mode)(struct Class_UART *this, UART_MODE mode);                                // 配置调试模式
-    void (*Configure_Param_Len)(struct Class_UART *this, uint8_t param_len);                        // 配置参数长度
-    void (*Configure_Callback)(struct Class_UART *this, void (*callback)(struct Class_UART *this)); // 配置回调函数
+    void (*Configure_Mode)(struct Class_UART *this, UART_MODE mode);                                         // 配置调试模式
+    void (*Configure_Param_Len)(struct Class_UART *this, uint8_t param_len);                                 // 配置参数长度
+    void (*Configure_Callback)(struct Class_UART *this, void (*callback)(struct Class_UART *this));          // 配置回调函数
     void (*Configure_Custom_Send_Datas)(struct Class_UART *this, void (*func)(uint8_t *datas, size_t size)); // 配置自定义发送数据函数
 
     void (*Bind_Param_With_Id)(struct Class_UART *this, uint8_t id, float *input_param); // 绑定参数

@@ -1,5 +1,6 @@
 #include "Algorithm/pure_pursuit.h"
 
+#ifdef USE_PURE_PURSUIT
 // <<<<<<<< 实例声明 <<<<<<<<
 static Class_PurePursuit _PURE_PURSUIT = {};
 // >>>>>>>> 实例声明 >>>>>>>>
@@ -451,3 +452,5 @@ bool PurePursuit_Calculate_Target_Speed(pClass_PurePursuit this)
 //     this->Target_Speed.angular_velocity = target_speed * curvature;
 
 // }
+
+#endif

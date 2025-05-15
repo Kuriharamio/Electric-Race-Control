@@ -1,8 +1,8 @@
 #ifndef __K230_SERIAL_H__
 #define __K230_SERIAL_H__
 
+#include "config.h"
 #include "BSP/uart.h"
-#include "Base_Modules/reminder.h"
 
 #define FRAME_HEADER_1 0xA5
 #define FRAME_HEADER_2 0x5A

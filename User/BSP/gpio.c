@@ -5,15 +5,15 @@
  * @note 该文件包含了电机编码器中断处理函数的实现。
  * @version 0.1
  * @date 2025-04-11
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 #include "gpio.h"
 
 void GROUP1_IRQHandler(void)
 {
-
+#ifdef USE_ENCODER
     /*******************************
                 编码器中断
     *******************************/
@@ -92,4 +92,5 @@ void GROUP1_IRQHandler(void)
             DL_GPIO_clearInterruptStatus(Motor_RF->ENCODER_PORT, Motor_RF->ENCODER_B_PIN);
         }
     }
+#endif
 }

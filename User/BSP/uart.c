@@ -87,9 +87,9 @@ pClass_UART Create_UART(uint8_t index)
 	this->Custom_Send_Datas = NULL;				// 自定义发送数据函数
 	this->Send = UART_Send;						// 发送数据函数
 
-	this->Configure_Mode = UART_Configure_Mode;				// 配置调试模式
-	this->Configure_Param_Len = UART_Configure_Param_Len;	// 配置参数长度
-	this->Configure_Callback = UART_Configure_Callback;		// 配置回调函数
+	this->Configure_Mode = UART_Configure_Mode;			  // 配置调试模式
+	this->Configure_Param_Len = UART_Configure_Param_Len; // 配置参数长度
+	this->Configure_Callback = UART_Configure_Callback;	  // 配置回调函数
 	this->Configure_Custom_Send_Datas = UART_Configure_Custom_Send_Datas;
 	this->Bind_Param_With_Id = UART_Bind_Param_With_Id;		// 绑定参数
 	this->Modify_Param_With_Id = UART_Modify_Param_With_Id; // 修改参数
@@ -374,7 +374,8 @@ void UART_1_INST_IRQHandler(void)
 	case DL_UART_IIDX_RX: // 如果是接收中断
 	{
 		// 接收发送过来的数据保存
-		receivedData = DL_UART_Main_receiveData(UART_1_INST);;
+		receivedData = DL_UART_Main_receiveData(UART_1_INST);
+		;
 		_UART_1_INST.current_byte = receivedData; // 保存当前接收的字节
 		if (_UART_1_INST.UART_INST_DataProcess != NULL)
 		{

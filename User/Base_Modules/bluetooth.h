@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "BSP/uart.h"
-#include "BSP/board.h"
 
 void Bluetooth_Rx_Callback(pClass_UART this);
 

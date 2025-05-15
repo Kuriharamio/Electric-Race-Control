@@ -42,8 +42,8 @@
 
 DL_TimerA_backupConfig gPWM_MOTOR_LBackup;
 DL_TimerA_backupConfig gPWM_MOTOR_RBackup;
-DL_TimerG_backupConfig gENCODERBackup;
-DL_TimerG_backupConfig gPIDBackup;
+DL_TimerG_backupConfig gENCODER_TIMERBackup;
+DL_TimerG_backupConfig gPID_TIMERBackup;
 DL_UART_Main_backupConfig gUART_2Backup;
 
 /*
@@ -58,19 +58,19 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_SYSCTL_init();
     SYSCFG_DL_PWM_MOTOR_L_init();
     SYSCFG_DL_PWM_MOTOR_R_init();
-    SYSCFG_DL_ENCODER_init();
-    SYSCFG_DL_PID_init();
-    SYSCFG_DL_ADC_BUTTON_init();
+    SYSCFG_DL_ENCODER_TIMER_init();
+    SYSCFG_DL_PID_TIMER_init();
+    SYSCFG_DL_ADC_BUTTON_TIMER_init();
     SYSCFG_DL_UART_0_init();
     SYSCFG_DL_UART_1_init();
     SYSCFG_DL_UART_2_init();
-    SYSCFG_DL_adckey_init();
+    SYSCFG_DL_ADC_BUTTON_init();
     SYSCFG_DL_SYSTICK_init();
     /* Ensure backup structures have no valid state */
 	gPWM_MOTOR_LBackup.backupRdy 	= false;
 	gPWM_MOTOR_RBackup.backupRdy 	= false;
-	gENCODERBackup.backupRdy 	= false;
-	gPIDBackup.backupRdy 	= false;
+	gENCODER_TIMERBackup.backupRdy 	= false;
+	gPID_TIMERBackup.backupRdy 	= false;
 	gUART_2Backup.backupRdy 	= false;
 
 }
@@ -84,8 +84,8 @@ SYSCONFIG_WEAK bool SYSCFG_DL_saveConfiguration(void)
 
 	retStatus &= DL_TimerA_saveConfiguration(PWM_MOTOR_L_INST, &gPWM_MOTOR_LBackup);
 	retStatus &= DL_TimerA_saveConfiguration(PWM_MOTOR_R_INST, &gPWM_MOTOR_RBackup);
-	retStatus &= DL_TimerG_saveConfiguration(ENCODER_INST, &gENCODERBackup);
-	retStatus &= DL_TimerG_saveConfiguration(PID_INST, &gPIDBackup);
+	retStatus &= DL_TimerG_saveConfiguration(ENCODER_TIMER_INST, &gENCODER_TIMERBackup);
+	retStatus &= DL_TimerG_saveConfiguration(PID_TIMER_INST, &gPID_TIMERBackup);
 	retStatus &= DL_UART_Main_saveConfiguration(UART_2_INST, &gUART_2Backup);
 
     return retStatus;
@@ -98,8 +98,8 @@ SYSCONFIG_WEAK bool SYSCFG_DL_restoreConfiguration(void)
 
 	retStatus &= DL_TimerA_restoreConfiguration(PWM_MOTOR_L_INST, &gPWM_MOTOR_LBackup, false);
 	retStatus &= DL_TimerA_restoreConfiguration(PWM_MOTOR_R_INST, &gPWM_MOTOR_RBackup, false);
-	retStatus &= DL_TimerG_restoreConfiguration(ENCODER_INST, &gENCODERBackup, false);
-	retStatus &= DL_TimerG_restoreConfiguration(PID_INST, &gPIDBackup, false);
+	retStatus &= DL_TimerG_restoreConfiguration(ENCODER_TIMER_INST, &gENCODER_TIMERBackup, false);
+	retStatus &= DL_TimerG_restoreConfiguration(PID_TIMER_INST, &gPID_TIMERBackup, false);
 	retStatus &= DL_UART_Main_restoreConfiguration(UART_2_INST, &gUART_2Backup);
 
     return retStatus;
@@ -111,26 +111,26 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_GPIO_reset(GPIOB);
     DL_TimerA_reset(PWM_MOTOR_L_INST);
     DL_TimerA_reset(PWM_MOTOR_R_INST);
-    DL_TimerG_reset(ENCODER_INST);
-    DL_TimerG_reset(PID_INST);
-    DL_TimerG_reset(ADC_BUTTON_INST);
+    DL_TimerG_reset(ENCODER_TIMER_INST);
+    DL_TimerG_reset(PID_TIMER_INST);
+    DL_TimerG_reset(ADC_BUTTON_TIMER_INST);
     DL_UART_Main_reset(UART_0_INST);
     DL_UART_Main_reset(UART_1_INST);
     DL_UART_Main_reset(UART_2_INST);
-    DL_ADC12_reset(adckey_INST);
+    DL_ADC12_reset(ADC_BUTTON_INST);
 
 
     DL_GPIO_enablePower(GPIOA);
     DL_GPIO_enablePower(GPIOB);
     DL_TimerA_enablePower(PWM_MOTOR_L_INST);
     DL_TimerA_enablePower(PWM_MOTOR_R_INST);
-    DL_TimerG_enablePower(ENCODER_INST);
-    DL_TimerG_enablePower(PID_INST);
-    DL_TimerG_enablePower(ADC_BUTTON_INST);
+    DL_TimerG_enablePower(ENCODER_TIMER_INST);
+    DL_TimerG_enablePower(PID_TIMER_INST);
+    DL_TimerG_enablePower(ADC_BUTTON_TIMER_INST);
     DL_UART_Main_enablePower(UART_0_INST);
     DL_UART_Main_enablePower(UART_1_INST);
     DL_UART_Main_enablePower(UART_2_INST);
-    DL_ADC12_enablePower(adckey_INST);
+    DL_ADC12_enablePower(ADC_BUTTON_INST);
 
     delay_cycles(POWER_STARTUP_DELAY);
 }
@@ -418,7 +418,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_PWM_MOTOR_R_init(void) {
  * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
  *   250000 Hz = 10000000 Hz / (8 * (39 + 1))
  */
-static const DL_TimerG_ClockConfig gENCODERClockConfig = {
+static const DL_TimerG_ClockConfig gENCODER_TIMERClockConfig = {
     .clockSel    = DL_TIMER_CLOCK_BUSCLK,
     .divideRatio = DL_TIMER_CLOCK_DIVIDE_8,
     .prescale    = 39U,
@@ -426,23 +426,23 @@ static const DL_TimerG_ClockConfig gENCODERClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * ENCODER_INST_LOAD_VALUE = (10 ms * 250000 Hz) - 1
+ * ENCODER_TIMER_INST_LOAD_VALUE = (10 ms * 250000 Hz) - 1
  */
-static const DL_TimerG_TimerConfig gENCODERTimerConfig = {
-    .period     = ENCODER_INST_LOAD_VALUE,
+static const DL_TimerG_TimerConfig gENCODER_TIMERTimerConfig = {
+    .period     = ENCODER_TIMER_INST_LOAD_VALUE,
     .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC,
     .startTimer = DL_TIMER_START,
 };
 
-SYSCONFIG_WEAK void SYSCFG_DL_ENCODER_init(void) {
+SYSCONFIG_WEAK void SYSCFG_DL_ENCODER_TIMER_init(void) {
 
-    DL_TimerG_setClockConfig(ENCODER_INST,
-        (DL_TimerG_ClockConfig *) &gENCODERClockConfig);
+    DL_TimerG_setClockConfig(ENCODER_TIMER_INST,
+        (DL_TimerG_ClockConfig *) &gENCODER_TIMERClockConfig);
 
-    DL_TimerG_initTimerMode(ENCODER_INST,
-        (DL_TimerG_TimerConfig *) &gENCODERTimerConfig);
-    DL_TimerG_enableInterrupt(ENCODER_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
-    DL_TimerG_enableClock(ENCODER_INST);
+    DL_TimerG_initTimerMode(ENCODER_TIMER_INST,
+        (DL_TimerG_TimerConfig *) &gENCODER_TIMERTimerConfig);
+    DL_TimerG_enableInterrupt(ENCODER_TIMER_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
+    DL_TimerG_enableClock(ENCODER_TIMER_INST);
 
 
 
@@ -454,7 +454,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_ENCODER_init(void) {
  * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
  *   250000 Hz = 10000000 Hz / (8 * (39 + 1))
  */
-static const DL_TimerG_ClockConfig gPIDClockConfig = {
+static const DL_TimerG_ClockConfig gPID_TIMERClockConfig = {
     .clockSel    = DL_TIMER_CLOCK_BUSCLK,
     .divideRatio = DL_TIMER_CLOCK_DIVIDE_8,
     .prescale    = 39U,
@@ -462,23 +462,23 @@ static const DL_TimerG_ClockConfig gPIDClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * PID_INST_LOAD_VALUE = (10 ms * 250000 Hz) - 1
+ * PID_TIMER_INST_LOAD_VALUE = (10 ms * 250000 Hz) - 1
  */
-static const DL_TimerG_TimerConfig gPIDTimerConfig = {
-    .period     = PID_INST_LOAD_VALUE,
+static const DL_TimerG_TimerConfig gPID_TIMERTimerConfig = {
+    .period     = PID_TIMER_INST_LOAD_VALUE,
     .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC,
     .startTimer = DL_TIMER_START,
 };
 
-SYSCONFIG_WEAK void SYSCFG_DL_PID_init(void) {
+SYSCONFIG_WEAK void SYSCFG_DL_PID_TIMER_init(void) {
 
-    DL_TimerG_setClockConfig(PID_INST,
-        (DL_TimerG_ClockConfig *) &gPIDClockConfig);
+    DL_TimerG_setClockConfig(PID_TIMER_INST,
+        (DL_TimerG_ClockConfig *) &gPID_TIMERClockConfig);
 
-    DL_TimerG_initTimerMode(PID_INST,
-        (DL_TimerG_TimerConfig *) &gPIDTimerConfig);
-    DL_TimerG_enableInterrupt(PID_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
-    DL_TimerG_enableClock(PID_INST);
+    DL_TimerG_initTimerMode(PID_TIMER_INST,
+        (DL_TimerG_TimerConfig *) &gPID_TIMERTimerConfig);
+    DL_TimerG_enableInterrupt(PID_TIMER_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
+    DL_TimerG_enableClock(PID_TIMER_INST);
 
 
 
@@ -490,7 +490,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_PID_init(void) {
  * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
  *   1250000 Hz = 40000000 Hz / (1 * (31 + 1))
  */
-static const DL_TimerG_ClockConfig gADC_BUTTONClockConfig = {
+static const DL_TimerG_ClockConfig gADC_BUTTON_TIMERClockConfig = {
     .clockSel    = DL_TIMER_CLOCK_BUSCLK,
     .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
     .prescale    = 31U,
@@ -498,23 +498,23 @@ static const DL_TimerG_ClockConfig gADC_BUTTONClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * ADC_BUTTON_INST_LOAD_VALUE = (50 ms * 1250000 Hz) - 1
+ * ADC_BUTTON_TIMER_INST_LOAD_VALUE = (50 ms * 1250000 Hz) - 1
  */
-static const DL_TimerG_TimerConfig gADC_BUTTONTimerConfig = {
-    .period     = ADC_BUTTON_INST_LOAD_VALUE,
+static const DL_TimerG_TimerConfig gADC_BUTTON_TIMERTimerConfig = {
+    .period     = ADC_BUTTON_TIMER_INST_LOAD_VALUE,
     .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC,
     .startTimer = DL_TIMER_START,
 };
 
-SYSCONFIG_WEAK void SYSCFG_DL_ADC_BUTTON_init(void) {
+SYSCONFIG_WEAK void SYSCFG_DL_ADC_BUTTON_TIMER_init(void) {
 
-    DL_TimerG_setClockConfig(ADC_BUTTON_INST,
-        (DL_TimerG_ClockConfig *) &gADC_BUTTONClockConfig);
+    DL_TimerG_setClockConfig(ADC_BUTTON_TIMER_INST,
+        (DL_TimerG_ClockConfig *) &gADC_BUTTON_TIMERClockConfig);
 
-    DL_TimerG_initTimerMode(ADC_BUTTON_INST,
-        (DL_TimerG_TimerConfig *) &gADC_BUTTONTimerConfig);
-    DL_TimerG_enableInterrupt(ADC_BUTTON_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
-    DL_TimerG_enableClock(ADC_BUTTON_INST);
+    DL_TimerG_initTimerMode(ADC_BUTTON_TIMER_INST,
+        (DL_TimerG_TimerConfig *) &gADC_BUTTON_TIMERTimerConfig);
+    DL_TimerG_enableInterrupt(ADC_BUTTON_TIMER_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
+    DL_TimerG_enableClock(ADC_BUTTON_TIMER_INST);
 
 
 
@@ -631,31 +631,31 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_2_init(void)
     DL_UART_Main_enable(UART_2_INST);
 }
 
-/* adckey Initialization */
-static const DL_ADC12_ClockConfig gadckeyClockConfig = {
+/* ADC_BUTTON Initialization */
+static const DL_ADC12_ClockConfig gADC_BUTTONClockConfig = {
     .clockSel       = DL_ADC12_CLOCK_SYSOSC,
     .divideRatio    = DL_ADC12_CLOCK_DIVIDE_8,
     .freqRange      = DL_ADC12_CLOCK_FREQ_RANGE_24_TO_32,
 };
-SYSCONFIG_WEAK void SYSCFG_DL_adckey_init(void)
+SYSCONFIG_WEAK void SYSCFG_DL_ADC_BUTTON_init(void)
 {
-    DL_ADC12_setClockConfig(adckey_INST, (DL_ADC12_ClockConfig *) &gadckeyClockConfig);
-    DL_ADC12_configConversionMem(adckey_INST, adckey_ADCMEM_key,
+    DL_ADC12_setClockConfig(ADC_BUTTON_INST, (DL_ADC12_ClockConfig *) &gADC_BUTTONClockConfig);
+    DL_ADC12_configConversionMem(ADC_BUTTON_INST, ADC_BUTTON_ADCMEM_0,
         DL_ADC12_INPUT_CHAN_0, DL_ADC12_REFERENCE_VOLTAGE_VDDA, DL_ADC12_SAMPLE_TIMER_SOURCE_SCOMP0, DL_ADC12_AVERAGING_MODE_DISABLED,
         DL_ADC12_BURN_OUT_SOURCE_DISABLED, DL_ADC12_TRIGGER_MODE_AUTO_NEXT, DL_ADC12_WINDOWS_COMP_MODE_DISABLED);
-    DL_ADC12_setSampleTime0(adckey_INST,20000);
+    DL_ADC12_setSampleTime0(ADC_BUTTON_INST,20000);
     /* Enable ADC12 interrupt */
-    DL_ADC12_clearInterruptStatus(adckey_INST,(DL_ADC12_INTERRUPT_MEM0_RESULT_LOADED));
-    DL_ADC12_enableInterrupt(adckey_INST,(DL_ADC12_INTERRUPT_MEM0_RESULT_LOADED));
-    DL_ADC12_enableConversions(adckey_INST);
+    DL_ADC12_clearInterruptStatus(ADC_BUTTON_INST,(DL_ADC12_INTERRUPT_MEM0_RESULT_LOADED));
+    DL_ADC12_enableInterrupt(ADC_BUTTON_INST,(DL_ADC12_INTERRUPT_MEM0_RESULT_LOADED));
+    DL_ADC12_enableConversions(ADC_BUTTON_INST);
 }
 
 SYSCONFIG_WEAK void SYSCFG_DL_SYSTICK_init(void)
 {
     /*
-     * Initializes the SysTick period to 400.00 μs,
+     * Initializes the SysTick period to 1.00 μs,
      * enables the interrupt, and starts the SysTick Timer
      */
-    DL_SYSTICK_config(32000);
+    DL_SYSTICK_config(80);
 }
 

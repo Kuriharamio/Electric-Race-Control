@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-void softwareReset(uint32_t resetType);
+void softwareReset(void);
 void board_init(void);
 
 #endif // __BOARD__H__

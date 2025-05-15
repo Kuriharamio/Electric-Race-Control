@@ -50,11 +50,10 @@ multiplier2.multiplyValue = 10;
 const mux8       = system.clockTree["HSCLKMUX"];
 mux8.inputSelect = "HSCLKMUX_SYSPLL2X";
 
-ADC121.$name                             = "adckey";
 ADC121.sampClkDiv                        = "DL_ADC12_CLOCK_DIVIDE_8";
 ADC121.enabledInterrupts                 = ["DL_ADC12_INTERRUPT_MEM0_RESULT_LOADED"];
-ADC121.adcMem0_name                      = "key";
 ADC121.sampleTime0                       = "5 ms";
+ADC121.$name                             = "ADC_BUTTON";
 ADC121.peripheral.$assign                = "ADC0";
 ADC121.peripheral.adcPin0.$assign        = "PA27";
 ADC121.adcPin0Config.hideOutputInversion = scripting.forceWrite(false);
@@ -248,10 +247,10 @@ PWM2.ccp1PinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric7";
 SYSCTL.clockTreeEn = true;
 
 SYSTICK.periodEnable      = true;
-SYSTICK.period            = 32000;
 SYSTICK.interruptEnable   = true;
 SYSTICK.interruptPriority = "0";
 SYSTICK.systickEnable     = true;
+SYSTICK.period            = 80;
 
 TIMER1.timerStartTimer    = true;
 TIMER1.timerMode          = "PERIODIC";
@@ -259,7 +258,7 @@ TIMER1.timerClkDiv        = 8;
 TIMER1.interrupts         = ["ZERO"];
 TIMER1.timerClkPrescale   = 40;
 TIMER1.timerPeriod        = "10 ms";
-TIMER1.$name              = "ENCODER";
+TIMER1.$name              = "ENCODER_TIMER";
 TIMER1.peripheral.$assign = "TIMG7";
 
 TIMER2.timerClkDiv        = 8;
@@ -267,16 +266,16 @@ TIMER2.timerClkPrescale   = 40;
 TIMER2.timerMode          = "PERIODIC";
 TIMER2.timerStartTimer    = true;
 TIMER2.interrupts         = ["ZERO"];
-TIMER2.$name              = "PID";
 TIMER2.timerPeriod        = "10 ms";
+TIMER2.$name              = "PID_TIMER";
 TIMER2.peripheral.$assign = "TIMG6";
 
-TIMER3.$name              = "ADC_BUTTON";
 TIMER3.timerClkPrescale   = 32;
 TIMER3.timerPeriod        = "50 ms";
 TIMER3.timerStartTimer    = true;
 TIMER3.interrupts         = ["ZERO"];
 TIMER3.timerMode          = "PERIODIC";
+TIMER3.$name              = "ADC_BUTTON_TIMER";
 TIMER3.peripheral.$assign = "TIMG0";
 
 UART1.$name                    = "UART_0";

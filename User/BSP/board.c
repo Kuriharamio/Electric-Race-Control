@@ -19,7 +19,7 @@ void _sys_exit(int x)
 }
 #endif
 
-void softwareReset(uint32_t resetType)
+void softwareReset(void)
 {
     DL_SYSCTL_resetDevice(SYSCTL_RESETLEVEL_LEVEL_POR);
 }
@@ -30,18 +30,20 @@ void board_init(void)
     SYSCFG_DL_init();
 
     // TIM初始化
-    NVIC_ClearPendingIRQ(ENCODER_INST_INT_IRQN);
-    NVIC_ClearPendingIRQ(PID_INST_INT_IRQN);
-#ifdef USE_ADC_BUTTON
-    NVIC_ClearPendingIRQ(ADC_BUTTON_INST_INT_IRQN);
-    NVIC_EnableIRQ(ADC_BUTTON_INST_INT_IRQN);
+#ifdef USE_PID
+    NVIC_ClearPendingIRQ(PID_TIMER_INST_INT_IRQN);
+    NVIC_EnableIRQ(PID_TIMER_INST_INT_IRQN);
 #endif
-
-    NVIC_EnableIRQ(ENCODER_INST_INT_IRQN);
-    NVIC_EnableIRQ(PID_INST_INT_IRQN);
-
-
+#ifdef USE_ENCODER
+    NVIC_ClearPendingIRQ(ENCODER_TIMER_INST_INT_IRQN);
+    NVIC_EnableIRQ(ENCODER_TIMER_INST_INT_IRQN);
     // GPIO初始化
     NVIC_EnableIRQ(GPIOA_INT_IRQn);
     NVIC_EnableIRQ(GPIOB_INT_IRQn);
+#endif
+
+#ifdef USE_ADC_BUTTON
+    NVIC_ClearPendingIRQ(ADC_BUTTON_TIMER_INST_INT_IRQN);
+    NVIC_EnableIRQ(ADC_BUTTON_TIMER_INST_INT_IRQN);
+#endif
 }

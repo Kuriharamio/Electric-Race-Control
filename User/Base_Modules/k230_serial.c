@@ -1,5 +1,7 @@
 #include "Base_Modules/k230_serial.h"
 
+#ifdef USE_K230
+
 static RxState Rx_State = STATE_WAIT_HEADER_1; // 接收状态标志位
 static uint8_t Rx_Data_Len = 0;				   // 数据长度
 static uint8_t Rx_BCC = 0;					   // 接收到的BCC校验位
@@ -98,24 +100,17 @@ void K230_Rx_Callback(pClass_UART this)
 
 		if (Rx_BCC == Calculate_BCC((this->rxbuffer), this->rx_len))
 		{
-			// this->rxbuffer[this->rx_len++] = '\0';
 			// 转化浮点数
-			if (Rx_Data_Len == 4)
+			uint8_t index = 0;
+			while (index * 4 < (uint8_t)(this->rx_len))
 			{
-				LED(TOGGLE);
-
-				float f1 = BigEndianBytesToFloat(&(this->rxbuffer[0]));
-				// float f2 = BigEndianBytesToFloat(&(this->rxbuffer[4]));
-				// float f3 = BigEndianBytesToFloat(&(this->rxbuffer[8]));
-				if (f1)
-					this->Modify_Param_With_Id(this, 0, f1); // 修改参数
-				// this->Modify_Param_With_Id(this, 1, f2); // 修改参数
-				// this->Modify_Param_With_Id(this, 2, f3); // 修改参数
+				float param = BigEndianBytesToFloat(&(this->rxbuffer[index * 4]));
+				this->Modify_Param_With_Id(this, index, param); // 修改参数
+				index++;
 			}
 		}
 		// 接收完重置标志位
 		Rx_State = STATE_WAIT_HEADER_1;
-		// this->Clear_RxBuffer(this);
 		break;
 	}
 }
@@ -152,3 +147,5 @@ void K230_Transmit(pClass_UART this, float *datas, uint8_t len)
 	// 发送完整帧
 	this->Send_Datas(this, buffer, frame_len);
 }
+
+#endif

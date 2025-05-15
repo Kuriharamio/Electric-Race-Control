@@ -115,21 +115,21 @@ extern "C" {
 
 
 
-/* Defines for ENCODER */
-#define ENCODER_INST                                                     (TIMG7)
-#define ENCODER_INST_IRQHandler                                 TIMG7_IRQHandler
-#define ENCODER_INST_INT_IRQN                                   (TIMG7_INT_IRQn)
-#define ENCODER_INST_LOAD_VALUE                                          (2499U)
-/* Defines for PID */
-#define PID_INST                                                         (TIMG6)
-#define PID_INST_IRQHandler                                     TIMG6_IRQHandler
-#define PID_INST_INT_IRQN                                       (TIMG6_INT_IRQn)
-#define PID_INST_LOAD_VALUE                                              (2499U)
-/* Defines for ADC_BUTTON */
-#define ADC_BUTTON_INST                                                  (TIMG0)
-#define ADC_BUTTON_INST_IRQHandler                              TIMG0_IRQHandler
-#define ADC_BUTTON_INST_INT_IRQN                                (TIMG0_INT_IRQn)
-#define ADC_BUTTON_INST_LOAD_VALUE                                      (62499U)
+/* Defines for ENCODER_TIMER */
+#define ENCODER_TIMER_INST                                               (TIMG7)
+#define ENCODER_TIMER_INST_IRQHandler                           TIMG7_IRQHandler
+#define ENCODER_TIMER_INST_INT_IRQN                             (TIMG7_INT_IRQn)
+#define ENCODER_TIMER_INST_LOAD_VALUE                                    (2499U)
+/* Defines for PID_TIMER */
+#define PID_TIMER_INST                                                   (TIMG6)
+#define PID_TIMER_INST_IRQHandler                               TIMG6_IRQHandler
+#define PID_TIMER_INST_INT_IRQN                                 (TIMG6_INT_IRQn)
+#define PID_TIMER_INST_LOAD_VALUE                                        (2499U)
+/* Defines for ADC_BUTTON_TIMER */
+#define ADC_BUTTON_TIMER_INST                                            (TIMG0)
+#define ADC_BUTTON_TIMER_INST_IRQHandler                        TIMG0_IRQHandler
+#define ADC_BUTTON_TIMER_INST_INT_IRQN                          (TIMG0_INT_IRQn)
+#define ADC_BUTTON_TIMER_INST_LOAD_VALUE                                (62499U)
 
 
 
@@ -179,15 +179,15 @@ extern "C" {
 
 
 
-/* Defines for adckey */
-#define adckey_INST                                                         ADC0
-#define adckey_INST_IRQHandler                                   ADC0_IRQHandler
-#define adckey_INST_INT_IRQN                                     (ADC0_INT_IRQn)
-#define adckey_ADCMEM_key                                     DL_ADC12_MEM_IDX_0
-#define adckey_ADCMEM_key_REF                    DL_ADC12_REFERENCE_VOLTAGE_VDDA
-#define adckey_ADCMEM_key_REF_VOLTAGE                                         -1 // VDDA cannot be determined
-#define GPIO_adckey_C0_PORT                                                GPIOA
-#define GPIO_adckey_C0_PIN                                        DL_GPIO_PIN_27
+/* Defines for ADC_BUTTON */
+#define ADC_BUTTON_INST                                                     ADC0
+#define ADC_BUTTON_INST_IRQHandler                               ADC0_IRQHandler
+#define ADC_BUTTON_INST_INT_IRQN                                 (ADC0_INT_IRQn)
+#define ADC_BUTTON_ADCMEM_0                                   DL_ADC12_MEM_IDX_0
+#define ADC_BUTTON_ADCMEM_0_REF                  DL_ADC12_REFERENCE_VOLTAGE_VDDA
+#define ADC_BUTTON_ADCMEM_0_REF_VOLTAGE                                       -1 // VDDA cannot be determined
+#define GPIO_ADC_BUTTON_C0_PORT                                            GPIOA
+#define GPIO_ADC_BUTTON_C0_PIN                                    DL_GPIO_PIN_27
 
 
 
@@ -299,13 +299,13 @@ void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_PWM_MOTOR_L_init(void);
 void SYSCFG_DL_PWM_MOTOR_R_init(void);
-void SYSCFG_DL_ENCODER_init(void);
-void SYSCFG_DL_PID_init(void);
-void SYSCFG_DL_ADC_BUTTON_init(void);
+void SYSCFG_DL_ENCODER_TIMER_init(void);
+void SYSCFG_DL_PID_TIMER_init(void);
+void SYSCFG_DL_ADC_BUTTON_TIMER_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_UART_1_init(void);
 void SYSCFG_DL_UART_2_init(void);
-void SYSCFG_DL_adckey_init(void);
+void SYSCFG_DL_ADC_BUTTON_init(void);
 
 void SYSCFG_DL_SYSTICK_init(void);
 

@@ -1,5 +1,6 @@
 #include "Base_Modules/imu.h"
 
+#ifdef USE_IMU
 void Handle_IMU_Data_Bag(pClass_UART this)
 {
     static float first_yaw = 0.0f;
@@ -18,7 +19,7 @@ void Handle_IMU_Data_Bag(pClass_UART this)
             }
             else
             {
-                this->Modify_Param_With_Id(this, 0, TransAngleInPI((short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * PI - first_yaw));
+                this->Modify_Param_With_Id(this, 0, TransAngleInPI((short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * PI));
             }
         }
     }
@@ -53,3 +54,5 @@ void IMU_Rx_Callback(pClass_UART this)
         find_bag = false;
     }
 }
+
+#endif
