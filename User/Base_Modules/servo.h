@@ -14,7 +14,6 @@ typedef struct Class_Servo
     float Begin_Angle;
 
     pClass_PID PID;
-    float Last_KI;
     float Error;
 
     bool STOP;
@@ -60,7 +59,5 @@ void Servo_Init(pClass_Servo this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uin
 void Servo_Set_Angle(pClass_Servo this, float angle);
 uint32_t Servo_angle_to_CCR(pClass_Servo this, float angle);
 void Servo_Update_PID(pClass_Servo this);
-
-
 
 #endif

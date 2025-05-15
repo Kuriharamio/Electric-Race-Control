@@ -72,7 +72,6 @@ void Servo_Init(pClass_Servo this, GPTIMER_Regs *PWM_INST, uint32_t PWM_IDX, uin
     this->Angle_Max = Angle_Max;
     this->Now_Angle = Begin_Angle;
     this->Begin_Angle = Begin_Angle;
-    this->Last_KI = 0.0f;
 
     this->PID->PID_Init(this->PID, 0.0f, 0.0f, 0.0f, 0.0f, this->Angle_Max / 2.0f, this->Angle_Max / 2.0f, PID_DELTA_T, 2.50f, 0.20f, 30.00f, 0.0f, PID_D_First_DISABLE);
 
