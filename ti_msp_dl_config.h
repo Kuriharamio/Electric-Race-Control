@@ -119,12 +119,12 @@ extern "C" {
 #define ENCODER_TIMER_INST                                               (TIMG7)
 #define ENCODER_TIMER_INST_IRQHandler                           TIMG7_IRQHandler
 #define ENCODER_TIMER_INST_INT_IRQN                             (TIMG7_INT_IRQn)
-#define ENCODER_TIMER_INST_LOAD_VALUE                                    (2499U)
+#define ENCODER_TIMER_INST_LOAD_VALUE                                    (4999U)
 /* Defines for PID_TIMER */
 #define PID_TIMER_INST                                                   (TIMG6)
 #define PID_TIMER_INST_IRQHandler                               TIMG6_IRQHandler
 #define PID_TIMER_INST_INT_IRQN                                 (TIMG6_INT_IRQn)
-#define PID_TIMER_INST_LOAD_VALUE                                        (2499U)
+#define PID_TIMER_INST_LOAD_VALUE                                        (7499U)
 /* Defines for ADC_BUTTON_TIMER */
 #define ADC_BUTTON_TIMER_INST                                            (TIMG0)
 #define ADC_BUTTON_TIMER_INST_IRQHandler                        TIMG0_IRQHandler

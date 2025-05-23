@@ -3,6 +3,7 @@
 #ifdef USE_IMU
 void Handle_IMU_Data_Bag(pClass_UART this)
 {
+    static uint8_t init_cnt = 0;
     static float first_yaw = 0.0f;
     if (this->rxbuffer[0] == 0x55 && this->rxbuffer[1] == 0x53)
     {
@@ -13,13 +14,15 @@ void Handle_IMU_Data_Bag(pClass_UART this)
         }
         if (crc == this->rxbuffer[this->rx_len - 1])
         {
-            if (!first_yaw)
+            float yaw = (float)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * 180.0f;
+            if (init_cnt < 10)
             {
-                first_yaw = (short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * PI;
+                init_cnt++;
+                first_yaw += yaw;
             }
             else
             {
-                this->Modify_Param_With_Id(this, 0, TransAngleInPI((short)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * PI));
+                this->Modify_Param_With_Id(this, 0, TransAngleInPI((yaw - first_yaw / 10.0f) / 180.0f * PI));
             }
         }
     }

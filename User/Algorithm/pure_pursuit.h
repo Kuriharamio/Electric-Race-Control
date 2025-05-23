@@ -6,14 +6,16 @@
 #include <math.h>
 #include <string.h>
 
-// 控制方向枚举，根据实际情况补充
 typedef enum
 {
-    TURN_LEFT,
-    TURN_RIGHT,
-    STRAIGHT,
-    FOLLOW,
-    STOP
+    STOP,
+    SPEED_Circle,
+    POSISITON_LA_Circle,
+    POSISITON_XY_Circle,
+    FOLLOW_Circle,
+    TRAJECTORY_1,
+    TRAJECTORY_2,
+    TRAJECTORY_3,
 } CONTROL_MODE;
 
 typedef struct
@@ -31,7 +33,7 @@ typedef struct
 
 typedef struct Class_PurePursuit
 {
-    float Trajectory[POINTS_NUM][2]; // 轨迹点
+    float (*Trajectory)[2]; // 轨迹点
 
     CONTROL_MODE Control_Dir; // 控制方向
 
@@ -44,8 +46,10 @@ typedef struct Class_PurePursuit
     bool is_inited;           // 是否初始化
     bool finish_current_mode; // 当前模式是否完成
 
+    int last_closest_index;      // 上次最近点索引
+    float last_angular_velocity; // 上次角速度（用于滤波）
+
     void (*Init)(struct Class_PurePursuit *this);                                  // 初始化
-    void (*Update_Now_Speed)(struct Class_PurePursuit *this, SPEED speed);         // 更新位置
     bool (*Calculate_Target_Speed)(struct Class_PurePursuit *this);                // 计算目标速度
     SPEED (*Get_Output_Speed)(struct Class_PurePursuit *this);                     // 获取输出速度
     void (*Set_Mode)(struct Class_PurePursuit *this, CONTROL_MODE dir);            // 设置控制方向
@@ -55,10 +59,10 @@ typedef struct Class_PurePursuit
 
 pClass_PurePursuit Create_PurePursuit();
 void PurePursuit_Init(pClass_PurePursuit this);
-void PurePursuit_Update_Now_Speed(pClass_PurePursuit this, SPEED speed);
 bool PurePursuit_Calculate_Target_Speed(pClass_PurePursuit this);
 SPEED PurePursuit_Get_Output_Speed(pClass_PurePursuit this);
 void PurePursuit_Set_Mode(pClass_PurePursuit this, CONTROL_MODE dir);
+
 int PurePursuit_Find_Closest_Point(pClass_PurePursuit this, float *min_dist_sq);
 int PurePursuit_Find_Lookahead_Point(pClass_PurePursuit this, float lookahead_distance);
 

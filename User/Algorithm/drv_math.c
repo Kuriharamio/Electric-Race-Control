@@ -191,14 +191,13 @@ int Math_Abs_int(int x)
  */
 float TransAngleInPI(float angle)
 {
-    float out_angle = angle;
-    if (angle > PI)
+    while (angle > PI)
     {
-        out_angle -= 2 * PI;
+        angle -= 2 * PI;
     }
-    else if (angle < -PI)
+    while (angle < -PI)
     {
-        out_angle += 2 * PI;
+        angle += 2 * PI;
     }
-    return out_angle;
+    return angle;
 }

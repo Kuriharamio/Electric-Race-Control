@@ -16,28 +16,66 @@
 // 电机PID定时器中断处理函数
 void PID_TIMER_INST_IRQHandler(void)
 {
+    static uint8_t count = 0;
     switch (DL_TimerA_getPendingInterrupt(PID_TIMER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
+        count++;
 #ifdef USE_CAR
-        // // pClass_Motor Motor_LB = Get_Motor_INST(LEFT_BACK);
-        // if (Get_Motor_INST(LEFT_BACK)->is_inited)
-        //     Get_Motor_INST(LEFT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_BACK));
-        // // pClass_Motor Motor_RB = Get_Motor_INST(RIGHT_BACK);
-        // if (Get_Motor_INST(RIGHT_BACK)->is_inited)
-        //     Get_Motor_INST(RIGHT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_BACK));
-        // // pClass_Motor Motor_LF = Get_Motor_INST(LEFT_FRONT);
-        // if (Get_Motor_INST(LEFT_FRONT)->is_inited)
-        //     Get_Motor_INST(LEFT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_FRONT));
-        // // pClass_Motor Motor_RF = Get_Motor_INST(RIGHT_FRONT);
-        // if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
-        //     Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
-        // if (Get_Car_Handle()->is_inited)
-        // {
-        //     Get_Car_Handle()->Update_Speed_PID(Get_Car_Handle());
-        //     if (Get_Car_Handle()->follow_error)
-        //         Get_Car_Handle()->Update_Follow_PID(Get_Car_Handle());
-        // }
+        if (Get_Car_Handle()->is_inited)
+        {
+            Get_Car_Handle()->Judge_Mode(Get_Car_Handle());
+        }
+
+        if (count % PID_MOTOR_FACTOR == 0)
+        {
+            if (Get_Motor_INST(LEFT_BACK)->is_inited)
+                Get_Motor_INST(LEFT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_BACK));
+            if (Get_Motor_INST(RIGHT_BACK)->is_inited)
+                Get_Motor_INST(RIGHT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_BACK));
+            if (Get_Motor_INST(LEFT_FRONT)->is_inited)
+                Get_Motor_INST(LEFT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_FRONT));
+            if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
+                Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
+        }
+
+        if (count % PID_CAR_SPEED_FACTOR == 0)
+        {
+            if (Get_Car_Handle()->is_inited){
+                Get_Car_Handle()->Update_Speed_PID(Get_Car_Handle());
+            }
+        }
+
+        if (count % PID_CAR_POS_FACTOR == 0)
+        {
+            if (Get_Car_Handle()->is_inited)
+            {
+                if (Get_Car_Handle()->Mode == POSISITON_LA_Circle){
+                    Get_Car_Handle()->Update_Linear_Position_PID(Get_Car_Handle());
+#ifdef USE_IMU_IN_ODOM
+                    Get_Car_Handle()->Update_Angle_Position_PID_IMU(Get_Car_Handle());
+#else
+                    Get_Car_Handle()->Update_Angle_Position_PID_WHEEL(Get_Car_Handle());
+#endif
+                }
+                else if (Get_Car_Handle()->Mode == POSISITON_XY_Circle)
+                {
+                    Get_Car_Handle()->Update_XY_Position_PID(Get_Car_Handle());
+                }else if(Get_Car_Handle()->Mode == TRAJECTORY_1 || Get_Car_Handle()->Mode == TRAJECTORY_2 || Get_Car_Handle()->Mode == TRAJECTORY_3){
+                    Get_Car_Handle()->Upadate_Controller(Get_Car_Handle());
+                }
+            }
+        }
+
+        if (count % PID_CAR_FOLLOW_FACTOR == 0)
+        {
+            if (Get_Car_Handle()->is_inited)
+            {
+                if (Get_Car_Handle()->Mode == FOLLOW_Circle)
+                    Get_Car_Handle()->Update_Follow_PID(Get_Car_Handle());
+            }
+        }
+
 #endif
 
 #ifdef USE_SERVO
@@ -62,9 +100,9 @@ void PID_TIMER_INST_IRQHandler(void)
 
 #ifdef USE_ENCODER
 // 编码器测速定时器中断处理函数
-void ENCODER_INST_IRQHandler(void)
+void ENCODER_TIMER_INST_IRQHandler(void)
 {
-    switch (DL_TimerG_getPendingInterrupt(ENCODER_INST))
+    switch (DL_TimerG_getPendingInterrupt(ENCODER_TIMER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
         // 计算速度
@@ -97,8 +135,8 @@ void ENCODER_INST_IRQHandler(void)
         if (Get_Car_Handle()->is_inited)
         {
             Get_Car_Handle()->Kinematic_Forward(Get_Car_Handle());
-            Get_Car_Handle()->Update_Odom(Get_Car_Handle());
-            Get_Car_Handle()->PurePursuit->Update_Now_Speed(Get_Car_Handle()->PurePursuit, Get_Car_Handle()->Now_Speed);
+            Get_Car_Handle()->Update_Odom(Get_Car_Handle(), ENCODER_TIMER_T);
+            // Get_Car_Handle()->PurePursuit->Update_Now_Speed(Get_Car_Handle()->PurePursuit, Get_Car_Handle()->Now_Speed);
         }
         break;
 

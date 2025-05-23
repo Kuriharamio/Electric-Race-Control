@@ -33,8 +33,9 @@ pClass_Car Create_Car(void)
     car->PurePursuit = Create_PurePursuit();
 
     // 创建PID对象
-    car->PID_Straight_Position = create_PID(); // 直线位置PID
-    car->PID_Angle_Position = create_PID();
+    car->PID_Linear_Position = create_PID(); // 直线位置PID
+    car->PID_Angle_Position_WHEEL = create_PID();
+    car->PID_Angle_Position_IMU = create_PID();
     car->PID_Linear = create_PID();  // 速度环PID
     car->PID_Angular = create_PID(); // 角度环PID
     car->PID_Follow = create_PID();
@@ -46,10 +47,15 @@ pClass_Car Create_Car(void)
     car->Update_Odom = Car_Update_Odom;
     car->Upadate_Controller = Car_Upadate_Controller;
 
+    car->Judge_Mode = Car_Judge_Mode;
+    car->Update_Mode = Car_Update_Mode;
+
     car->Update_Follow_PID = Car_Update_Follow_PID;
     car->Update_Speed_PID = Car_Update_Speed_PID;
-    car->Update_Straight_Position_PID = Car_Update_Straight_Position_PID;
-    car->Update_Angle_Position_PID = Car_Update_Angle_Position_PID;
+    car->Update_Linear_Position_PID = Car_Update_Linear_Position_PID;
+    car->Update_Angle_Position_PID_WHEEL = Car_Update_Angle_Position_PID_WHEEL;
+    car->Update_Angle_Position_PID_IMU = Car_Update_Angle_Position_PID_IMU;
+    car->Update_XY_Position_PID = Car_Update_XY_Position_PID;
 
     return car;
 }
@@ -75,6 +81,8 @@ void Car_Init(pClass_Car this)
     this->Target_Position.y = 0.0f;   // 目标y坐标
     this->Target_Position.yaw = 0.0f; // 目标偏航角
 
+    this->Begin_Yaw = 0.0f; // 起始IMU偏航角
+
     this->Target_Speed.linear_velocity = 0.0f;  // 目标线速度
     this->Target_Speed.angular_velocity = 0.0f; // 目标角速度
     this->Output_Speed.linear_velocity = 0.0f;  // 输出线速度
@@ -83,11 +91,14 @@ void Car_Init(pClass_Car this)
     this->Now_Speed.angular_velocity = 0.0f;    // 实际角速度
 
     this->Mode = STOP;
-    this->follow_error = 0;
+    this->Follow_Error = 0;
+
+    this->Finish_Current_Mode = true;
+    this->Task_ID = 0;
 
     // 初始化电机
-    this->Motor_LF->Init(this->Motor_LF, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 2);                                                            // 初始化电机对象
-    this->Motor_LF->PID_Speed->PID_Init(this->Motor_LF->PID_Speed, 3000, 5000.0, 0.0, 0.0, 1200, 1400, PID_MOTOR_TIMER_T, 0.008, 0.0, 0.0, 0.0, PID_D_First_DISABLE); // 初始化PID参数
+    this->Motor_LF->Init(this->Motor_LF, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 4);                                                            // 初始化电机对象
+    this->Motor_LF->PID_Speed->PID_Init(this->Motor_LF->PID_Speed, 1000, 8000.0, 10.0, 0.0, 600, 1400, PID_DELTA_T * PID_MOTOR_FACTOR, 0.08, 0.0, 0.0, 0.4, PID_D_First_DISABLE); // 初始化PID参数
     this->Motor_LF->Configure_IN_1(this->Motor_LF, MOTOR_DRV_LF_IN1_PORT, MOTOR_DRV_LF_IN1_PIN);                                                                      // 配置电机引脚IN1
     this->Motor_LF->Configure_IN_2(this->Motor_LF, MOTOR_DRV_LF_IN2_PORT, MOTOR_DRV_LF_IN2_PIN);                                                                      // 配置电机引脚IN2
     this->Motor_LF->Configure_ENCODER_A(this->Motor_LF, ENCODER_LF_PORT, ENCODER_LF_LF_A_PIN);                                                                        // 配置电机引脚编码器A
@@ -95,8 +106,8 @@ void Car_Init(pClass_Car this)
     this->Motor_LF->Configure_PWM(this->Motor_LF, PWM_MOTOR_L_INST, GPIO_PWM_MOTOR_L_C0_IDX);                                                                         // 配置电机PWM
     this->Motor_LF->Configure_STBY(this->Motor_LF, MOTOR_DRV_STBY_F_PORT, MOTOR_DRV_STBY_F_PIN);                                                                      // 配置电机待机引脚
 
-    this->Motor_LB->Init(this->Motor_LB, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 2);                                                            // 初始化电机对象
-    this->Motor_LB->PID_Speed->PID_Init(this->Motor_LB->PID_Speed, 3000, 5000.0, 0.0, 0.0, 1200, 1400, PID_MOTOR_TIMER_T, 0.008, 0.0, 0.0, 0.0, PID_D_First_DISABLE); // 初始化PID参数
+    this->Motor_LB->Init(this->Motor_LB, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 4);                                                            // 初始化电机对象
+    this->Motor_LB->PID_Speed->PID_Init(this->Motor_LB->PID_Speed, 1000, 8000.0, 10.0, 0.0, 600, 1400, PID_DELTA_T * PID_MOTOR_FACTOR, 0.08, 0.0, 0.0, 0.4, PID_D_First_DISABLE); // 初始化PID参数
     this->Motor_LB->Configure_IN_1(this->Motor_LB, MOTOR_DRV_LB_IN1_PORT, MOTOR_DRV_LB_IN1_PIN);                                                                      // 配置电机引脚IN1
     this->Motor_LB->Configure_IN_2(this->Motor_LB, MOTOR_DRV_LB_IN2_PORT, MOTOR_DRV_LB_IN2_PIN);                                                                      // 配置电机引脚IN2
     this->Motor_LB->Configure_ENCODER_A(this->Motor_LB, ENCODER_LB_PORT, ENCODER_LB_LB_A_PIN);                                                                        // 配置电机引脚编码器A
@@ -104,8 +115,8 @@ void Car_Init(pClass_Car this)
     this->Motor_LB->Configure_PWM(this->Motor_LB, PWM_MOTOR_L_INST, GPIO_PWM_MOTOR_L_C1_IDX);                                                                         // 配置电机PWM
     this->Motor_LB->Configure_STBY(this->Motor_LB, MOTOR_DRV_STBY_B_PORT, MOTOR_DRV_STBY_B_PIN);                                                                      // 配置电机待机引脚
 
-    this->Motor_RF->Init(this->Motor_RF, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 2);                                                            // 初始化电机对象
-    this->Motor_RF->PID_Speed->PID_Init(this->Motor_RF->PID_Speed, 3000, 5000.0, 0.0, 0.0, 1200, 1400, PID_MOTOR_TIMER_T, 0.008, 0.0, 0.0, 0.0, PID_D_First_DISABLE); // 初始化PID参数
+    this->Motor_RF->Init(this->Motor_RF, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 4);                                                            // 初始化电机对象
+    this->Motor_RF->PID_Speed->PID_Init(this->Motor_RF->PID_Speed, 1000, 8000.0, 10.0, 0.0, 600, 1400, PID_DELTA_T * PID_MOTOR_FACTOR, 0.08, 0.0, 0.0, 0.4, PID_D_First_DISABLE); // 初始化PID参数
     this->Motor_RF->Configure_IN_1(this->Motor_RF, MOTOR_DRV_RF_IN1_PORT, MOTOR_DRV_RF_IN1_PIN);                                                                      // 配置电机引脚IN1
     this->Motor_RF->Configure_IN_2(this->Motor_RF, MOTOR_DRV_RF_IN2_PORT, MOTOR_DRV_RF_IN2_PIN);                                                                      // 配置电机引脚IN2
     this->Motor_RF->Configure_ENCODER_A(this->Motor_RF, ENCODER_RF_PORT, ENCODER_RF_RF_A_PIN);                                                                        // 配置电机引脚编码器A
@@ -113,9 +124,8 @@ void Car_Init(pClass_Car this)
     this->Motor_RF->Configure_PWM(this->Motor_RF, PWM_MOTOR_R_INST, GPIO_PWM_MOTOR_R_C0_IDX);                                                                         // 配置电机PWM
     this->Motor_RF->Configure_STBY(this->Motor_RF, MOTOR_DRV_STBY_F_PORT, MOTOR_DRV_STBY_F_PIN);                                                                      // 配置电机待机引脚
 
-    this->Motor_RB->Init(this->Motor_RB, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 2); // 初始化电机对象
-    // this->Motor_RB->PID_Speed->PID_Init(this->Motor_RB->PID_Speed, 2000, 10000.0, 2000.0, 5000.0, 1500, 1600, PID_MOTOR_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_ENABLE); // 初始化PID参数
-    this->Motor_RB->PID_Speed->PID_Init(this->Motor_RB->PID_Speed, 3000, 5000.0, 0.0, 0.0, 1200, 1400, PID_MOTOR_TIMER_T, 0.008, 0.0, 0.0, 0.0, PID_D_First_DISABLE); // 初始化PID参数
+    this->Motor_RB->Init(this->Motor_RB, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 4);
+    this->Motor_RB->PID_Speed->PID_Init(this->Motor_RB->PID_Speed, 1000, 8000.0, 10.0, 0.0, 600, 1400, PID_DELTA_T * PID_MOTOR_FACTOR, 0.08, 0.0, 0.0, 0.4, PID_D_First_DISABLE); // 初始化PID参数
     this->Motor_RB->Configure_IN_1(this->Motor_RB, MOTOR_DRV_RB_IN1_PORT, MOTOR_DRV_RB_IN1_PIN);                                                                      // 配置电机引脚IN1
     this->Motor_RB->Configure_IN_2(this->Motor_RB, MOTOR_DRV_RB_IN2_PORT, MOTOR_DRV_RB_IN2_PIN);                                                                      // 配置电机引脚IN2
     this->Motor_RB->Configure_ENCODER_A(this->Motor_RB, ENCODER_RB_PORT, ENCODER_RB_RB_A_PIN);                                                                        // 配置电机引脚编码器A
@@ -127,11 +137,14 @@ void Car_Init(pClass_Car this)
     this->PurePursuit->Init(this->PurePursuit);
 
     // 初始化PID
-    this->PID_Straight_Position->PID_Init(this->PID_Straight_Position, 2.8, 1.0, 0.0, 0.0, MAX_LINEAR_SPEED * 0.8, MAX_LINEAR_SPEED, PID_CAR_POSITION_TIMER_T, 0.05, 0.0, 0.0, 0.0, PID_D_First_DISABLE); // 初始化PID参数
-    this->PID_Angle_Position->PID_Init(this->PID_Angle_Position, 4.50f, 0.25f, 0.0f, 0.0f, 0.8, 0.8, PID_CAR_POSITION_TIMER_T, 0.1, 0.0, 0.0, 0.1, PID_D_First_DISABLE);
-    this->PID_Linear->PID_Init(this->PID_Linear, 0.5f, 25.0f, 0.0f, 0.0f, MAX_LINEAR_SPEED, MAX_LINEAR_SPEED, PID_CAR_SPEED_TIMER_T, 0.005f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);   // 初始化PID参数
-    this->PID_Angular->PID_Init(this->PID_Angular, 0.1f, 50.0f, 0.0f, 0.0f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_CAR_SPEED_TIMER_T, 0.0f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE); // 初始化PID参数
-    this->PID_Follow->PID_Init(this->PID_Follow, 0.0065f, 0.0055f, 0.00f, 0.45f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_CAR_SPEED_TIMER_T, 0.0f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
+    this->PID_Linear->PID_Init(this->PID_Linear, 0.6f, 10.0f, 0.0f, 0.0f, MAX_LINEAR_SPEED, MAX_LINEAR_SPEED, PID_DELTA_T * PID_CAR_SPEED_FACTOR, 0.010f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
+    this->PID_Angular->PID_Init(this->PID_Angular, 0.6f, 10.0f, 0.0f, 0.0f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_SPEED_FACTOR, 0.050f, 0.0f, 0.0f, 0.00f, PID_D_First_DISABLE);
+
+    this->PID_Linear_Position->PID_Init(this->PID_Linear_Position, 2.2f, 0.08f, 0.05f, 0.4f, MAX_LINEAR_SPEED, MAX_LINEAR_SPEED, PID_DELTA_T * PID_CAR_POS_FACTOR, 0.010f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
+    this->PID_Angle_Position_WHEEL->PID_Init(this->PID_Angle_Position_WHEEL, 2.2f, 0.5f, 0.01f, 12.2f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_POS_FACTOR, 0.010f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
+    this->PID_Angle_Position_IMU->PID_Init(this->PID_Angle_Position_IMU, 2.2f, 0.5f, 0.01f, 12.2f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_POS_FACTOR, 0.010f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
+
+    this->PID_Follow->PID_Init(this->PID_Follow, 0.0065f, 0.0055f, 0.00f, 0.45f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_FOLLOW_FACTOR, 0.0f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
 
     // 初始化完成标志位
     this->is_inited = true;
@@ -166,15 +179,30 @@ void Car_Kinematic_Inverse(pClass_Car this)
  *
  * @param this
  */
-void Car_Update_Odom(pClass_Car this)
+void Car_Update_Odom(pClass_Car this, float dt)
 {
-    this->Now_Position.yaw += this->Now_Speed.angular_velocity * ENCODER_TIMER_T;
+#ifdef USE_IMU_IN_ODOM
+    this->Now_Position.yaw = this->IMU_Yaw;
+    float delta_distance = this->Now_Speed.linear_velocity * dt;
+    this->Now_Position.x += delta_distance * cos(this->Now_Position.yaw);
+    this->Now_Position.y += delta_distance * sin(this->Now_Position.yaw);
+#else
+    this->Now_Position.yaw += this->Now_Speed.angular_velocity * dt;
     this->Now_Position.yaw = TransAngleInPI(this->Now_Position.yaw);
 
-    float delta_distance = this->Now_Speed.linear_velocity * ENCODER_TIMER_T;
+    float delta_distance = this->Now_Speed.linear_velocity * dt;
 
     this->Now_Position.x += delta_distance * cos(this->Now_Position.yaw);
     this->Now_Position.y += delta_distance * sin(this->Now_Position.yaw);
+#endif
+
+    this->Current_Mode_Position.yaw += this->Now_Speed.angular_velocity * dt;
+    this->Current_Mode_Position.yaw = TransAngleInPI(this->Current_Mode_Position.yaw);
+
+    delta_distance = this->Now_Speed.linear_velocity * dt;
+
+    this->Current_Mode_Position.x += delta_distance * cos(this->Current_Mode_Position.yaw);
+    this->Current_Mode_Position.y += delta_distance * sin(this->Current_Mode_Position.yaw);
 }
 
 /**
@@ -182,14 +210,13 @@ void Car_Update_Odom(pClass_Car this)
  *
  * @param this
  */
-void Car_Update_Straight_Position_PID(pClass_Car this)
+void Car_Update_Linear_Position_PID(pClass_Car this)
 {
-    this->PID_Straight_Position->Set_Target(this->PID_Straight_Position, this->Target_Position.x);
-    this->PID_Straight_Position->Set_Now(this->PID_Straight_Position, this->Now_Position.x);
-    this->PID_Straight_Position->TIM_Adjust_PeriodElapsedCallback(this->PID_Straight_Position);
+    this->PID_Linear_Position->Set_Target(this->PID_Linear_Position, this->Target_Position.x);
+    this->PID_Linear_Position->Set_Now(this->PID_Linear_Position, this->Current_Mode_Position.x);
+    this->PID_Linear_Position->TIM_Adjust_PeriodElapsedCallback(this->PID_Linear_Position);
 
-    this->Target_Speed.linear_velocity = this->PID_Straight_Position->Get_PID_Out(this->PID_Straight_Position);
-    this->Target_Speed.angular_velocity = this->PID_Angle_Position->Get_PID_Out(this->PID_Angle_Position);
+    this->Target_Speed.linear_velocity = this->PID_Linear_Position->Get_PID_Out(this->PID_Linear_Position);
 }
 
 /**
@@ -197,15 +224,55 @@ void Car_Update_Straight_Position_PID(pClass_Car this)
  *
  * @param this
  */
-void Car_Update_Angle_Position_PID(pClass_Car this)
+void Car_Update_Angle_Position_PID_WHEEL(pClass_Car this)
 {
     float error_yaw = TransAngleInPI(this->Target_Position.yaw - this->Now_Position.yaw);
-    this->PID_Angle_Position->Set_Target(this->PID_Angle_Position, error_yaw);
-    this->PID_Angle_Position->Set_Now(this->PID_Angle_Position, 0);
-    this->PID_Angle_Position->TIM_Adjust_PeriodElapsedCallback(this->PID_Angle_Position);
+    this->PID_Angle_Position_WHEEL->Set_Target(this->PID_Angle_Position_WHEEL, error_yaw);
+    this->PID_Angle_Position_WHEEL->Set_Now(this->PID_Angle_Position_WHEEL, 0);
+    this->PID_Angle_Position_WHEEL->TIM_Adjust_PeriodElapsedCallback(this->PID_Angle_Position_WHEEL);
 
-    this->Target_Speed.linear_velocity = this->PID_Straight_Position->Get_PID_Out(this->PID_Straight_Position);
-    this->Target_Speed.angular_velocity = this->PID_Angle_Position->Get_PID_Out(this->PID_Angle_Position);
+    this->Target_Speed.angular_velocity = this->PID_Angle_Position_WHEEL->Get_PID_Out(this->PID_Angle_Position_WHEEL);
+}
+
+void Car_Update_Angle_Position_PID_IMU(pClass_Car this)
+{
+    float error_yaw = TransAngleInPI(this->Target_Position.yaw - this->IMU_Yaw);
+
+    this->PID_Angle_Position_IMU->Set_Target(this->PID_Angle_Position_IMU, error_yaw);
+    this->PID_Angle_Position_IMU->Set_Now(this->PID_Angle_Position_IMU, 0);
+    this->PID_Angle_Position_IMU->TIM_Adjust_PeriodElapsedCallback(this->PID_Angle_Position_IMU);
+
+    this->Target_Speed.angular_velocity = this->PID_Angle_Position_IMU->Get_PID_Out(this->PID_Angle_Position_IMU);
+}
+
+/**
+ * @brief xy坐标位置PID
+ *
+ * @param this
+ */
+void Car_Update_XY_Position_PID(pClass_Car this)
+{
+    this->PID_Linear_Position->Set_Target(this->PID_Linear_Position, this->Target_Position.x);
+    this->PID_Linear_Position->Set_Now(this->PID_Linear_Position, this->Current_Mode_Position.x);
+    this->PID_Linear_Position->TIM_Adjust_PeriodElapsedCallback(this->PID_Linear_Position);
+    float linear_pid = this->PID_Linear_Position->Get_PID_Out(this->PID_Linear_Position);
+
+    float predict_x = this->Current_Mode_Position.x + this->Now_Speed.linear_velocity * cos(this->Current_Mode_Position.yaw) * PID_CAR_POS_FACTOR * PID_DELTA_T * 2;
+    float predict_y = this->Current_Mode_Position.y + this->Now_Speed.linear_velocity * sin(this->Current_Mode_Position.yaw) * PID_CAR_POS_FACTOR * PID_DELTA_T * 2;
+
+    float predict_dx = this->Target_Position.x - predict_x;
+    float predict_dy = this->Target_Position.y - predict_y;
+
+    this->Target_Position.yaw = atan2f(predict_dy, predict_dx);
+    float error_yaw = TransAngleInPI(this->Target_Position.yaw - this->Current_Mode_Position.yaw);
+    this->PID_Angle_Position_WHEEL->Set_Target(this->PID_Angle_Position_WHEEL, error_yaw);
+    this->PID_Angle_Position_WHEEL->Set_Now(this->PID_Angle_Position_WHEEL, 0);
+    this->PID_Angle_Position_WHEEL->TIM_Adjust_PeriodElapsedCallback(this->PID_Angle_Position_WHEEL);
+    float angular_pid = this->PID_Angle_Position_WHEEL->Get_PID_Out(this->PID_Angle_Position_WHEEL);
+
+    this->Target_Speed.linear_velocity = linear_pid * cosf(this->Target_Position.yaw);
+    this->Target_Speed.angular_velocity = angular_pid + (linear_pid * sinf(this->Target_Position.yaw));
+
 }
 
 /**
@@ -216,18 +283,10 @@ void Car_Update_Angle_Position_PID(pClass_Car this)
 void Car_Update_Follow_PID(pClass_Car this)
 {
     this->PID_Follow->Set_Target(this->PID_Follow, 0);
-    this->PID_Follow->Set_Now(this->PID_Follow, -this->follow_error);
+    this->PID_Follow->Set_Now(this->PID_Follow, this->Follow_Error);
     this->PID_Follow->TIM_Adjust_PeriodElapsedCallback(this->PID_Follow);
 
     this->Target_Speed.angular_velocity = this->PID_Follow->Get_PID_Out(this->PID_Follow);
-
-    if (this->follow_error != 500)
-        this->Target_Speed.linear_velocity = FOLLOW_SPEED;
-    else
-    {
-        this->Target_Speed.linear_velocity = 0;
-        this->Target_Speed.angular_velocity = 0;
-    }
 }
 
 /**
@@ -254,6 +313,162 @@ void Car_Update_Speed_PID(pClass_Car this)
 }
 
 /**
+ * @brief 小车模式更新
+ *
+ * @param this
+ */
+void Car_Update_Mode(pClass_Car this, CONTROL_MODE mode)
+{
+    this->Current_Mode_Position.x = 0.0f;
+    this->Current_Mode_Position.y = 0.0f;
+    this->Current_Mode_Position.yaw = 0.0f;
+
+    this->Mode = mode;
+}
+
+/**
+ * @brief 小车模式判断
+ *
+ * @param this
+ */
+void Car_Judge_Mode(pClass_Car this)
+{
+    static uint8_t Task_1_Step = 0;
+    static uint8_t Task_2_Step = 0;
+
+    switch (this->Mode) 
+    {
+    case STOP:
+        this->Target_Speed.linear_velocity = 0.0f;
+        this->Target_Speed.angular_velocity = 0.0f;
+        this->Finish_Current_Mode = true;
+        break;
+    case POSISITON_LA_Circle:
+        if (fabs(this->Target_Position.x - this->Current_Mode_Position.x) < 0.02f && fabs(this->Target_Position.y - this->Current_Mode_Position.y) < 0.02f && fabs(TransAngleInPI(this->Target_Position.yaw - this->Now_Position.yaw)) < 0.02f)
+        {
+            this->Finish_Current_Mode = true;
+        }
+        break;
+    case POSISITON_XY_Circle:
+        if (fabs(this->Target_Position.x - this->Current_Mode_Position.x) < 0.02f && fabs(this->Target_Position.y - this->Current_Mode_Position.y) < 0.02f)
+        {
+            this->Finish_Current_Mode = true;
+        }
+        break;
+    default:
+        break;
+    }
+
+    if (!this->Finish_Current_Mode)
+        return;
+
+    this->Finish_Current_Mode = false;
+    switch (this->Task_ID)
+    {
+    case 1:
+        Task_1_Step++;
+        switch (Task_1_Step)
+        {
+        case 1: //* 直走
+#ifdef USE_IMU_IN_ANGULAR_PID
+            this->Begin_Yaw = this->IMU_Yaw;
+#else
+            this->Begin_Yaw = this->Now_Position.yaw;
+#endif
+            this->Target_Position.x = 0.6f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw;
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 2: //* 转回原角度
+            this->Target_Position.x = 0.0f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw;
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 3: //* 入库
+            this->Update_Mode(this, TRAJECTORY_3);
+            break;
+        case 4://* 转回原角度
+            this->Target_Position.x = -0.08f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw;
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 5://* 结束
+            this->Update_Mode(this, STOP);
+            Task_1_Step--;
+            break;
+        }
+        break;
+    case 2:
+        Task_2_Step++;
+        switch (Task_2_Step)
+        {
+        case 1: //* 直走
+            this->Begin_Yaw = this->IMU_Yaw;
+            
+            this->Target_Position.x = 0.6f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw;
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 2: //* 转回原角度
+            this->Target_Position.x = 0.0f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw;
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 3: //* 绕圈
+            this->Update_Mode(this, TRAJECTORY_3);
+            break;
+        case 4: //* 转向相反方向
+            this->Target_Position.x = 0.0f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw + PI;
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 5: //* 直走
+            this->Target_Position.x = 0.6f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw + PI;
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+
+            break;
+        case 6: //* 转回原角度
+            this->Target_Position.x = 0.0f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw + PI;
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 7: //* 绕圈
+            this->Update_Mode(this, TRAJECTORY_3);
+            break;
+        case 8: //* 转回原角度
+            this->Target_Position.x = 0.0f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw;
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 9: //* 结束
+            this->Update_Mode(this, STOP);
+            Task_2_Step--;
+            break;
+        }
+    default:
+        break;
+    }
+}
+
+/**
  * @brief 控制器
  *
  * @param this
@@ -261,9 +476,17 @@ void Car_Update_Speed_PID(pClass_Car this)
 void Car_Upadate_Controller(pClass_Car this)
 {
     // 启动控制
-    this->PurePursuit->Calculate_Target_Speed(this->PurePursuit);
-
-    // 更新小车目标速度
-    this->Target_Speed = this->PurePursuit->Get_Output_Speed(this->PurePursuit);
+    this->PurePursuit->Set_Mode(this->PurePursuit, this->Mode);
+    this->PurePursuit->Now_Position = this->Current_Mode_Position;
+    this->PurePursuit->Now_Speed = this->Now_Speed;
+    if(this->PurePursuit->Calculate_Target_Speed(this->PurePursuit)){
+        // 更新小车目标速度
+        this->Target_Speed = this->PurePursuit->Get_Output_Speed(this->PurePursuit);
+    }else{
+        this->Mode = STOP;
+        this->PurePursuit->Set_Mode(this->PurePursuit, STOP);
+    }
 }
+
+
 #endif

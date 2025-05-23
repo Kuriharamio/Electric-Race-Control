@@ -4,6 +4,8 @@
 #include "Base_Modules/motor.h"
 #include "Algorithm/pure_pursuit.h"
 
+
+
 typedef struct Class_Car
 {
     // 电机对象
@@ -17,38 +19,48 @@ typedef struct Class_Car
     CONTROL_MODE Mode;              // 控制模式
 
     // PID对象
-    pClass_PID PID_Straight_Position; // 直线位置PID
-    pClass_PID PID_Angle_Position;
+    pClass_PID PID_Linear_Position; // 直线位置PID
+    pClass_PID PID_Angle_Position_WHEEL;
+    pClass_PID PID_Angle_Position_IMU;
 
     pClass_PID PID_Linear;  // 速度环PID
     pClass_PID PID_Angular; // 角度环PID
+    
     pClass_PID PID_Follow;
 
     // 里程计
     POSITION Target_Position; // 目标位置
     POSITION Now_Position;    // 里程计位置
+    POSITION Current_Mode_Position;
 
     // 速度
     SPEED Target_Speed; // 目标速度
     SPEED Output_Speed; // 输出速度
     SPEED Now_Speed;    // 实际速度
 
-    float follow_error;
-    float imu_yaw;
-    float Target_imu_yaw;
+    float Follow_Error;
+    float IMU_Yaw;
+    float Begin_Yaw;
 
+    bool Finish_Current_Mode;
+    uint8_t Task_ID;
     bool is_inited; // 是否初始化完成
 
     void (*Init)(struct Class_Car *this);
     void (*Kinematic_Forward)(struct Class_Car *this);
     void (*Kinematic_Inverse)(struct Class_Car *this);
-    void (*Update_Odom)(struct Class_Car *this);
+    void (*Update_Odom)(struct Class_Car *this, float dt);
+
+    void (*Judge_Mode)(struct Class_Car *this);
+    void (*Update_Mode)(struct Class_Car *this, CONTROL_MODE mode);
 
     void (*Upadate_Controller)(struct Class_Car *this);
 
     void (*Update_Follow_PID)(struct Class_Car *this);
-    void (*Update_Straight_Position_PID)(struct Class_Car *this);
-    void (*Update_Angle_Position_PID)(struct Class_Car *this);
+    void (*Update_Linear_Position_PID)(struct Class_Car *this);
+    void (*Update_Angle_Position_PID_WHEEL)(struct Class_Car *this);
+    void (*Update_Angle_Position_PID_IMU)(struct Class_Car *this);
+    void (*Update_XY_Position_PID)(struct Class_Car *this);
     void (*Update_Speed_PID)(struct Class_Car *this);
 
 } Class_Car, *pClass_Car;
@@ -59,12 +71,16 @@ pClass_Car Get_Car_Handle(void);
 void Car_Init(pClass_Car this);
 void Car_Kinematic_Forward(pClass_Car this);
 void Car_Kinematic_Inverse(pClass_Car this);
-void Car_Update_Odom(pClass_Car this);
+void Car_Update_Odom(pClass_Car this, float dt);
 
 void Car_Update_Follow_PID(pClass_Car this);
-void Car_Update_Straight_Position_PID(pClass_Car this);
-void Car_Update_Angle_Position_PID(pClass_Car this);
+void Car_Update_Linear_Position_PID(pClass_Car this);
+void Car_Update_Angle_Position_PID_WHEEL(pClass_Car this);
+void Car_Update_Angle_Position_PID_IMU(pClass_Car this);
+void Car_Update_XY_Position_PID(pClass_Car this);
 void Car_Update_Speed_PID(pClass_Car this);
+void Car_Update_Mode(pClass_Car this, CONTROL_MODE mode);
+void Car_Judge_Mode(pClass_Car this);
 void Car_Upadate_Controller(pClass_Car this);
 
 #endif // __CAR_H__

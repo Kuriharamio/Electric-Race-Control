@@ -283,15 +283,15 @@ IRQn_Type Get_UART_IRQN_From_Index(uint8_t index)
 {
 	switch (index)
 	{
-#ifdef UART_0_INST
+#ifdef USE_UART_0
 	case 0:
 		return UART_0_INST_INT_IRQN;
 #endif
-#ifdef UART_1_INST
+#ifdef USE_UART_1
 	case 1:
 		return UART_1_INST_INT_IRQN;
 #endif
-#ifdef UART_2_INST
+#ifdef USE_UART_2
 	case 2:
 		return UART_2_INST_INT_IRQN;
 #endif
@@ -310,15 +310,15 @@ UART_Regs *Get_UART_INST_From_Index(uint8_t index)
 {
 	switch (index)
 	{
-#ifdef UART_0_INST
+#ifdef USE_UART_0
 	case 0:
 		return UART_0_INST;
 #endif
-#ifdef UART_1_INST
+#ifdef USE_UART_1
 	case 1:
 		return UART_1_INST;
 #endif
-#ifdef UART_2_INST
+#ifdef USE_UART_2
 	case 2:
 		return UART_2_INST;
 #endif
@@ -327,7 +327,7 @@ UART_Regs *Get_UART_INST_From_Index(uint8_t index)
 	}
 }
 
-#ifdef UART_0_INST
+#ifdef USE_UART_0
 /**
  * @brief 串口0中断处理函数
  *
@@ -357,7 +357,7 @@ void UART_0_INST_IRQHandler(void)
 	}
 }
 #endif
-#ifdef UART_1_INST
+#ifdef USE_UART_1
 /**
  * @brief 串口1中断处理函数
  *
@@ -388,7 +388,7 @@ void UART_1_INST_IRQHandler(void)
 	}
 }
 #endif
-#ifdef UART_2_INST
+#ifdef USE_UART_2
 /**
  * @brief 串口2中断处理函数
  *

@@ -426,7 +426,7 @@ static const DL_TimerG_ClockConfig gENCODER_TIMERClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * ENCODER_TIMER_INST_LOAD_VALUE = (10 ms * 250000 Hz) - 1
+ * ENCODER_TIMER_INST_LOAD_VALUE = (20 ms * 250000 Hz) - 1
  */
 static const DL_TimerG_TimerConfig gENCODER_TIMERTimerConfig = {
     .period     = ENCODER_TIMER_INST_LOAD_VALUE,
@@ -462,7 +462,7 @@ static const DL_TimerG_ClockConfig gPID_TIMERClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * PID_TIMER_INST_LOAD_VALUE = (10 ms * 250000 Hz) - 1
+ * PID_TIMER_INST_LOAD_VALUE = (30 ms * 250000 Hz) - 1
  */
 static const DL_TimerG_TimerConfig gPID_TIMERTimerConfig = {
     .period     = PID_TIMER_INST_LOAD_VALUE,

@@ -257,8 +257,8 @@ TIMER1.timerMode          = "PERIODIC";
 TIMER1.timerClkDiv        = 8;
 TIMER1.interrupts         = ["ZERO"];
 TIMER1.timerClkPrescale   = 40;
-TIMER1.timerPeriod        = "10 ms";
 TIMER1.$name              = "ENCODER_TIMER";
+TIMER1.timerPeriod        = "20 ms";
 TIMER1.peripheral.$assign = "TIMG7";
 
 TIMER2.timerClkDiv        = 8;
@@ -266,8 +266,8 @@ TIMER2.timerClkPrescale   = 40;
 TIMER2.timerMode          = "PERIODIC";
 TIMER2.timerStartTimer    = true;
 TIMER2.interrupts         = ["ZERO"];
-TIMER2.timerPeriod        = "10 ms";
 TIMER2.$name              = "PID_TIMER";
+TIMER2.timerPeriod        = "30 ms";
 TIMER2.peripheral.$assign = "TIMG6";
 
 TIMER3.timerClkPrescale   = 32;
