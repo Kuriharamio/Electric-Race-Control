@@ -6,8 +6,6 @@
 #ifndef __PID_H__
 #define __PID_H__
 
-#include "Algorithm/drv_math.h"
-#include "stdlib.h"
 #include "config.h"
 
 /**
@@ -174,7 +172,7 @@ typedef struct Class_PID
      *
      * @return float 输出值
      */
-    void (*TIM_Adjust_PeriodElapsedCallback)(struct Class_PID *pid);
+    void (*Update_Value)(struct Class_PID *pid);
 
 } Class_PID, *pClass_PID;
 pClass_PID create_PID(void);
@@ -196,6 +194,6 @@ void Set_Target(pClass_PID pid, float __Target);
 void Set_Now(pClass_PID pid, float __Now);
 void Set_Integral_Error(pClass_PID pid, float __Integral_Error);
 
-void TIM_Adjust_PeriodElapsedCallback(pClass_PID pid);
+void PID_Update_Value(pClass_PID pid);
 
 #endif

@@ -38,7 +38,7 @@ pClass_ADCButton Create_ADCButton(void)
     return ADC_Button;
 }
 
-pClass_ADCButton GET_ADCButton_INST(void)
+pClass_ADCButton Get_ADCButton_Handle(void)
 {
     return &_ADC_Button;
 }

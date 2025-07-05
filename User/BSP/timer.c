@@ -67,6 +67,7 @@ void PID_TIMER_INST_IRQHandler(void)
             }
         }
 
+#ifdef USE_GRAY_SENSOR
         if (count % PID_CAR_FOLLOW_FACTOR == 0)
         {
             if (Get_Car_Handle()->is_inited)
@@ -75,6 +76,7 @@ void PID_TIMER_INST_IRQHandler(void)
                     Get_Car_Handle()->Update_Follow_PID(Get_Car_Handle());
             }
         }
+#endif
 
 #endif
 

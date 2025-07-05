@@ -19,20 +19,17 @@
 
 int main(void)
 {
-  board_init();
+  SYSCFG_DL_init();
 
   pClass_Car Car = Create_Car(); // 创建小车对象
   Car->Init(Car);                // 初始化小车对象
 
   // 蓝牙配置
   pClass_UART Bluetooth_Debuger = Create_UART(BLUETOOTH_UART_INDEX);                                                 // 获取蓝牙对象实例
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 4);                            // 初始化蓝牙对象
-  Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE);                               // 配置调试模式
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 1);                            // 初始化蓝牙对象
+  Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_STRING);                               // 配置调试模式
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback);                // 配置回调函数
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->Now_Position.y));
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->Now_Position.x));
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Car->Now_Position.yaw));
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(Car->IMU_Yaw));
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->gray_scale_sensor->Follow_Error)); // 绑定参数0
 
   // 按键配置
   // pClass_ADCButton Adc_Button = Create_AdcButton();                                   // 创建按键对象
@@ -44,11 +41,11 @@ int main(void)
   // Adc_Button->Configure_Callback(Adc_Button, BUTTON_5, Test_Button_Event);            // 配置按键5的回调函数
 
   // IMU配置
-  pClass_UART IMU_Communicator = Create_UART(IMU_UART_INDEX);                             // 获取IMU串口对象实例
-  IMU_Communicator->Init(IMU_Communicator, IMU_RX_LEN_MAX, 1);               // 初始化IMU串口对象
-  IMU_Communicator->Configure_Mode(IMU_Communicator, DEBUG_STRING);
-  IMU_Communicator->Configure_Callback(IMU_Communicator, IMU_Rx_Callback); // 配置IMU回调函数
-  IMU_Communicator->Bind_Param_With_Id(IMU_Communicator, 0, &(Car->IMU_Yaw)); // 绑定参数0
+  // pClass_UART IMU_Communicator = Create_UART(IMU_UART_INDEX);                             // 获取IMU串口对象实例
+  // IMU_Communicator->Init(IMU_Communicator, IMU_RX_LEN_MAX, 1);               // 初始化IMU串口对象
+  // IMU_Communicator->Configure_Mode(IMU_Communicator, DEBUG_STRING);
+  // IMU_Communicator->Configure_Callback(IMU_Communicator, IMU_Rx_Callback); // 配置IMU回调函数
+  // IMU_Communicator->Bind_Param_With_Id(IMU_Communicator, 0, &(Car->IMU_Yaw)); // 绑定参数0
 
   // K230串口通信配置
   // pClass_UART K230_Communicator = Create_UART(K230_UART_INDEX);   // 获取K230串口对象实例
@@ -57,22 +54,21 @@ int main(void)
   // K230_Communicator->Configure_Callback(K230_Communicator, K230_Rx_Callback); // 配置回调函数
   // K230_Communicator->Bind_Param_With_Id(K230_Communicator, 0, &(Car->follow_error));            // 绑定参数0
 
-  
-
+  Enable_All_Interrupt();
   while (1)
   {
-    Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
+    LED(TOGGLE);
+    Car->gray_scale_sensor->Update(Car->gray_scale_sensor);
+    // // Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
+    printf("Follow Error: %.2f\r\n", Car->gray_scale_sensor->Follow_Error); // 打印循迹误差
+    // {
+    //     static int count = 0;
+    //     count++;
+    //     if(count == 3*100){
+    //       Car->Task_ID = 3;
+    //     }
+    // }
 
-    {
-        static int count = 0;
-        count++;
-        // Car->Target_Position.yaw = 1.57f * sin(count * 0.05f);
-        if(count == 100){
-          Car->Task_ID = 2;
-        }
-          
+    delay_ms(1);
     }
-
-    delay_ms(50);
-  }
 }

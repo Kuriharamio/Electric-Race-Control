@@ -375,7 +375,6 @@ void UART_1_INST_IRQHandler(void)
 	{
 		// 接收发送过来的数据保存
 		receivedData = DL_UART_Main_receiveData(UART_1_INST);
-		;
 		_UART_1_INST.current_byte = receivedData; // 保存当前接收的字节
 		if (_UART_1_INST.UART_INST_DataProcess != NULL)
 		{

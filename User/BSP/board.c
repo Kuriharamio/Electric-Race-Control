@@ -19,16 +19,19 @@ void _sys_exit(int x)
 }
 #endif
 
+int fputc(int ch, FILE *stream)
+{
+    Get_UART_INST(BLUETOOTH_UART_INDEX)->Send_Bit(Get_UART_INST(BLUETOOTH_UART_INDEX), (uint8_t)ch); // 发送字符到蓝牙串口
+    return ch;
+}
+
 void softwareReset(void)
 {
     DL_SYSCTL_resetDevice(SYSCTL_RESETLEVEL_LEVEL_POR);
 }
 
-void board_init(void)
+void Enable_All_Interrupt(void)
 {
-    // SYSCFG初始化
-    SYSCFG_DL_init();
-
     // TIM初始化
 #ifdef USE_PID
     NVIC_ClearPendingIRQ(PID_TIMER_INST_INT_IRQN);
@@ -47,3 +50,4 @@ void board_init(void)
     NVIC_EnableIRQ(ADC_BUTTON_TIMER_INST_INT_IRQN);
 #endif
 }
+

@@ -3,7 +3,7 @@
 
 #include "Base_Modules/motor.h"
 #include "Algorithm/pure_pursuit.h"
-
+#include "Base_Modules/follow_sensor.h"
 
 
 typedef struct Class_Car
@@ -32,18 +32,19 @@ typedef struct Class_Car
     POSITION Target_Position; // 目标位置
     POSITION Now_Position;    // 里程计位置
     POSITION Current_Mode_Position;
+    float IMU_Yaw;
+    float Begin_Yaw;
 
     // 速度
     SPEED Target_Speed; // 目标速度
     SPEED Output_Speed; // 输出速度
     SPEED Now_Speed;    // 实际速度
 
-    float Follow_Error;
-    float IMU_Yaw;
-    float Begin_Yaw;
-
     bool Finish_Current_Mode;
     uint8_t Task_ID;
+
+    pClass_GraySensor gray_scale_sensor;
+
     bool is_inited; // 是否初始化完成
 
     void (*Init)(struct Class_Car *this);

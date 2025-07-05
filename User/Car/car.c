@@ -22,7 +22,9 @@ static Class_Car _Car = {0};
 pClass_Car Create_Car(void)
 {
     pClass_Car car = &_Car;
-
+#ifdef USE_GRAY_SENSOR
+    car->gray_scale_sensor = Create_GraySensor(); // 创建循迹传感器对象
+#endif
     // 创建电机对象
     car->Motor_RB = create_motor(RIGHT_BACK);  // 右后轮
     car->Motor_LB = create_motor(LEFT_BACK);   // 左后轮
@@ -91,11 +93,17 @@ void Car_Init(pClass_Car this)
     this->Now_Speed.angular_velocity = 0.0f;    // 实际角速度
 
     this->Mode = STOP;
-    this->Follow_Error = 0;
 
     this->Finish_Current_Mode = true;
     this->Task_ID = 0;
 
+#ifdef USE_GRAY_SENSOR
+    // 初始化循迹传感器
+    this->gray_scale_sensor->Init_With_Params(this->gray_scale_sensor, white, black);
+    // 初始化循迹 PID
+    this->PID_Follow->PID_Init(this->PID_Follow, 2.0f, 0.0f, 0.1f, 10.0f, MAX_ANGULAR_SPEED * 0.2, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_FOLLOW_FACTOR, 0.0f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
+
+#endif
     // 初始化电机
     this->Motor_LF->Init(this->Motor_LF, WHEEL_RADIUS, 1600, 1.5, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 4);                                                            // 初始化电机对象
     this->Motor_LF->PID_Speed->PID_Init(this->Motor_LF->PID_Speed, 1000, 8000.0, 10.0, 0.0, 600, 1400, PID_DELTA_T * PID_MOTOR_FACTOR, 0.08, 0.0, 0.0, 0.4, PID_D_First_DISABLE); // 初始化PID参数
@@ -144,7 +152,6 @@ void Car_Init(pClass_Car this)
     this->PID_Angle_Position_WHEEL->PID_Init(this->PID_Angle_Position_WHEEL, 2.2f, 0.5f, 0.01f, 12.2f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_POS_FACTOR, 0.010f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
     this->PID_Angle_Position_IMU->PID_Init(this->PID_Angle_Position_IMU, 2.2f, 0.5f, 0.01f, 12.2f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_POS_FACTOR, 0.010f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
 
-    this->PID_Follow->PID_Init(this->PID_Follow, 0.0065f, 0.0055f, 0.00f, 0.45f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_FOLLOW_FACTOR, 0.0f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
 
     // 初始化完成标志位
     this->is_inited = true;
@@ -214,7 +221,7 @@ void Car_Update_Linear_Position_PID(pClass_Car this)
 {
     this->PID_Linear_Position->Set_Target(this->PID_Linear_Position, this->Target_Position.x);
     this->PID_Linear_Position->Set_Now(this->PID_Linear_Position, this->Current_Mode_Position.x);
-    this->PID_Linear_Position->TIM_Adjust_PeriodElapsedCallback(this->PID_Linear_Position);
+    this->PID_Linear_Position->Update_Value(this->PID_Linear_Position);
 
     this->Target_Speed.linear_velocity = this->PID_Linear_Position->Get_PID_Out(this->PID_Linear_Position);
 }
@@ -229,7 +236,7 @@ void Car_Update_Angle_Position_PID_WHEEL(pClass_Car this)
     float error_yaw = TransAngleInPI(this->Target_Position.yaw - this->Now_Position.yaw);
     this->PID_Angle_Position_WHEEL->Set_Target(this->PID_Angle_Position_WHEEL, error_yaw);
     this->PID_Angle_Position_WHEEL->Set_Now(this->PID_Angle_Position_WHEEL, 0);
-    this->PID_Angle_Position_WHEEL->TIM_Adjust_PeriodElapsedCallback(this->PID_Angle_Position_WHEEL);
+    this->PID_Angle_Position_WHEEL->Update_Value(this->PID_Angle_Position_WHEEL);
 
     this->Target_Speed.angular_velocity = this->PID_Angle_Position_WHEEL->Get_PID_Out(this->PID_Angle_Position_WHEEL);
 }
@@ -240,7 +247,7 @@ void Car_Update_Angle_Position_PID_IMU(pClass_Car this)
 
     this->PID_Angle_Position_IMU->Set_Target(this->PID_Angle_Position_IMU, error_yaw);
     this->PID_Angle_Position_IMU->Set_Now(this->PID_Angle_Position_IMU, 0);
-    this->PID_Angle_Position_IMU->TIM_Adjust_PeriodElapsedCallback(this->PID_Angle_Position_IMU);
+    this->PID_Angle_Position_IMU->Update_Value(this->PID_Angle_Position_IMU);
 
     this->Target_Speed.angular_velocity = this->PID_Angle_Position_IMU->Get_PID_Out(this->PID_Angle_Position_IMU);
 }
@@ -254,7 +261,7 @@ void Car_Update_XY_Position_PID(pClass_Car this)
 {
     this->PID_Linear_Position->Set_Target(this->PID_Linear_Position, this->Target_Position.x);
     this->PID_Linear_Position->Set_Now(this->PID_Linear_Position, this->Current_Mode_Position.x);
-    this->PID_Linear_Position->TIM_Adjust_PeriodElapsedCallback(this->PID_Linear_Position);
+    this->PID_Linear_Position->Update_Value(this->PID_Linear_Position);
     float linear_pid = this->PID_Linear_Position->Get_PID_Out(this->PID_Linear_Position);
 
     float predict_x = this->Current_Mode_Position.x + this->Now_Speed.linear_velocity * cos(this->Current_Mode_Position.yaw) * PID_CAR_POS_FACTOR * PID_DELTA_T * 2;
@@ -267,7 +274,7 @@ void Car_Update_XY_Position_PID(pClass_Car this)
     float error_yaw = TransAngleInPI(this->Target_Position.yaw - this->Current_Mode_Position.yaw);
     this->PID_Angle_Position_WHEEL->Set_Target(this->PID_Angle_Position_WHEEL, error_yaw);
     this->PID_Angle_Position_WHEEL->Set_Now(this->PID_Angle_Position_WHEEL, 0);
-    this->PID_Angle_Position_WHEEL->TIM_Adjust_PeriodElapsedCallback(this->PID_Angle_Position_WHEEL);
+    this->PID_Angle_Position_WHEEL->Update_Value(this->PID_Angle_Position_WHEEL);
     float angular_pid = this->PID_Angle_Position_WHEEL->Get_PID_Out(this->PID_Angle_Position_WHEEL);
 
     this->Target_Speed.linear_velocity = linear_pid * cosf(this->Target_Position.yaw);
@@ -275,6 +282,7 @@ void Car_Update_XY_Position_PID(pClass_Car this)
 
 }
 
+#ifdef USE_GRAY_SENSOR
 /**
  * @brief 循迹PID
  *
@@ -282,12 +290,21 @@ void Car_Update_XY_Position_PID(pClass_Car this)
  */
 void Car_Update_Follow_PID(pClass_Car this)
 {
-    this->PID_Follow->Set_Target(this->PID_Follow, 0);
-    this->PID_Follow->Set_Now(this->PID_Follow, this->Follow_Error);
-    this->PID_Follow->TIM_Adjust_PeriodElapsedCallback(this->PID_Follow);
+    this->PID_Follow->Set_Target(this->PID_Follow, 0.0);
+    this->PID_Follow->Set_Now(this->PID_Follow, this->gray_scale_sensor->Follow_Error);
+    this->PID_Follow->Update_Value(this->PID_Follow);
 
+    float max_speed = MAX_ANGULAR_SPEED * (WHEEL_TRACK + WHEEL_BASE);
     this->Target_Speed.angular_velocity = this->PID_Follow->Get_PID_Out(this->PID_Follow);
+    this->Target_Speed.linear_velocity = max_speed - fabs(this->Target_Speed.angular_velocity * (WHEEL_TRACK + WHEEL_BASE));
+
+    Math_Constrain_float(&this->Target_Speed.linear_velocity, -10.0f, this->gray_scale_sensor->Linear_Speed_Max);
+
+    this->Target_Speed.linear_velocity = -this->Target_Speed.linear_velocity;
+    // Car_Kinematic_Inverse(this);
 }
+#endif
+
 
 /**
  * @brief 速度PID
@@ -299,12 +316,12 @@ void Car_Update_Speed_PID(pClass_Car this)
     // 线速度PID
     this->PID_Linear->Set_Target(this->PID_Linear, this->Target_Speed.linear_velocity);
     this->PID_Linear->Set_Now(this->PID_Linear, this->Now_Speed.linear_velocity);
-    this->PID_Linear->TIM_Adjust_PeriodElapsedCallback(this->PID_Linear);
+    this->PID_Linear->Update_Value(this->PID_Linear);
 
     // 角速度PID
     this->PID_Angular->Set_Target(this->PID_Angular, this->Target_Speed.angular_velocity);
     this->PID_Angular->Set_Now(this->PID_Angular, this->Now_Speed.angular_velocity);
-    this->PID_Angular->TIM_Adjust_PeriodElapsedCallback(this->PID_Angular);
+    this->PID_Angular->Update_Value(this->PID_Angular);
 
     // 获取输出
     this->Output_Speed.linear_velocity = (this->PID_Linear->Get_PID_Out(this->PID_Linear));
@@ -335,6 +352,7 @@ void Car_Judge_Mode(pClass_Car this)
 {
     static uint8_t Task_1_Step = 0;
     static uint8_t Task_2_Step = 0;
+    static uint8_t Task_3_Step = 0;
 
     switch (this->Mode) 
     {
@@ -381,13 +399,6 @@ void Car_Judge_Mode(pClass_Car this)
 
             this->Update_Mode(this, POSISITON_LA_Circle);
             break;
-        case 2: //* 转回原角度
-            this->Target_Position.x = 0.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw;
-
-            this->Update_Mode(this, POSISITON_LA_Circle);
-            break;
         case 3: //* 入库
             this->Update_Mode(this, TRAJECTORY_3);
             break;
@@ -400,6 +411,9 @@ void Car_Judge_Mode(pClass_Car this)
         case 5://* 结束
             this->Update_Mode(this, STOP);
             Task_1_Step--;
+            break;
+        default:
+            this->Finish_Current_Mode = true;
             break;
         }
         break;
@@ -461,6 +475,21 @@ void Car_Judge_Mode(pClass_Car this)
         case 9: //* 结束
             this->Update_Mode(this, STOP);
             Task_2_Step--;
+            break;
+        default:
+            this->Finish_Current_Mode = true;
+            break;
+        }
+    case 3:
+        Task_3_Step++;
+        switch (Task_3_Step) {
+        case 1: 
+            this->Update_Mode(this, FOLLOW_Circle);
+            break;
+        case 2:
+            this->Update_Mode(this, STOP);
+        default:
+            this->Finish_Current_Mode = true;
             break;
         }
     default:

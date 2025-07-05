@@ -326,7 +326,7 @@ void Motor_TIM_PID_PeriodElapsedCallback(pClass_Motor this)
 
     this->PID_Speed->Set_Target((this->PID_Speed), this->Target_Speed);
     this->PID_Speed->Set_Now((this->PID_Speed), this->Now_Speed);
-    this->PID_Speed->TIM_Adjust_PeriodElapsedCallback((this->PID_Speed));
+    this->PID_Speed->Update_Value((this->PID_Speed));
 
     this->Output_Now = (this->PID_Speed->Get_PID_Out((this->PID_Speed)));
 

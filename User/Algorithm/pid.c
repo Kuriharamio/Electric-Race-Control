@@ -37,7 +37,7 @@ pClass_PID create_PID(void)
     tmp_pid_ptr->Set_Target = Set_Target;
     tmp_pid_ptr->Set_Now = Set_Now;
     tmp_pid_ptr->Set_Integral_Error = Set_Integral_Error;
-    tmp_pid_ptr->TIM_Adjust_PeriodElapsedCallback = TIM_Adjust_PeriodElapsedCallback;
+    tmp_pid_ptr->Update_Value = PID_Update_Value;
     return tmp_pid_ptr;
 }
 
@@ -227,7 +227,7 @@ void Set_Integral_Error(pClass_PID pid, float __Integral_Error)
  *
  * @return float 输出值
  */
-void TIM_Adjust_PeriodElapsedCallback(pClass_PID pid)
+void PID_Update_Value(pClass_PID pid)
 {
     // P输出
     float p_out = 0.0f;

@@ -2,9 +2,9 @@ import numpy as np
 import math
 from scipy.interpolate import CubicHermiteSpline
 
-def generate_trajectory_diff_drive_with_resistance(poses, num_points=200, 
+def generate_trajectory(poses, num_points=30, 
                                                 linear_resistance_coeff=0.1, 
-                                                angular_resistance_coeff=0.05):
+                                                angular_resistance_coeff=0.5):
     if len(poses) < 2:
         return None
 
@@ -114,15 +114,17 @@ if __name__ == "__main__":
     # 角度为弧度，使用 math.pi
     poses = [
         (0.0, 0.0, 0.0),
-        (0.55, 0.07, math.pi/4),
-        (0.6, 0.6, math.pi/2),
+        (0.05, 0.0, 0.0),
+        (0.2, 0.2, 0.0),
+        (0.6, 0.0, 0.0),
+        (0.8, 0.0, 0.0),
     ]
     
-    trajectory = generate_trajectory_diff_drive_with_resistance(
+    trajectory = generate_trajectory(
         poses, 
         num_points=30,
-        linear_resistance_coeff=0.2,
-        angular_resistance_coeff=0.1
+        linear_resistance_coeff=0.1,
+        angular_resistance_coeff=0.05
     )
     
     if trajectory is not None:
@@ -144,7 +146,7 @@ if __name__ == "__main__":
         
         plt.axis('equal')
         plt.legend()
-        plt.title('Smooth Trajectory with Resistance')
+        plt.title('Trajectory')
         plt.xlabel('X (m)')
         plt.ylabel('Y (m)')
         plt.show()

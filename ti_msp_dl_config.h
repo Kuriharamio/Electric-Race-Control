@@ -179,15 +179,15 @@ extern "C" {
 
 
 
-/* Defines for ADC_BUTTON */
-#define ADC_BUTTON_INST                                                     ADC0
-#define ADC_BUTTON_INST_IRQHandler                               ADC0_IRQHandler
-#define ADC_BUTTON_INST_INT_IRQN                                 (ADC0_INT_IRQn)
-#define ADC_BUTTON_ADCMEM_0                                   DL_ADC12_MEM_IDX_0
-#define ADC_BUTTON_ADCMEM_0_REF                  DL_ADC12_REFERENCE_VOLTAGE_VDDA
-#define ADC_BUTTON_ADCMEM_0_REF_VOLTAGE                                       -1 // VDDA cannot be determined
-#define GPIO_ADC_BUTTON_C0_PORT                                            GPIOA
-#define GPIO_ADC_BUTTON_C0_PIN                                    DL_GPIO_PIN_27
+/* Defines for ADC_GRAY_SCALE */
+#define ADC_GRAY_SCALE_INST                                                 ADC0
+#define ADC_GRAY_SCALE_INST_IRQHandler                           ADC0_IRQHandler
+#define ADC_GRAY_SCALE_INST_INT_IRQN                             (ADC0_INT_IRQn)
+#define ADC_GRAY_SCALE_ADCMEM_ADC_CH0                         DL_ADC12_MEM_IDX_0
+#define ADC_GRAY_SCALE_ADCMEM_ADC_CH0_REF         DL_ADC12_REFERENCE_VOLTAGE_VDDA
+#define ADC_GRAY_SCALE_ADCMEM_ADC_CH0_REF_VOLTAGE                                      -1 // VDDA cannot be determined
+#define GPIO_ADC_GRAY_SCALE_C0_PORT                                        GPIOA
+#define GPIO_ADC_GRAY_SCALE_C0_PIN                                DL_GPIO_PIN_27
 
 
 
@@ -264,10 +264,10 @@ extern "C" {
 #define MOTOR_DRV_LF_IN2_PORT                                            (GPIOB)
 #define MOTOR_DRV_LF_IN2_PIN                                    (DL_GPIO_PIN_16)
 #define MOTOR_DRV_LF_IN2_IOMUX                                   (IOMUX_PINCM33)
-/* Defines for LB_IN1: GPIOA.15 with pinCMx 37 on package pin 8 */
-#define MOTOR_DRV_LB_IN1_PORT                                            (GPIOA)
-#define MOTOR_DRV_LB_IN1_PIN                                    (DL_GPIO_PIN_15)
-#define MOTOR_DRV_LB_IN1_IOMUX                                   (IOMUX_PINCM37)
+/* Defines for LB_IN1: GPIOB.19 with pinCMx 45 on package pin 16 */
+#define MOTOR_DRV_LB_IN1_PORT                                            (GPIOB)
+#define MOTOR_DRV_LB_IN1_PIN                                    (DL_GPIO_PIN_19)
+#define MOTOR_DRV_LB_IN1_IOMUX                                   (IOMUX_PINCM45)
 /* Defines for LB_IN2: GPIOA.16 with pinCMx 38 on package pin 9 */
 #define MOTOR_DRV_LB_IN2_PORT                                            (GPIOA)
 #define MOTOR_DRV_LB_IN2_PIN                                    (DL_GPIO_PIN_16)
@@ -288,6 +288,18 @@ extern "C" {
 #define MOTOR_DRV_RB_IN2_PORT                                            (GPIOB)
 #define MOTOR_DRV_RB_IN2_PIN                                     (DL_GPIO_PIN_1)
 #define MOTOR_DRV_RB_IN2_IOMUX                                   (IOMUX_PINCM13)
+/* Port definition for Pin Group GRAY_SCALE */
+#define GRAY_SCALE_PORT                                                  (GPIOA)
+
+/* Defines for AD0: GPIOA.12 with pinCMx 34 on package pin 5 */
+#define GRAY_SCALE_AD0_PIN                                      (DL_GPIO_PIN_12)
+#define GRAY_SCALE_AD0_IOMUX                                     (IOMUX_PINCM34)
+/* Defines for AD1: GPIOA.13 with pinCMx 35 on package pin 6 */
+#define GRAY_SCALE_AD1_PIN                                      (DL_GPIO_PIN_13)
+#define GRAY_SCALE_AD1_IOMUX                                     (IOMUX_PINCM35)
+/* Defines for AD2: GPIOA.14 with pinCMx 36 on package pin 7 */
+#define GRAY_SCALE_AD2_PIN                                      (DL_GPIO_PIN_14)
+#define GRAY_SCALE_AD2_IOMUX                                     (IOMUX_PINCM36)
 
 
 
@@ -305,7 +317,7 @@ void SYSCFG_DL_ADC_BUTTON_TIMER_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_UART_1_init(void);
 void SYSCFG_DL_UART_2_init(void);
-void SYSCFG_DL_ADC_BUTTON_init(void);
+void SYSCFG_DL_ADC_GRAY_SCALE_init(void);
 
 void SYSCFG_DL_SYSTICK_init(void);
 

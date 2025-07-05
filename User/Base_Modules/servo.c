@@ -120,7 +120,7 @@ void Servo_Update_PID(pClass_Servo this)
 
     this->PID->Set_Target(this->PID, 0);
     this->PID->Set_Now(this->PID, this->Error);
-    this->PID->TIM_Adjust_PeriodElapsedCallback(this->PID);
+    this->PID->Update_Value(this->PID);
 
     float output = this->PID->Get_PID_Out(this->PID) + this->Begin_Angle;
     this->Set_Angle(this, output);

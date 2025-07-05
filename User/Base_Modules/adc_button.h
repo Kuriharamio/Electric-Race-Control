@@ -54,7 +54,7 @@ typedef struct Class_ADCButton
 } Class_ADCButton, *pClass_ADCButton;
 
 pClass_ADCButton Create_ADCButton(void);
-pClass_ADCButton GET_ADCButton_INST(void);
+pClass_ADCButton Get_ADCButton_Handle(void);
 
 void ADC_Init(pClass_ADCButton this, ADC12_Regs *ADC_INST, IRQn_Type ADC_INST_INT_IRQN, DL_ADC12_MEM_IDX ADCMEM_IDX);
 void ADC_Get_Current_Value(pClass_ADCButton this);
