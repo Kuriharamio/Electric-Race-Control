@@ -7,6 +7,8 @@
  * @note 关于限幅：可以更改舵机中存储的限幅位，但我只在单片机端进行了限幅
  *       关于控制方式：目前只使用了位置控制，还可以使用速度控制（按一定速度持续旋转，这个库没有使用）
  *       若要实现激光跟随等功能，还需要加一个跟随PID，可参考普通舵机库 servo.c
+ *       待优化：测试是否可以同时获取两个舵机的信息
+ *       http://doc.feetech.cn/#/prodinfodownload?srcType=FT-SMS-STS-emanual-229f4476422d4059abfb1cb0
  * @copyright Copyright (c) 2025
  * 
  */
