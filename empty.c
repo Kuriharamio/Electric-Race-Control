@@ -54,6 +54,17 @@ int main(void)
   // K230_Communicator->Configure_Callback(K230_Communicator, K230_Rx_Callback); // 配置回调函数
   // K230_Communicator->Bind_Param_With_Id(K230_Communicator, 0, &(Car->follow_error));            // 绑定参数0
 
+  // pClass_UART FT_Servo_Controller = Create_UART(FT_SERVO_UART_INDEX);
+  // FT_Servo_Controller->Init(FT_Servo_Controller, FT_SERVO_RX_LEN_MAX, 1);
+  // FT_Servo_Controller->Configure_Mode(FT_Servo_Controller, DEBUG_STRING);
+  // FT_Servo_Controller->Configure_Callback(FT_Servo_Controller, FT_Servo_Data_Process);
+
+  // pClass_FT_Servo servo_1 = Create_FT_Servo(1);
+  // pClass_FT_Servo servo_2 = Create_FT_Servo(2);
+
+  // servo_1->Init(servo_1, POS_MODE_ABSOLUTE, 0, 4095, 0, 60, 0, 50);
+  // servo_2->Init(servo_2, POS_MODE_ABSOLUTE, 0, 4095, 0, 60, 0, 50);
+
   Enable_All_Interrupt();
   while (1)
   {
