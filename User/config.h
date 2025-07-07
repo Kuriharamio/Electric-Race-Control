@@ -15,6 +15,13 @@
 #define USE_UART_0              // 启用串口0
 #define BLUETOOTH_RX_LEN_MAX 20 // 蓝牙接收数据最大长度
 
+//* 飞特舵机串口配置
+// #define USE_FT_SERVO          // 启用飞特舵机
+// #define FT_SERVO_UART_INDEX 0 // 飞特舵机串口索引号
+// #define USE_UART_0            // 启用串口0
+// #define FT_SERVO_RX_LEN_MAX 100 // 飞特舵机接收数据最大长度
+// #define PROTECT_CURRENT 30 // 保护电流大小
+
 //* K230 串口配置
 // #define USE_K230
 // #define K230_UART_INDEX 1   // K230串口索引号
