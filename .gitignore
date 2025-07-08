@@ -11,3 +11,9 @@ Event.dot
 keil/empty_LP_MSPM0G3507_nortos_keil.uvguix.张昕
 keil/Nu_Link_Driver.ini
 .idea
+build
+.eide
+.cmsis
+.eide.usr.ctx.json
+.clang-format
+empty_LP_MSPM0G3507_nortos_keil.code-workspace

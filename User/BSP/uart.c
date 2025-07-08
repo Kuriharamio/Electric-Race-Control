@@ -110,7 +110,12 @@ void UART_Init(pClass_UART this, uint8_t rx_max_len, uint8_t param_len)
 	this->mode = DEBUG_STRING;
 	this->param_len = param_len;											// 设置参数个数
 	this->param_list = (float **)malloc(this->param_len * sizeof(float *)); // 分配参数列表内存
+	this->param_name = (char **)malloc(this->param_len * sizeof(char *));	//分配参数名称列表内存
 	if (this->param_list == NULL)
+	{
+		return; // 分配失败
+	}
+	if (this->param_name == NULL)
 	{
 		return; // 分配失败
 	}
@@ -159,6 +164,7 @@ void UART_Send_Datas(pClass_UART this, uint8_t *datas, size_t size)
 
 void UART_Send(pClass_UART this, uint8_t *datas, size_t size)
 {
+	char temp[30];
 	if (this->mode == DEBUG_WAVE)
 	{
 		for (int i = 0; i < this->param_len; i++)
@@ -170,6 +176,50 @@ void UART_Send(pClass_UART this, uint8_t *datas, size_t size)
 	else if (this->mode == DEBUG_STRING)
 	{
 		this->Send_Datas(this, datas, size); // 发送数据
+	}
+	else if (this->mode == HMI_WAVE)
+	{
+		if (this->param_len <=4)
+		{
+			for (int i = 0; i < this->param_len; i++)
+			{
+				sprintf(temp, "add s0.id,%d,%d\xFF\xFF\xFF",i,(int)*this->param_list[i]); //发送波形显示指令
+				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+				sprintf(temp, "a%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); //发送数据显示指令
+				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+				sprintf(temp, "c%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); //发送数据名称显示指令
+				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				sprintf(temp, "add s0.id,%d,%d\xFF\xFF\xFF",i,(int)*this->param_list[i]); //发送波形显示指令
+				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+				sprintf(temp, "a%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); //发送数据显示指令
+				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+				sprintf(temp, "c%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); //发送数据名称显示指令
+				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+			}
+			for (int i = 4; i < this->param_len; i++)
+			{
+				sprintf(temp, "add s1.id,%d,%d\xFF\xFF\xFF",i,(int)*this->param_list[i]); //发送波形显示指令
+				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+				sprintf(temp, "a%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); //发送数据显示指令
+				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+				sprintf(temp, "c%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); //发送数据名称显示指令
+				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+			}
+		}
+	}
+	else if (this->mode == HMI_WATCH)
+	{
+		for (int i = 0; i < this->param_len; i++)
+		{
+			sprintf(temp, "t%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); //发送数据显示指令
+			this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+		}
 	}
 	else if (this->mode == CUSTOM)
 	{
@@ -234,13 +284,15 @@ void UART_Configure_Callback(pClass_UART this, void (*callback)(pClass_UART this
  * @param this 串口对象
  * @param id 参数ID
  * @param input_param 输入参数指针
+ * @param input_param_name 输入参数名称
  */
-void UART_Bind_Param_With_Id(pClass_UART this, uint8_t id, float *input_param)
+void UART_Bind_Param_With_Id(pClass_UART this, uint8_t id, float *input_param, char *input_param_name)
 {
 	if (id >= this->param_len)
 		return;
 
 	this->param_list[id] = input_param;
+	this->param_name[id] = input_param_name;
 }
 
 /**
