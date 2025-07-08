@@ -58,4 +58,21 @@ void IMU_Rx_Callback(pClass_UART this)
     }
 }
 
+uint8_t unlock[5] = {0xFF, 0xAA, 0x69, 0x88, 0xB5};
+uint8_t start_calibration[5] = {0xFF, 0xAA, 0x01, 0x01, 0x00};
+uint8_t stop_calibration[5] = {0xFF, 0xAA, 0x01, 0x00, 0x00};
+uint8_t save[5] = {0xFF, 0xAA, 0x00, 0x00, 0x00};
+void IMU_Init(void)
+{
+    pClass_UART uart = Get_UART_INST(IMU_UART_INDEX);
+    uart->Send_Datas(uart, unlock, 5);
+    delay_ms(200);
+    uart->Send_Datas(uart, start_calibration, 5);
+    delay_ms(4000);
+    uart->Send_Datas(uart, stop_calibration, 5);
+    delay_ms(100);
+    uart->Send_Datas(uart, save, 5);
+    delay_ms(100);
+}
+
 #endif

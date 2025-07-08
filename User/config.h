@@ -3,7 +3,9 @@
 
 #include "ti_msp_dl_config.h"
 #include "Algorithm/drv_math.h"
+#include "BSP/delay.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 //* 声光提示配置
 #define USE_LED  // 启用LED
@@ -29,12 +31,12 @@
 // #define K230_RX_LEN_MAX 100 // K230接收数据最大长度
 
 //* IMU 串口配置
-// #define USE_IMU
+#define USE_IMU
 // #define USE_IMU_IN_ODOM
 // #define USE_IMU_IN_ANGULAR_PID
-// #define IMU_UART_INDEX 2  // IMU 串口索引号
-// #define USE_UART_2        // 启用串口2
-// #define IMU_RX_LEN_MAX 11 // IMU 接收数据最大长度
+#define IMU_UART_INDEX 2  // IMU 串口索引号
+#define USE_UART_2        // 启用串口2
+#define IMU_RX_LEN_MAX 11 // IMU 接收数据最大长度
 
 //* 舵机配置
 // #define USE_SERVO          // 启用舵机
@@ -70,8 +72,8 @@
 #define WHEEL_Gearbox_Rate 20.0f      // 减速比
 #define WHEEL_Per_Pulse 13.0f         // 每转脉冲数
 #define WHEEL_Ferq_Rate 4
-#define MAX_LINEAR_SPEED 0.8f
-#define MAX_ANGULAR_SPEED 0.3/(WHEEL_TRACK + WHEEL_BASE)// 1.5 * 3.14f
+#define MAX_LINEAR_SPEED 0.57f
+#define MAX_ANGULAR_SPEED 0.57 / (WHEEL_TRACK + WHEEL_BASE)   //1.5 * 3.14f //
 
 //* PurePursuit 配置
 #define USE_PURE_PURSUIT

@@ -167,13 +167,32 @@ extern "C" {
 #define UART_2_INST                                                        UART3
 #define UART_2_INST_IRQHandler                                  UART3_IRQHandler
 #define UART_2_INST_INT_IRQN                                      UART3_INT_IRQn
-#define GPIO_UART_2_RX_PORT                                                GPIOB
-#define GPIO_UART_2_RX_PIN                                         DL_GPIO_PIN_3
-#define GPIO_UART_2_IOMUX_RX                                     (IOMUX_PINCM16)
-#define GPIO_UART_2_IOMUX_RX_FUNC                      IOMUX_PINCM16_PF_UART3_RX
+#define GPIO_UART_2_RX_PORT                                                GPIOA
+#define GPIO_UART_2_TX_PORT                                                GPIOA
+#define GPIO_UART_2_RX_PIN                                        DL_GPIO_PIN_13
+#define GPIO_UART_2_TX_PIN                                        DL_GPIO_PIN_14
+#define GPIO_UART_2_IOMUX_RX                                     (IOMUX_PINCM35)
+#define GPIO_UART_2_IOMUX_TX                                     (IOMUX_PINCM36)
+#define GPIO_UART_2_IOMUX_RX_FUNC                      IOMUX_PINCM35_PF_UART3_RX
+#define GPIO_UART_2_IOMUX_TX_FUNC                      IOMUX_PINCM36_PF_UART3_TX
 #define UART_2_BAUD_RATE                                                  (9600)
 #define UART_2_IBRD_80_MHZ_9600_BAUD                                       (520)
 #define UART_2_FBRD_80_MHZ_9600_BAUD                                        (53)
+/* Defines for UART_3 */
+#define UART_3_INST                                                        UART2
+#define UART_3_INST_IRQHandler                                  UART2_IRQHandler
+#define UART_3_INST_INT_IRQN                                      UART2_INT_IRQn
+#define GPIO_UART_3_RX_PORT                                                GPIOB
+#define GPIO_UART_3_TX_PORT                                                GPIOB
+#define GPIO_UART_3_RX_PIN                                        DL_GPIO_PIN_16
+#define GPIO_UART_3_TX_PIN                                        DL_GPIO_PIN_15
+#define GPIO_UART_3_IOMUX_RX                                     (IOMUX_PINCM33)
+#define GPIO_UART_3_IOMUX_TX                                     (IOMUX_PINCM32)
+#define GPIO_UART_3_IOMUX_RX_FUNC                      IOMUX_PINCM33_PF_UART2_RX
+#define GPIO_UART_3_IOMUX_TX_FUNC                      IOMUX_PINCM32_PF_UART2_TX
+#define UART_3_BAUD_RATE                                                  (9600)
+#define UART_3_IBRD_40_MHZ_9600_BAUD                                       (260)
+#define UART_3_FBRD_40_MHZ_9600_BAUD                                        (27)
 
 
 
@@ -189,6 +208,16 @@ extern "C" {
 #define GPIO_ADC_GRAY_SCALE_C0_PORT                                        GPIOA
 #define GPIO_ADC_GRAY_SCALE_C0_PIN                                DL_GPIO_PIN_27
 
+/* Defines for ADC_BUTTON */
+#define ADC_BUTTON_INST                                                     ADC1
+#define ADC_BUTTON_INST_IRQHandler                               ADC1_IRQHandler
+#define ADC_BUTTON_INST_INT_IRQN                                 (ADC1_INT_IRQn)
+#define ADC_BUTTON_ADCMEM_0                                   DL_ADC12_MEM_IDX_0
+#define ADC_BUTTON_ADCMEM_0_REF                  DL_ADC12_REFERENCE_VOLTAGE_VDDA
+#define ADC_BUTTON_ADCMEM_0_REF_VOLTAGE                                       -1 // VDDA cannot be determined
+#define GPIO_ADC_BUTTON_C0_PORT                                            GPIOA
+#define GPIO_ADC_BUTTON_C0_PIN                                    DL_GPIO_PIN_15
+
 
 
 /* Port definition for Pin Group REMINDER */
@@ -197,9 +226,9 @@ extern "C" {
 /* Defines for LED: GPIOB.22 with pinCMx 50 on package pin 21 */
 #define REMINDER_LED_PIN                                        (DL_GPIO_PIN_22)
 #define REMINDER_LED_IOMUX                                       (IOMUX_PINCM50)
-/* Defines for BUZZ: GPIOB.27 with pinCMx 58 on package pin 29 */
-#define REMINDER_BUZZ_PIN                                       (DL_GPIO_PIN_27)
-#define REMINDER_BUZZ_IOMUX                                      (IOMUX_PINCM58)
+/* Defines for BUZZ: GPIOB.20 with pinCMx 48 on package pin 19 */
+#define REMINDER_BUZZ_PIN                                       (DL_GPIO_PIN_20)
+#define REMINDER_BUZZ_IOMUX                                      (IOMUX_PINCM48)
 /* Port definition for Pin Group ENCODER_LF */
 #define ENCODER_LF_PORT                                                  (GPIOB)
 
@@ -256,14 +285,14 @@ extern "C" {
 #define MOTOR_DRV_STBY_B_PORT                                            (GPIOB)
 #define MOTOR_DRV_STBY_B_PIN                                    (DL_GPIO_PIN_14)
 #define MOTOR_DRV_STBY_B_IOMUX                                   (IOMUX_PINCM31)
-/* Defines for LF_IN1: GPIOB.15 with pinCMx 32 on package pin 3 */
+/* Defines for LF_IN1: GPIOB.4 with pinCMx 17 on package pin 52 */
 #define MOTOR_DRV_LF_IN1_PORT                                            (GPIOB)
-#define MOTOR_DRV_LF_IN1_PIN                                    (DL_GPIO_PIN_15)
-#define MOTOR_DRV_LF_IN1_IOMUX                                   (IOMUX_PINCM32)
-/* Defines for LF_IN2: GPIOB.16 with pinCMx 33 on package pin 4 */
+#define MOTOR_DRV_LF_IN1_PIN                                     (DL_GPIO_PIN_4)
+#define MOTOR_DRV_LF_IN1_IOMUX                                   (IOMUX_PINCM17)
+/* Defines for LF_IN2: GPIOB.5 with pinCMx 18 on package pin 53 */
 #define MOTOR_DRV_LF_IN2_PORT                                            (GPIOB)
-#define MOTOR_DRV_LF_IN2_PIN                                    (DL_GPIO_PIN_16)
-#define MOTOR_DRV_LF_IN2_IOMUX                                   (IOMUX_PINCM33)
+#define MOTOR_DRV_LF_IN2_PIN                                     (DL_GPIO_PIN_5)
+#define MOTOR_DRV_LF_IN2_IOMUX                                   (IOMUX_PINCM18)
 /* Defines for LB_IN1: GPIOB.19 with pinCMx 45 on package pin 16 */
 #define MOTOR_DRV_LB_IN1_PORT                                            (GPIOB)
 #define MOTOR_DRV_LB_IN1_PIN                                    (DL_GPIO_PIN_19)
@@ -289,17 +318,17 @@ extern "C" {
 #define MOTOR_DRV_RB_IN2_PIN                                     (DL_GPIO_PIN_1)
 #define MOTOR_DRV_RB_IN2_IOMUX                                   (IOMUX_PINCM13)
 /* Port definition for Pin Group GRAY_SCALE */
-#define GRAY_SCALE_PORT                                                  (GPIOA)
+#define GRAY_SCALE_PORT                                                  (GPIOB)
 
-/* Defines for AD0: GPIOA.12 with pinCMx 34 on package pin 5 */
-#define GRAY_SCALE_AD0_PIN                                      (DL_GPIO_PIN_12)
-#define GRAY_SCALE_AD0_IOMUX                                     (IOMUX_PINCM34)
-/* Defines for AD1: GPIOA.13 with pinCMx 35 on package pin 6 */
-#define GRAY_SCALE_AD1_PIN                                      (DL_GPIO_PIN_13)
-#define GRAY_SCALE_AD1_IOMUX                                     (IOMUX_PINCM35)
-/* Defines for AD2: GPIOA.14 with pinCMx 36 on package pin 7 */
-#define GRAY_SCALE_AD2_PIN                                      (DL_GPIO_PIN_14)
-#define GRAY_SCALE_AD2_IOMUX                                     (IOMUX_PINCM36)
+/* Defines for AD0: GPIOB.23 with pinCMx 51 on package pin 22 */
+#define GRAY_SCALE_AD0_PIN                                      (DL_GPIO_PIN_23)
+#define GRAY_SCALE_AD0_IOMUX                                     (IOMUX_PINCM51)
+/* Defines for AD1: GPIOB.26 with pinCMx 57 on package pin 28 */
+#define GRAY_SCALE_AD1_PIN                                      (DL_GPIO_PIN_26)
+#define GRAY_SCALE_AD1_IOMUX                                     (IOMUX_PINCM57)
+/* Defines for AD2: GPIOB.27 with pinCMx 58 on package pin 29 */
+#define GRAY_SCALE_AD2_PIN                                      (DL_GPIO_PIN_27)
+#define GRAY_SCALE_AD2_IOMUX                                     (IOMUX_PINCM58)
 
 
 
@@ -317,7 +346,9 @@ void SYSCFG_DL_ADC_BUTTON_TIMER_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_UART_1_init(void);
 void SYSCFG_DL_UART_2_init(void);
+void SYSCFG_DL_UART_3_init(void);
 void SYSCFG_DL_ADC_GRAY_SCALE_init(void);
+void SYSCFG_DL_ADC_BUTTON_init(void);
 
 void SYSCFG_DL_SYSTICK_init(void);
 

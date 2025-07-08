@@ -52,7 +52,7 @@ void PID_TIMER_INST_IRQHandler(void)
             {
                 if (Get_Car_Handle()->Mode == POSISITON_LA_Circle){
                     Get_Car_Handle()->Update_Linear_Position_PID(Get_Car_Handle());
-#ifdef USE_IMU_IN_ODOM
+#ifdef USE_IMU_IN_ANGULAR_PID
                     Get_Car_Handle()->Update_Angle_Position_PID_IMU(Get_Car_Handle());
 #else
                     Get_Car_Handle()->Update_Angle_Position_PID_WHEEL(Get_Car_Handle());

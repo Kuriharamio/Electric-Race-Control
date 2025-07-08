@@ -353,6 +353,7 @@ void Car_Judge_Mode(pClass_Car this)
     static uint8_t Task_1_Step = 0;
     static uint8_t Task_2_Step = 0;
     static uint8_t Task_3_Step = 0;
+    
 
     switch (this->Mode) 
     {
@@ -362,7 +363,7 @@ void Car_Judge_Mode(pClass_Car this)
         this->Finish_Current_Mode = true;
         break;
     case POSISITON_LA_Circle:
-        if (fabs(this->Target_Position.x - this->Current_Mode_Position.x) < 0.02f && fabs(this->Target_Position.y - this->Current_Mode_Position.y) < 0.02f && fabs(TransAngleInPI(this->Target_Position.yaw - this->Now_Position.yaw)) < 0.02f)
+        if (fabs(this->Target_Position.x - this->Current_Mode_Position.x) < 0.03f && fabs(TransAngleInPI(this->Target_Position.yaw - this->Now_Position.yaw)) < 0.03f)
         {
             this->Finish_Current_Mode = true;
         }
@@ -371,6 +372,12 @@ void Car_Judge_Mode(pClass_Car this)
         if (fabs(this->Target_Position.x - this->Current_Mode_Position.x) < 0.02f && fabs(this->Target_Position.y - this->Current_Mode_Position.y) < 0.02f)
         {
             this->Finish_Current_Mode = true;
+        }
+        break;
+    case FOLLOW_Circle:
+        if(this->gray_scale_sensor->Finish){
+            this->Finish_Current_Mode = true;
+            this->gray_scale_sensor->Finish = false;
         }
         break;
     default:
@@ -422,76 +429,108 @@ void Car_Judge_Mode(pClass_Car this)
         switch (Task_2_Step)
         {
         case 1: //* 直走
+#ifdef USE_IMU_IN_ANGULAR_PID
             this->Begin_Yaw = this->IMU_Yaw;
-            
-            this->Target_Position.x = 0.6f;
+#else
+            this->Begin_Yaw = this->Now_Position.yaw;
+#endif
+            this->Target_Position.x = -1.0f;
             this->Target_Position.y = 0.0f;
             this->Target_Position.yaw = this->Begin_Yaw;
 
             this->Update_Mode(this, POSISITON_LA_Circle);
             break;
-        case 2: //* 转回原角度
+        case 2: //* 巡线
+            this->Update_Mode(this, FOLLOW_Circle);
+            break;
+        case 3: //* 转向相反方向
             this->Target_Position.x = 0.0f;
             this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw;
-
-            this->Update_Mode(this, POSISITON_LA_Circle);
+            this->Target_Position.yaw = this->Begin_Yaw + PI;
             break;
-        case 3: //* 绕圈
-            this->Update_Mode(this, TRAJECTORY_3);
-            break;
-        case 4: //* 转向相反方向
-            this->Target_Position.x = 0.0f;
+        case 4: //* 直走
+            this->Target_Position.x = -1.0f;
             this->Target_Position.y = 0.0f;
             this->Target_Position.yaw = this->Begin_Yaw + PI;
 
             this->Update_Mode(this, POSISITON_LA_Circle);
             break;
-        case 5: //* 直走
-            this->Target_Position.x = 0.6f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw + PI;
-
-            this->Update_Mode(this, POSISITON_LA_Circle);
-
+        case 5: //* 巡线
+            this->Update_Mode(this, FOLLOW_Circle);
             break;
         case 6: //* 转回原角度
             this->Target_Position.x = 0.0f;
             this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw + PI;
+            this->Target_Position.yaw = this->Begin_Yaw;
 
             this->Update_Mode(this, POSISITON_LA_Circle);
             break;
-        case 7: //* 绕圈
-            this->Update_Mode(this, TRAJECTORY_3);
+        case 7: //* 结束
+            this->Update_Mode(this, STOP);
+            Task_2_Step--;
             break;
-        case 8: //* 转回原角度
+        default:
+            break;
+        }
+        break;
+    case 3:
+        Task_3_Step++;
+        switch (Task_3_Step) 
+        {
+        case 1: //* 转
+#ifdef USE_IMU_IN_ANGULAR_PID
+            this->Begin_Yaw = this->IMU_Yaw;
+#else
+            this->Begin_Yaw = this->Now_Position.yaw;
+#endif
+            this->Target_Position.x = 0.0f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw - atan2f(1.0f, 0.8f);
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 2: //* 直走
+            this->Target_Position.x = -sqrt(0.8f * 0.8f + 1.0f * 1.0f);
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw - atan2f(1.0f, 0.8f);
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+
+
+        case 3: //* 巡线
+            this->Update_Mode(this, FOLLOW_Circle);
+            break;
+        case 4: //* 转向相反方向
+            this->Target_Position.x = 0.0f;
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw + PI - atan2f(1.0f, 0.8f);
+            break;
+        case 5: //* 直走
+            this->Target_Position.x = -sqrt(0.8f * 0.8f + 1.0f * 1.0f);
+            this->Target_Position.y = 0.0f;
+            this->Target_Position.yaw = this->Begin_Yaw + PI - atan2f(1.0f, 0.8f);
+
+            this->Update_Mode(this, POSISITON_LA_Circle);
+            break;
+        case 6: //* 巡线
+            this->Update_Mode(this, FOLLOW_Circle);
+            break;
+        case 7: //* 转回原角度
             this->Target_Position.x = 0.0f;
             this->Target_Position.y = 0.0f;
             this->Target_Position.yaw = this->Begin_Yaw;
 
             this->Update_Mode(this, POSISITON_LA_Circle);
             break;
-        case 9: //* 结束
+        case 8: //* 结束
             this->Update_Mode(this, STOP);
             Task_2_Step--;
             break;
         default:
-            this->Finish_Current_Mode = true;
             break;
         }
-    case 3:
-        Task_3_Step++;
-        switch (Task_3_Step) {
-        case 1: 
-            this->Update_Mode(this, FOLLOW_Circle);
-            break;
-        case 2:
-            this->Update_Mode(this, STOP);
-        default:
-            this->Finish_Current_Mode = true;
-            break;
-        }
+        break;
     default:
         break;
     }

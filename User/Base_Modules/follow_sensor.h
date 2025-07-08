@@ -45,6 +45,7 @@ typedef struct Class_GraySensor
     bool undetected;    // 未检测到黑线标志
     int Search_Direction; // 搜索方向
     float Linear_Speed_Max; // 最大线速度
+    bool Finish;
 
     unsigned int ADC_Value; // ADC采样值
     bool ADC_Flag; // ADC采样标志

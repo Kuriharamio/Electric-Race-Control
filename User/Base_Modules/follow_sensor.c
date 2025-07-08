@@ -68,10 +68,12 @@ void Convert_Analog_To_Digital(pClass_GraySensor this)
         if (this->Analog_value[i] > this->Gray_white[i])
         {
             this->Digtal |= (1 << i); // 超过白阈值置1（白色）
+            this->Digital_value[i] = 0;
         }
         else if (this->Analog_value[i] < this->Gray_black[i])
         {
             this->Digtal &= ~(1 << i); // 低于黑阈值置0（黑色）
+            this->Digital_value[i] = 1;
         }
         // 中间灰度值保持原有状态
     }
@@ -252,15 +254,20 @@ void GraySensor_Update(pClass_GraySensor this)
             //* 全黑状态处理
         }
     }
-    // else if(black == 0){
-    //     white_times++;
-    //     if (white_times > 100) // 防止线比传感器间隔细，导致误判为白色区域
-    //     {
-    //         this->Linear_Speed_Max = -1.5;
-    //         this->undetected = true;
-    //         this->Follow_Error = 80.0f * this->Search_Direction;
-    //     }
-    // }
+    else if(black == 0){
+        white_times++;
+        // if (white_times > 100) // 防止线比传感器间隔细，导致误判为白色区域
+        // {
+        //     // this->Linear_Speed_Max = -1.5;
+        //     // this->undetected = true;
+        //     // this->Follow_Error = 80.0f * this->Search_Direction;
+        // }
+        if(white_times > 2){
+            white_times = 0;
+            //* 全白状态处理
+            this->Finish = true;
+        }
+    }
     else
     {
         this->undetected = false;

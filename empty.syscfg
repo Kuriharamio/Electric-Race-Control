@@ -10,6 +10,7 @@
  */
 const ADC12         = scripting.addModule("/ti/driverlib/ADC12", {}, false);
 const ADC121        = ADC12.addInstance();
+const ADC122        = ADC12.addInstance();
 const GPIO          = scripting.addModule("/ti/driverlib/GPIO", {}, false);
 const GPIO1         = GPIO.addInstance();
 const GPIO2         = GPIO.addInstance();
@@ -31,6 +32,7 @@ const UART          = scripting.addModule("/ti/driverlib/UART", {}, false);
 const UART1         = UART.addInstance();
 const UART2         = UART.addInstance();
 const UART3         = UART.addInstance();
+const UART4         = UART.addInstance();
 const ProjectConfig = scripting.addModule("/ti/project_config/ProjectConfig");
 
 /**
@@ -57,8 +59,12 @@ ADC121.sampClkDiv                        = "DL_ADC12_CLOCK_DIVIDE_8";
 ADC121.repeatMode                        = true;
 ADC121.peripheral.$assign                = "ADC0";
 ADC121.peripheral.adcPin0.$assign        = "PA27";
-ADC121.adcPin0Config.$name               = "ti_driverlib_gpio_GPIOPinGeneric8";
 ADC121.adcPin0Config.hideOutputInversion = scripting.forceWrite(false);
+ADC121.adcPin0Config.$name               = "ti_driverlib_gpio_GPIOPinGeneric8";
+
+ADC122.$name                             = "ADC_BUTTON";
+ADC122.adcPin0Config.$name               = "ti_driverlib_gpio_GPIOPinGeneric13";
+ADC122.adcPin0Config.hideOutputInversion = scripting.forceWrite(false);
 
 const Board                       = scripting.addModule("/ti/driverlib/Board", {}, false);
 Board.peripheral.$assign          = "DEBUGSS";
@@ -74,7 +80,7 @@ GPIO1.associatedPins[0].assignedPin      = "22";
 GPIO1.associatedPins[0].pin.$assign      = "PB22";
 GPIO1.associatedPins[1].internalResistor = "PULL_UP";
 GPIO1.associatedPins[1].$name            = "BUZZ";
-GPIO1.associatedPins[1].pin.$assign      = "PB27";
+GPIO1.associatedPins[1].pin.$assign      = "PB20";
 
 GPIO2.$name                              = "ENCODER_LF";
 GPIO2.port                               = "PORTB";
@@ -169,11 +175,11 @@ GPIO6.associatedPins[1].pin.$assign      = "PB14";
 GPIO6.associatedPins[2].$name            = "LF_IN1";
 GPIO6.associatedPins[2].ioStructure      = "SD";
 GPIO6.associatedPins[2].internalResistor = "PULL_UP";
-GPIO6.associatedPins[2].pin.$assign      = "PB15";
+GPIO6.associatedPins[2].pin.$assign      = "PB4";
 GPIO6.associatedPins[3].$name            = "LF_IN2";
 GPIO6.associatedPins[3].ioStructure      = "SD";
 GPIO6.associatedPins[3].internalResistor = "PULL_UP";
-GPIO6.associatedPins[3].pin.$assign      = "PB16";
+GPIO6.associatedPins[3].pin.$assign      = "PB5";
 GPIO6.associatedPins[4].$name            = "LB_IN1";
 GPIO6.associatedPins[4].ioStructure      = "SD";
 GPIO6.associatedPins[4].internalResistor = "PULL_UP";
@@ -205,14 +211,15 @@ GPIO6.associatedPins[9].pin.$assign      = "PB1";
 GPIO7.$name                          = "GRAY_SCALE";
 GPIO7.associatedPins.create(3);
 GPIO7.associatedPins[0].$name        = "AD0";
-GPIO7.associatedPins[0].assignedPort = "PORTA";
-GPIO7.associatedPins[0].assignedPin  = "12";
+GPIO7.associatedPins[0].assignedPort = "PORTB";
+GPIO7.associatedPins[0].assignedPin  = "23";
 GPIO7.associatedPins[1].$name        = "AD1";
-GPIO7.associatedPins[1].assignedPort = "PORTA";
-GPIO7.associatedPins[1].assignedPin  = "13";
+GPIO7.associatedPins[1].assignedPort = "PORTB";
+GPIO7.associatedPins[1].assignedPin  = "26";
 GPIO7.associatedPins[2].$name        = "AD2";
-GPIO7.associatedPins[2].assignedPort = "PORTA";
-GPIO7.associatedPins[2].assignedPin  = "14";
+GPIO7.associatedPins[2].assignedPort = "PORTB";
+GPIO7.associatedPins[2].assignedPin  = "27";
+GPIO7.associatedPins[2].pin.$assign  = "PB27";
 
 PWM1.timerStartTimer                    = true;
 PWM1.pwmMode                            = "EDGE_ALIGN_UP";
@@ -313,15 +320,18 @@ UART2.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric2";
 UART2.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric3";
 
 UART3.$name                    = "UART_2";
-UART3.enableDMARX              = false;
-UART3.enableDMATX              = false;
 UART3.enabledInterrupts        = ["RX"];
-UART3.rxFifoThreshold          = "DL_UART_RX_FIFO_LEVEL_ONE_ENTRY";
-UART3.txFifoThreshold          = "DL_UART_TX_FIFO_LEVEL_3_4_EMPTY";
-UART3.direction                = "RX";
-UART3.peripheral.$assign       = "UART3";
-UART3.peripheral.rxPin.$assign = "PB3";
+UART3.peripheral.rxPin.$assign = "PA13";
+UART3.peripheral.txPin.$assign = "PA14";
+UART3.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric9";
 UART3.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric10";
+
+UART4.$name                    = "UART_3";
+UART4.peripheral.$assign       = "UART2";
+UART4.peripheral.rxPin.$assign = "PB16";
+UART4.peripheral.txPin.$assign = "PB15";
+UART4.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric11";
+UART4.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric12";
 
 ProjectConfig.deviceSpin = "MSPM0G3507";
 scripting.suppress("Migrating requires going through the Switch Board or Device menu in the Device View section\\.", ProjectConfig, "deviceSpin");
@@ -331,7 +341,9 @@ scripting.suppress("Migrating requires going through the Switch Board or Device 
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
+ADC122.peripheral.$suggestSolution           = "ADC1";
+ADC122.peripheral.adcPin0.$suggestSolution   = "PA15";
 GPIO6.associatedPins[4].pin.$suggestSolution = "PB19";
-GPIO7.associatedPins[0].pin.$suggestSolution = "PA12";
-GPIO7.associatedPins[1].pin.$suggestSolution = "PA13";
-GPIO7.associatedPins[2].pin.$suggestSolution = "PA14";
+GPIO7.associatedPins[0].pin.$suggestSolution = "PB23";
+GPIO7.associatedPins[1].pin.$suggestSolution = "PB26";
+UART3.peripheral.$suggestSolution            = "UART3";

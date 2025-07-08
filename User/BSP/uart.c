@@ -307,7 +307,7 @@ IRQn_Type Get_UART_IRQN_From_Index(uint8_t index)
  * @return UART_Regs*
  */
 UART_Regs *Get_UART_INST_From_Index(uint8_t index)
-{
+ {
 	switch (index)
 	{
 #ifdef USE_UART_0

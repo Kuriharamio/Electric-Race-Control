@@ -64,7 +64,9 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_UART_0_init();
     SYSCFG_DL_UART_1_init();
     SYSCFG_DL_UART_2_init();
+    SYSCFG_DL_UART_3_init();
     SYSCFG_DL_ADC_GRAY_SCALE_init();
+    SYSCFG_DL_ADC_BUTTON_init();
     SYSCFG_DL_SYSTICK_init();
     /* Ensure backup structures have no valid state */
 	gPWM_MOTOR_LBackup.backupRdy 	= false;
@@ -117,7 +119,9 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_UART_Main_reset(UART_0_INST);
     DL_UART_Main_reset(UART_1_INST);
     DL_UART_Main_reset(UART_2_INST);
+    DL_UART_Main_reset(UART_3_INST);
     DL_ADC12_reset(ADC_GRAY_SCALE_INST);
+    DL_ADC12_reset(ADC_BUTTON_INST);
 
 
     DL_GPIO_enablePower(GPIOA);
@@ -130,7 +134,9 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_UART_Main_enablePower(UART_0_INST);
     DL_UART_Main_enablePower(UART_1_INST);
     DL_UART_Main_enablePower(UART_2_INST);
+    DL_UART_Main_enablePower(UART_3_INST);
     DL_ADC12_enablePower(ADC_GRAY_SCALE_INST);
+    DL_ADC12_enablePower(ADC_BUTTON_INST);
 
     delay_cycles(POWER_STARTUP_DELAY);
 }
@@ -155,8 +161,14 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
         GPIO_UART_1_IOMUX_TX, GPIO_UART_1_IOMUX_TX_FUNC);
     DL_GPIO_initPeripheralInputFunction(
         GPIO_UART_1_IOMUX_RX, GPIO_UART_1_IOMUX_RX_FUNC);
+    DL_GPIO_initPeripheralOutputFunction(
+        GPIO_UART_2_IOMUX_TX, GPIO_UART_2_IOMUX_TX_FUNC);
     DL_GPIO_initPeripheralInputFunction(
         GPIO_UART_2_IOMUX_RX, GPIO_UART_2_IOMUX_RX_FUNC);
+    DL_GPIO_initPeripheralOutputFunction(
+        GPIO_UART_3_IOMUX_TX, GPIO_UART_3_IOMUX_TX_FUNC);
+    DL_GPIO_initPeripheralInputFunction(
+        GPIO_UART_3_IOMUX_RX, GPIO_UART_3_IOMUX_RX_FUNC);
 
     DL_GPIO_initDigitalOutput(REMINDER_LED_IOMUX);
 
@@ -243,15 +255,9 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
     DL_GPIO_initDigitalOutput(GRAY_SCALE_AD2_IOMUX);
 
     DL_GPIO_clearPins(GPIOA, MOTOR_DRV_STBY_F_PIN |
-		MOTOR_DRV_LB_IN2_PIN |
-		GRAY_SCALE_AD0_PIN |
-		GRAY_SCALE_AD1_PIN |
-		GRAY_SCALE_AD2_PIN);
+		MOTOR_DRV_LB_IN2_PIN);
     DL_GPIO_enableOutput(GPIOA, MOTOR_DRV_STBY_F_PIN |
-		MOTOR_DRV_LB_IN2_PIN |
-		GRAY_SCALE_AD0_PIN |
-		GRAY_SCALE_AD1_PIN |
-		GRAY_SCALE_AD2_PIN);
+		MOTOR_DRV_LB_IN2_PIN);
     DL_GPIO_clearPins(GPIOB, REMINDER_LED_PIN |
 		REMINDER_BUZZ_PIN |
 		MOTOR_DRV_STBY_B_PIN |
@@ -261,7 +267,10 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 		MOTOR_DRV_RF_IN1_PIN |
 		MOTOR_DRV_RF_IN2_PIN |
 		MOTOR_DRV_RB_IN1_PIN |
-		MOTOR_DRV_RB_IN2_PIN);
+		MOTOR_DRV_RB_IN2_PIN |
+		GRAY_SCALE_AD0_PIN |
+		GRAY_SCALE_AD1_PIN |
+		GRAY_SCALE_AD2_PIN);
     DL_GPIO_enableOutput(GPIOB, REMINDER_LED_PIN |
 		REMINDER_BUZZ_PIN |
 		MOTOR_DRV_STBY_B_PIN |
@@ -271,7 +280,10 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 		MOTOR_DRV_RF_IN1_PIN |
 		MOTOR_DRV_RF_IN2_PIN |
 		MOTOR_DRV_RB_IN1_PIN |
-		MOTOR_DRV_RB_IN2_PIN);
+		MOTOR_DRV_RB_IN2_PIN |
+		GRAY_SCALE_AD0_PIN |
+		GRAY_SCALE_AD1_PIN |
+		GRAY_SCALE_AD2_PIN);
     DL_GPIO_setLowerPinsPolarity(GPIOB, DL_GPIO_PIN_12_EDGE_RISE_FALL |
 		DL_GPIO_PIN_13_EDGE_RISE_FALL |
 		DL_GPIO_PIN_8_EDGE_RISE_FALL |
@@ -614,7 +626,7 @@ static const DL_UART_Main_ClockConfig gUART_2ClockConfig = {
 
 static const DL_UART_Main_Config gUART_2Config = {
     .mode        = DL_UART_MAIN_MODE_NORMAL,
-    .direction   = DL_UART_MAIN_DIRECTION_RX,
+    .direction   = DL_UART_MAIN_DIRECTION_TX_RX,
     .flowControl = DL_UART_MAIN_FLOW_CONTROL_NONE,
     .parity      = DL_UART_MAIN_PARITY_NONE,
     .wordLength  = DL_UART_MAIN_WORD_LENGTH_8_BITS,
@@ -643,6 +655,38 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_2_init(void)
     DL_UART_Main_enable(UART_2_INST);
 }
 
+static const DL_UART_Main_ClockConfig gUART_3ClockConfig = {
+    .clockSel    = DL_UART_MAIN_CLOCK_BUSCLK,
+    .divideRatio = DL_UART_MAIN_CLOCK_DIVIDE_RATIO_1
+};
+
+static const DL_UART_Main_Config gUART_3Config = {
+    .mode        = DL_UART_MAIN_MODE_NORMAL,
+    .direction   = DL_UART_MAIN_DIRECTION_TX_RX,
+    .flowControl = DL_UART_MAIN_FLOW_CONTROL_NONE,
+    .parity      = DL_UART_MAIN_PARITY_NONE,
+    .wordLength  = DL_UART_MAIN_WORD_LENGTH_8_BITS,
+    .stopBits    = DL_UART_MAIN_STOP_BITS_ONE
+};
+
+SYSCONFIG_WEAK void SYSCFG_DL_UART_3_init(void)
+{
+    DL_UART_Main_setClockConfig(UART_3_INST, (DL_UART_Main_ClockConfig *) &gUART_3ClockConfig);
+
+    DL_UART_Main_init(UART_3_INST, (DL_UART_Main_Config *) &gUART_3Config);
+    /*
+     * Configure baud rate by setting oversampling and baud rate divisors.
+     *  Target baud rate: 9600
+     *  Actual baud rate: 9599.81
+     */
+    DL_UART_Main_setOversampling(UART_3_INST, DL_UART_OVERSAMPLING_RATE_16X);
+    DL_UART_Main_setBaudRateDivisor(UART_3_INST, UART_3_IBRD_40_MHZ_9600_BAUD, UART_3_FBRD_40_MHZ_9600_BAUD);
+
+
+
+    DL_UART_Main_enable(UART_3_INST);
+}
+
 /* ADC_GRAY_SCALE Initialization */
 static const DL_ADC12_ClockConfig gADC_GRAY_SCALEClockConfig = {
     .clockSel       = DL_ADC12_CLOCK_SYSOSC,
@@ -659,6 +703,20 @@ SYSCONFIG_WEAK void SYSCFG_DL_ADC_GRAY_SCALE_init(void)
         DL_ADC12_INPUT_CHAN_0, DL_ADC12_REFERENCE_VOLTAGE_VDDA, DL_ADC12_SAMPLE_TIMER_SOURCE_SCOMP0, DL_ADC12_AVERAGING_MODE_DISABLED,
         DL_ADC12_BURN_OUT_SOURCE_DISABLED, DL_ADC12_TRIGGER_MODE_AUTO_NEXT, DL_ADC12_WINDOWS_COMP_MODE_DISABLED);
     DL_ADC12_enableConversions(ADC_GRAY_SCALE_INST);
+}
+/* ADC_BUTTON Initialization */
+static const DL_ADC12_ClockConfig gADC_BUTTONClockConfig = {
+    .clockSel       = DL_ADC12_CLOCK_SYSOSC,
+    .divideRatio    = DL_ADC12_CLOCK_DIVIDE_1,
+    .freqRange      = DL_ADC12_CLOCK_FREQ_RANGE_24_TO_32,
+};
+SYSCONFIG_WEAK void SYSCFG_DL_ADC_BUTTON_init(void)
+{
+    DL_ADC12_setClockConfig(ADC_BUTTON_INST, (DL_ADC12_ClockConfig *) &gADC_BUTTONClockConfig);
+    DL_ADC12_configConversionMem(ADC_BUTTON_INST, ADC_BUTTON_ADCMEM_0,
+        DL_ADC12_INPUT_CHAN_0, DL_ADC12_REFERENCE_VOLTAGE_VDDA, DL_ADC12_SAMPLE_TIMER_SOURCE_SCOMP0, DL_ADC12_AVERAGING_MODE_DISABLED,
+        DL_ADC12_BURN_OUT_SOURCE_DISABLED, DL_ADC12_TRIGGER_MODE_AUTO_NEXT, DL_ADC12_WINDOWS_COMP_MODE_DISABLED);
+    DL_ADC12_enableConversions(ADC_BUTTON_INST);
 }
 
 SYSCONFIG_WEAK void SYSCFG_DL_SYSTICK_init(void)
