@@ -9,6 +9,9 @@ typedef enum
 {
     DEBUG_STRING,
     DEBUG_WAVE,
+    HMI_STOP,               //串口屏停止模式
+    HMI_WAVE,               //串口屏波形模式
+    HMI_WATCH,              //串口屏观察数据模式
     CUSTOM,
 } UART_MODE;
 
@@ -27,6 +30,7 @@ typedef struct Class_UART
 
     uint8_t param_len;  // 参数个数
     float **param_list; // 参数列表
+    char **param_name;	//参数名称列表
 
     void (*Init)(struct Class_UART *this, uint8_t rx_max_len, uint8_t param_len); // 初始化函数
     void (*Send_Bit)(struct Class_UART *this, uint8_t data);                      // 发送数据函数
@@ -42,7 +46,7 @@ typedef struct Class_UART
     void (*Configure_Callback)(struct Class_UART *this, void (*callback)(struct Class_UART *this));          // 配置回调函数
     void (*Configure_Custom_Send_Datas)(struct Class_UART *this, void (*func)(uint8_t *datas, size_t size)); // 配置自定义发送数据函数
 
-    void (*Bind_Param_With_Id)(struct Class_UART *this, uint8_t id, float *input_param); // 绑定参数
+    void (*Bind_Param_With_Id)(struct Class_UART *this, uint8_t id, float *input_param, char *input_param_name); // 绑定参数
     void (*Modify_Param_With_Id)(struct Class_UART *this, uint8_t id, float value);      // 修改参数
 
     void (*UART_INST_DataProcess)(struct Class_UART *this); // 串口中断处理函数
@@ -61,7 +65,7 @@ void UART_Configure_Callback(pClass_UART this, void (*callback)(pClass_UART this
 void UART_Send_Bit(pClass_UART this, uint8_t data);
 void UART_Send_Datas(pClass_UART this, uint8_t *datas, size_t size);
 void UART_Clear_RxBuffer(pClass_UART this);
-void UART_Bind_Param_With_Id(pClass_UART this, uint8_t id, float *input_param);
+void UART_Bind_Param_With_Id(pClass_UART this, uint8_t id, float *input_param, char *input_param_name)
 void UART_Modify_Param_With_Id(pClass_UART this, uint8_t id, float value);
 
 void UART_Send(pClass_UART this, uint8_t *datas, size_t size);
