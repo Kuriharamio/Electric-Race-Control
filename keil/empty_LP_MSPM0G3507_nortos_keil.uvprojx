@@ -504,6 +504,11 @@
               <FileType>1</FileType>
               <FilePath>..\User\Base_Modules\follow_sensor.c</FilePath>
             </File>
+            <File>
+              <FileName>hmi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\hmi.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

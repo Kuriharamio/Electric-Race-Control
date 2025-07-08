@@ -65,7 +65,7 @@ void UART_Configure_Callback(pClass_UART this, void (*callback)(pClass_UART this
 void UART_Send_Bit(pClass_UART this, uint8_t data);
 void UART_Send_Datas(pClass_UART this, uint8_t *datas, size_t size);
 void UART_Clear_RxBuffer(pClass_UART this);
-void UART_Bind_Param_With_Id(pClass_UART this, uint8_t id, float *input_param, char *input_param_name)
+void UART_Bind_Param_With_Id(pClass_UART this, uint8_t id, float *input_param, char *input_param_name);
 void UART_Modify_Param_With_Id(pClass_UART this, uint8_t id, float value);
 
 void UART_Send(pClass_UART this, uint8_t *datas, size_t size);

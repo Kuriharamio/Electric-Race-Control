@@ -17,6 +17,12 @@
 #define USE_UART_0              // 启用串口0
 #define BLUETOOTH_RX_LEN_MAX 20 // 蓝牙接收数据最大长度
 
+//* 串口屏配置
+#define USE_HMI
+#define HMI_UART_INDEX 3
+#define USE_UART_3
+#define HMI_RX_LEN_MAX 100
+
 //* 飞特舵机串口配置
 // #define USE_FT_SERVO          // 启用飞特舵机
 // #define FT_SERVO_UART_INDEX 0 // 飞特舵机串口索引号
