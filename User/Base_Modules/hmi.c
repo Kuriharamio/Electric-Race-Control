@@ -40,6 +40,30 @@ void HMI_Rx_Callback(pClass_UART this)
         {
 			this->mode = HMI_WAVE;
         }
+        else if (strcmp((char *)this->rxbuffer, "task1") == 0)
+        {
+			
+        } 
+        else if (strcmp((char *)this->rxbuffer, "task2") == 0)
+        {
+			
+        } 
+        else if (strcmp((char *)this->rxbuffer, "task3") == 0)
+        {
+			
+        } 
+        else if (strcmp((char *)this->rxbuffer, "task4") == 0)
+        {
+			
+        } 
+        else if (strcmp((char *)this->rxbuffer, "task5") == 0)
+        {
+			
+        } 
+        else if (strcmp((char *)this->rxbuffer, "task6") == 0)
+        {
+			
+        } 
         else
         {
 			int id = 0;
