@@ -233,6 +233,8 @@ void UART_Send(pClass_UART this, uint8_t *datas, size_t size)
 		{
 			sprintf(temp, "t%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); //发送数据显示指令
 			this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
+			sprintf(temp, "d%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); //发送数据名称显示指令
+			this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
 		}
 	}
 	else if (this->mode == CUSTOM)
