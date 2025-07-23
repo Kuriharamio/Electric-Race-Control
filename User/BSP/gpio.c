@@ -17,79 +17,41 @@ void GROUP1_IRQHandler(void)
     /*******************************
                 编码器中断
     *******************************/
-    // 左后轮
-    pClass_Motor Motor_LB = Get_Motor_INST(LEFT_BACK);
-    if (Motor_LB->is_inited)
+    // 左
+    pClass_Motor Motor_L = Get_Motor_INST(LEFT);
+    if (Motor_L->is_inited)
     {
-        uint32_t EN_LB = DL_GPIO_getEnabledInterruptStatus(Motor_LB->ENCODER_PORT, Motor_LB->ENCODER_A_PIN | Motor_LB->ENCODER_B_PIN);
+        uint32_t EN_LB = DL_GPIO_getEnabledInterruptStatus(Motor_L->ENCODER_PORT, Motor_L->ENCODER_A_PIN | Motor_L->ENCODER_B_PIN);
 
-        if ((EN_LB & Motor_LB->ENCODER_A_PIN) == Motor_LB->ENCODER_A_PIN)
+        if ((EN_LB & Motor_L->ENCODER_A_PIN) == Motor_L->ENCODER_A_PIN)
         {
-            Motor_LB->Encoder_Callback(Motor_LB, 'A');
-            DL_GPIO_clearInterruptStatus(Motor_LB->ENCODER_PORT, Motor_LB->ENCODER_A_PIN);
+            Motor_L->Encoder_Callback(Motor_L, 'A');
+            DL_GPIO_clearInterruptStatus(Motor_L->ENCODER_PORT, Motor_L->ENCODER_A_PIN);
         }
 
-        if ((EN_LB & Motor_LB->ENCODER_B_PIN) == Motor_LB->ENCODER_B_PIN)
+        if ((EN_LB & Motor_L->ENCODER_B_PIN) == Motor_L->ENCODER_B_PIN)
         {
-            Motor_LB->Encoder_Callback(Motor_LB, 'B');
-            DL_GPIO_clearInterruptStatus(Motor_LB->ENCODER_PORT, Motor_LB->ENCODER_B_PIN);
+            Motor_L->Encoder_Callback(Motor_L, 'B');
+            DL_GPIO_clearInterruptStatus(Motor_L->ENCODER_PORT, Motor_L->ENCODER_B_PIN);
         }
     }
 
-    // 右后轮
-    pClass_Motor Motor_RB = Get_Motor_INST(RIGHT_BACK);
-    if (Motor_RB->is_inited)
+    // 右
+    pClass_Motor Motor_R = Get_Motor_INST(RIGHT);
+    if (Motor_R->is_inited)
     {
-        uint32_t EN_RB = DL_GPIO_getEnabledInterruptStatus(Motor_RB->ENCODER_PORT, Motor_RB->ENCODER_A_PIN | Motor_RB->ENCODER_B_PIN);
+        uint32_t EN_RB = DL_GPIO_getEnabledInterruptStatus(Motor_R->ENCODER_PORT, Motor_R->ENCODER_A_PIN | Motor_R->ENCODER_B_PIN);
 
-        if ((EN_RB & Motor_RB->ENCODER_A_PIN) == Motor_RB->ENCODER_A_PIN)
+        if ((EN_RB & Motor_R->ENCODER_A_PIN) == Motor_R->ENCODER_A_PIN)
         {
-            Motor_RB->Encoder_Callback(Motor_RB, 'A');
-            DL_GPIO_clearInterruptStatus(Motor_RB->ENCODER_PORT, Motor_RB->ENCODER_A_PIN);
+            Motor_R->Encoder_Callback(Motor_R, 'A');
+            DL_GPIO_clearInterruptStatus(Motor_R->ENCODER_PORT, Motor_R->ENCODER_A_PIN);
         }
 
-        if ((EN_RB & Motor_RB->ENCODER_B_PIN) == Motor_RB->ENCODER_B_PIN)
+        if ((EN_RB & Motor_R->ENCODER_B_PIN) == Motor_R->ENCODER_B_PIN)
         {
-            Motor_RB->Encoder_Callback(Motor_RB, 'B');
-            DL_GPIO_clearInterruptStatus(Motor_RB->ENCODER_PORT, Motor_RB->ENCODER_B_PIN);
-        }
-    }
-
-    // 左前轮
-    pClass_Motor Motor_LF = Get_Motor_INST(LEFT_FRONT);
-    if (Motor_LF->is_inited)
-    {
-        uint32_t EN_LF = DL_GPIO_getEnabledInterruptStatus(Motor_LF->ENCODER_PORT, Motor_LF->ENCODER_A_PIN | Motor_LF->ENCODER_B_PIN);
-
-        if ((EN_LF & Motor_LF->ENCODER_A_PIN) == Motor_LF->ENCODER_A_PIN)
-        {
-            Motor_LF->Encoder_Callback(Motor_LF, 'A');
-            DL_GPIO_clearInterruptStatus(Motor_LF->ENCODER_PORT, Motor_LF->ENCODER_A_PIN);
-        }
-
-        if ((EN_LF & Motor_LF->ENCODER_B_PIN) == Motor_LF->ENCODER_B_PIN)
-        {
-            Motor_LF->Encoder_Callback(Motor_LF, 'B');
-            DL_GPIO_clearInterruptStatus(Motor_LF->ENCODER_PORT, Motor_LF->ENCODER_B_PIN);
-        }
-    }
-
-    // 右前轮
-    pClass_Motor Motor_RF = Get_Motor_INST(RIGHT_FRONT);
-    if (Motor_RF->is_inited)
-    {
-        uint32_t EN_RF = DL_GPIO_getEnabledInterruptStatus(Motor_RF->ENCODER_PORT, Motor_RF->ENCODER_A_PIN | Motor_RF->ENCODER_B_PIN);
-
-        if ((EN_RF & Motor_RF->ENCODER_A_PIN) == Motor_RF->ENCODER_A_PIN)
-        {
-            Motor_RF->Encoder_Callback(Motor_RF, 'A');
-            DL_GPIO_clearInterruptStatus(Motor_RF->ENCODER_PORT, Motor_RF->ENCODER_A_PIN);
-        }
-
-        if ((EN_RF & Motor_RF->ENCODER_B_PIN) == Motor_RF->ENCODER_B_PIN)
-        {
-            Motor_RF->Encoder_Callback(Motor_RF, 'B');
-            DL_GPIO_clearInterruptStatus(Motor_RF->ENCODER_PORT, Motor_RF->ENCODER_B_PIN);
+            Motor_R->Encoder_Callback(Motor_R, 'B');
+            DL_GPIO_clearInterruptStatus(Motor_R->ENCODER_PORT, Motor_R->ENCODER_B_PIN);
         }
     }
 #endif

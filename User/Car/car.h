@@ -9,10 +9,8 @@
 typedef struct Class_Car
 {
     // 电机对象
-    pClass_Motor Motor_RB; // 右后轮
-    pClass_Motor Motor_LB; // 左后轮
-    pClass_Motor Motor_RF; // 右前轮
-    pClass_Motor Motor_LF; // 左前轮
+    pClass_Motor Motor_R; // 右后轮
+    pClass_Motor Motor_L; // 左后轮
 
     // 控制器
     pClass_PurePursuit PurePursuit; //  PurePursuit对象
@@ -23,8 +21,8 @@ typedef struct Class_Car
     pClass_PID PID_Angle_Position_WHEEL;
     pClass_PID PID_Angle_Position_IMU;
 
-    pClass_PID PID_Linear;  // 速度环PID
-    pClass_PID PID_Angular; // 角度环PID
+    // pClass_PID PID_Linear;  // 速度环PID
+    // pClass_PID PID_Angular; // 角度环PID
     
     pClass_PID PID_Follow;
 
@@ -32,6 +30,7 @@ typedef struct Class_Car
     POSITION Target_Position; // 目标位置
     POSITION Now_Position;    // 里程计位置
     POSITION Current_Mode_Position;
+    float Last_Mode_Yaw;
     float IMU_Yaw;
     float Begin_Yaw;
 
@@ -62,7 +61,7 @@ typedef struct Class_Car
     void (*Update_Angle_Position_PID_WHEEL)(struct Class_Car *this);
     void (*Update_Angle_Position_PID_IMU)(struct Class_Car *this);
     void (*Update_XY_Position_PID)(struct Class_Car *this);
-    void (*Update_Speed_PID)(struct Class_Car *this);
+    // void (*Update_Speed_PID)(struct Class_Car *this);
 
 } Class_Car, *pClass_Car;
 
@@ -79,7 +78,7 @@ void Car_Update_Linear_Position_PID(pClass_Car this);
 void Car_Update_Angle_Position_PID_WHEEL(pClass_Car this);
 void Car_Update_Angle_Position_PID_IMU(pClass_Car this);
 void Car_Update_XY_Position_PID(pClass_Car this);
-void Car_Update_Speed_PID(pClass_Car this);
+// void Car_Update_Speed_PID(pClass_Car this);
 void Car_Update_Mode(pClass_Car this, CONTROL_MODE mode);
 void Car_Judge_Mode(pClass_Car this);
 void Car_Upadate_Controller(pClass_Car this);

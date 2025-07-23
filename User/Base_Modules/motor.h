@@ -13,10 +13,8 @@ typedef enum
 
 typedef enum
 {
-    LEFT_BACK,
-    LEFT_FRONT,
-    RIGHT_BACK,
-    RIGHT_FRONT,
+    LEFT,
+    RIGHT,
 } SIDE;
 
 typedef struct Class_Motor
@@ -68,7 +66,7 @@ typedef struct Class_Motor
     void (*Configure_ENCODER_A)(struct Class_Motor *this, GPIO_Regs *__ENCODER_A_PORT, uint32_t __ENCODER_A_PIN); // 电机引脚编码器A配置
     void (*Configure_ENCODER_B)(struct Class_Motor *this, GPIO_Regs *__ENCODER_B_PORT, uint32_t __ENCODER_B_PIN); // 电机引脚编码器B配置
 
-    void (*TIM_PID_PeriodElapsedCallback)(struct Class_Motor *this); // 定时器回调函数
+    void (*Update_PID)(struct Class_Motor *this); // 定时器回调函数
     void (*Encoder_Callback)(struct Class_Motor *this, char phase);  // 编码器回调函数
     void (*Control)(struct Class_Motor *this);                       // 电机输入引脚控制函数
     void (*Output)(struct Class_Motor *this);                        // 电机PWM输出函数
@@ -88,7 +86,7 @@ void Motor_Configure_ENCODER_B(pClass_Motor this, GPIO_Regs *__ENCODER_B_PORT, u
 void Motor_Init(pClass_Motor this, float __radius, float __Output_Max, float __Speed_Max, int __Gearbox_Rate, int __Per_Pulse, int __Frequency_doubling);
 
 void Motor_Encoder_Callback(pClass_Motor this, char phase);
-void Motor_TIM_PID_PeriodElapsedCallback(pClass_Motor this);
+void Motor_Update_PID(pClass_Motor this);
 void Motor_Control(pClass_Motor this);
 void Motor_Output(pClass_Motor this);
 

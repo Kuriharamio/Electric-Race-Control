@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\Electric-Race-Control</IncludePath>
+              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\6_Two_Wheel_Car;..\Third</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -385,29 +385,29 @@
           <GroupName>Source</GroupName>
           <Files>
             <File>
-              <FileName>empty.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../empty.c</FilePath>
-            </File>
-            <File>
-              <FileName>empty.syscfg</FileName>
-              <FileType>5</FileType>
-              <FilePath>../empty.syscfg</FilePath>
-            </File>
-            <File>
-              <FileName>startup_mspm0g350x_uvision.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>startup_mspm0g350x_uvision.s</FilePath>
-            </File>
-            <File>
               <FileName>ti_msp_dl_config.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\ti_msp_dl_config.c</FilePath>
             </File>
             <File>
+              <FileName>empty.syscfg</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\empty.syscfg</FilePath>
+            </File>
+            <File>
+              <FileName>startup_mspm0g350x_uvision.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\startup_mspm0g350x_uvision.s</FilePath>
+            </File>
+            <File>
               <FileName>ti_msp_dl_config.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\ti_msp_dl_config.h</FilePath>
+            </File>
+            <File>
+              <FileName>empty.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\empty.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -424,11 +424,6 @@
         <Group>
           <GroupName>User</GroupName>
           <Files>
-            <File>
-              <FileName>car.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Car\car.c</FilePath>
-            </File>
             <File>
               <FileName>drv_math.c</FileName>
               <FileType>1</FileType>
@@ -455,6 +450,21 @@
               <FilePath>..\User\Base_Modules\bluetooth.c</FilePath>
             </File>
             <File>
+              <FileName>follow_sensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\follow_sensor.c</FilePath>
+            </File>
+            <File>
+              <FileName>FT_servo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\FT_servo.c</FilePath>
+            </File>
+            <File>
+              <FileName>hmi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\hmi.c</FilePath>
+            </File>
+            <File>
               <FileName>imu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Base_Modules\imu.c</FilePath>
@@ -475,6 +485,11 @@
               <FilePath>..\User\Base_Modules\reminder.c</FilePath>
             </File>
             <File>
+              <FileName>servo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\servo.c</FilePath>
+            </File>
+            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\BSP\board.c</FilePath>
@@ -490,6 +505,11 @@
               <FilePath>..\User\BSP\gpio.c</FilePath>
             </File>
             <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\BSP\i2c.c</FilePath>
+            </File>
+            <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\BSP\timer.c</FilePath>
@@ -500,14 +520,9 @@
               <FilePath>..\User\BSP\uart.c</FilePath>
             </File>
             <File>
-              <FileName>follow_sensor.c</FileName>
+              <FileName>car.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\Base_Modules\follow_sensor.c</FilePath>
-            </File>
-            <File>
-              <FileName>hmi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Base_Modules\hmi.c</FilePath>
+              <FilePath>..\User\Car\car.c</FilePath>
             </File>
           </Files>
         </Group>

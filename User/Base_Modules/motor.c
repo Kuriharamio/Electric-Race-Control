@@ -12,10 +12,8 @@
 
 #ifdef USE_CAR
 
-static Class_Motor _Motor_RB = {RIGHT_BACK};
-static Class_Motor _Motor_LB = {LEFT_BACK};
-static Class_Motor _Motor_RF = {RIGHT_FRONT};
-static Class_Motor _Motor_LF = {LEFT_FRONT};
+static Class_Motor _Motor_R = {RIGHT};
+static Class_Motor _Motor_L = {LEFT};
 
 pClass_Motor create_motor(SIDE side)
 {
@@ -23,17 +21,11 @@ pClass_Motor create_motor(SIDE side)
 
     switch (side)
     {
-    case LEFT_BACK:
-        tmp_motor_ptr = &_Motor_LB;
+    case LEFT:
+        tmp_motor_ptr = &_Motor_L;
         break;
-    case LEFT_FRONT:
-        tmp_motor_ptr = &_Motor_LF;
-        break;
-    case RIGHT_BACK:
-        tmp_motor_ptr = &_Motor_RB;
-        break;
-    case RIGHT_FRONT:
-        tmp_motor_ptr = &_Motor_RF;
+    case RIGHT:
+        tmp_motor_ptr = &_Motor_R;
         break;
     default:
         return NULL;
@@ -48,7 +40,7 @@ pClass_Motor create_motor(SIDE side)
     tmp_motor_ptr->Configure_ENCODER_A = Motor_Configure_ENCODER_A;
     tmp_motor_ptr->Configure_ENCODER_B = Motor_Configure_ENCODER_B;
 
-    tmp_motor_ptr->TIM_PID_PeriodElapsedCallback = Motor_TIM_PID_PeriodElapsedCallback;
+    tmp_motor_ptr->Update_PID = Motor_Update_PID;
     tmp_motor_ptr->Encoder_Callback = Motor_Encoder_Callback;
     tmp_motor_ptr->Control = Motor_Control;
     tmp_motor_ptr->Output = Motor_Output;
@@ -64,17 +56,11 @@ pClass_Motor Get_Motor_INST(SIDE side)
 
     switch (side)
     {
-    case LEFT_BACK:
-        tmp_motor_ptr = &_Motor_LB;
+    case LEFT:
+        tmp_motor_ptr = &_Motor_L;
         break;
-    case LEFT_FRONT:
-        tmp_motor_ptr = &_Motor_LF;
-        break;
-    case RIGHT_BACK:
-        tmp_motor_ptr = &_Motor_RB;
-        break;
-    case RIGHT_FRONT:
-        tmp_motor_ptr = &_Motor_RF;
+    case RIGHT:
+        tmp_motor_ptr = &_Motor_R;
         break;
     default:
         return NULL;
@@ -219,10 +205,7 @@ void Motor_Control(pClass_Motor this)
  */
 void Motor_Output(pClass_Motor this)
 {
-    if (this->Output_Now > this->Output_Max)
-        this->Output_Now = this->Output_Max;
-    if (this->Output_Now < -this->Output_Max)
-        this->Output_Now = -this->Output_Max;
+    Math_Constrain_float(&this->Output_Now, -this->Output_Max, this->Output_Max);
 
     if (this->Output_Now < -0.05)
     {
@@ -313,16 +296,10 @@ void Motor_Encoder_Callback(pClass_Motor this, char phase)
  * @brief TIM定时器中断计算回调函数
  *
  */
-void Motor_TIM_PID_PeriodElapsedCallback(pClass_Motor this)
+void Motor_Update_PID(pClass_Motor this)
 {
-    if (this->Target_Speed > this->Speed_Max)
-    {
-        this->Target_Speed = this->Speed_Max;
-    }
-    if (this->Target_Speed < -this->Speed_Max)
-    {
-        this->Target_Speed = -this->Speed_Max;
-    }
+
+    Math_Constrain_float(&(this->Target_Speed), -this->Speed_Max, this->Speed_Max);
 
     this->PID_Speed->Set_Target((this->PID_Speed), this->Target_Speed);
     this->PID_Speed->Set_Now((this->PID_Speed), this->Now_Speed);

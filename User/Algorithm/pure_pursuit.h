@@ -9,8 +9,9 @@
 typedef enum
 {
     STOP,
-    SPEED_Circle,
-    POSISITON_LA_Circle,
+    MOTOR_TEST,
+    POSISITON_L_Circle,
+    POSISITON_A_Circle,
     POSISITON_XY_Circle,
     FOLLOW_Circle,
     TRAJECTORY_1,

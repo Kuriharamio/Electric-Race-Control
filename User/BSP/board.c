@@ -45,9 +45,9 @@ void Enable_All_Interrupt(void)
     NVIC_EnableIRQ(GPIOB_INT_IRQn);
 #endif
 
-#ifdef USE_ADC_BUTTON
-    NVIC_ClearPendingIRQ(ADC_BUTTON_TIMER_INST_INT_IRQN);
-    NVIC_EnableIRQ(ADC_BUTTON_TIMER_INST_INT_IRQN);
+#if defined(USE_ADC_BUTTON) ||  defined(USE_GRAY_SENSOR)
+    NVIC_ClearPendingIRQ(READ_TIMER_INST_INT_IRQN);
+    NVIC_EnableIRQ(READ_TIMER_INST_INT_IRQN);
 #endif
 }
 

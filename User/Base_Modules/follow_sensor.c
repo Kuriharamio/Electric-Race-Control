@@ -2,8 +2,8 @@
 #ifdef USE_GRAY_SENSOR
 static Class_GraySensor _Gray_Sensor = {0};
 
-unsigned short white[8] = {1800, 1800, 1800, 1800, 1800, 1800, 1800, 1800};
-unsigned short black[8] = {300, 300, 300, 300, 300, 300, 300, 300};
+unsigned short white[8] = {1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000};
+unsigned short black[8] = {800, 800, 800, 800, 800, 800, 800, 800};
 
 pClass_GraySensor Create_GraySensor(void)
 {
@@ -201,60 +201,61 @@ void GraySensor_Update(pClass_GraySensor this)
         }
     }
 
-    if (this->undetected)
-    {
-        this->k1 = 0.0f;
-        if (this->Search_Direction == 1)
-        {
-            if (this->Digital_value[0] || this->Digital_value[1])
-            {
-                black = 1;
-            }
-            else
-            {
-                black = 0;
-                for (int k = 2; k < 8; k++)
-                {
-                    this->Digital_value[k] = 0;
-                }
-            }
-        }
-        else if (this->Search_Direction == -1)
-        {
-            if(this->Digital_value[6] || this->Digital_value[7]){
-                black = 1;
-            }else{
-                black = 0;
-                for (int k = 0; k < 6; k++){
-                    this->Digital_value[k] = 0;
-                }
-            }
-        }
-    }else{
+    // if (this->undetected)
+    // {
+    //     this->k1 = 0.0f;
+    //     if (this->Search_Direction == 1)
+    //     {
+    //         if (this->Digital_value[0] || this->Digital_value[1])
+    //         {
+    //             black = 1;
+    //         }
+    //         else
+    //         {
+    //             black = 0;
+    //             for (int k = 2; k < 8; k++)
+    //             {
+    //                 this->Digital_value[k] = 0;
+    //             }
+    //         }
+    //     }
+    //     else if (this->Search_Direction == -1)
+    //     {
+    //         if(this->Digital_value[6] || this->Digital_value[7]){
+    //             black = 1;
+    //         }else{
+    //             black = 0;
+    //             for (int k = 0; k < 6; k++){
+    //                 this->Digital_value[k] = 0;
+    //             }
+    //         }
+    //     }
+    // }else{
 
-    }
+    // }
 
-    //* 判断急转方向
-    if (this->Digital_value[7] || this->Digital_value[6])
-    {
-        this->Search_Direction = -1;
-    }
-    if (this->Digital_value[0] || this->Digital_value[1])
-    {
-        this->Search_Direction = 1;
-    }
+    // //* 判断急转方向
+    // if (this->Digital_value[7] || this->Digital_value[6])
+    // {
+    //     this->Search_Direction = -1;
+    // }
+    // if (this->Digital_value[0] || this->Digital_value[1])
+    // {
+    //     this->Search_Direction = 1;
+    // }
 
 
-    if (black == 8)
-    {
-        black_times++;
-        if (black_times > 2)
-        {
-            black_times = 0;
-            //* 全黑状态处理
-        }
-    }
-    else if(black == 0){
+    // if (black == 8)
+    // {
+    //     black_times++;
+    //     if (black_times > 2)
+    //     {
+    //         black_times = 0;
+    //         //* 全黑状态处理
+    //     }
+    // }
+    // else 
+    if(black == 0){
         white_times++;
         // if (white_times > 100) // 防止线比传感器间隔细，导致误判为白色区域
         // {
@@ -262,7 +263,7 @@ void GraySensor_Update(pClass_GraySensor this)
         //     // this->undetected = true;
         //     // this->Follow_Error = 80.0f * this->Search_Direction;
         // }
-        if(white_times > 2){
+        if(white_times > 20){
             white_times = 0;
             //* 全白状态处理
             this->Finish = true;
@@ -273,7 +274,7 @@ void GraySensor_Update(pClass_GraySensor this)
         this->undetected = false;
         black_times = 0;
         white_times = 0;
-        this->Linear_Speed_Max = 0.3f;
+        this->Linear_Speed_Max = 0.2f;
         this->Follow_Error = this->k1 * (this->Normal_value[0] - this->Normal_value[7]) + this->k2 * (this->Normal_value[1] - this->Normal_value[6]) + this->k3 * (this->Normal_value[2] - this->Normal_value[5]) + this->k4 * (this->Normal_value[3] - this->Normal_value[4]);
     
     }

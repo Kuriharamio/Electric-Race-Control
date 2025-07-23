@@ -27,31 +27,38 @@ void PID_TIMER_INST_IRQHandler(void)
             Get_Car_Handle()->Judge_Mode(Get_Car_Handle());
         }
 
+        Get_Car_Handle()->Kinematic_Inverse(Get_Car_Handle());
+
         if (count % PID_MOTOR_FACTOR == 0)
         {
-            if (Get_Motor_INST(LEFT_BACK)->is_inited)
-                Get_Motor_INST(LEFT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_BACK));
-            if (Get_Motor_INST(RIGHT_BACK)->is_inited)
-                Get_Motor_INST(RIGHT_BACK)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_BACK));
-            if (Get_Motor_INST(LEFT_FRONT)->is_inited)
-                Get_Motor_INST(LEFT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(LEFT_FRONT));
-            if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
-                Get_Motor_INST(RIGHT_FRONT)->TIM_PID_PeriodElapsedCallback(Get_Motor_INST(RIGHT_FRONT));
+            if (Get_Motor_INST(LEFT)->is_inited)
+                Get_Motor_INST(LEFT)->Update_PID(Get_Motor_INST(LEFT));
+            if (Get_Motor_INST(RIGHT)->is_inited)
+                Get_Motor_INST(RIGHT)->Update_PID(Get_Motor_INST(RIGHT));
         }
 
-        if (count % PID_CAR_SPEED_FACTOR == 0)
-        {
-            if (Get_Car_Handle()->is_inited){
-                Get_Car_Handle()->Update_Speed_PID(Get_Car_Handle());
-            }
-        }
+        // if (count % PID_CAR_SPEED_FACTOR == 0)
+        // {
+        //     if (Get_Car_Handle()->is_inited){
+        //         if (Get_Car_Handle()->Mode != FOLLOW_Circle && Get_Car_Handle()->Mode != MOTOR_TEST)
+        //             Get_Car_Handle()->Update_Speed_PID(Get_Car_Handle());
+        //     }
+        // }
 
         if (count % PID_CAR_POS_FACTOR == 0)
         {
             if (Get_Car_Handle()->is_inited)
             {
-                if (Get_Car_Handle()->Mode == POSISITON_LA_Circle){
+                if (Get_Car_Handle()->Mode == POSISITON_L_Circle){
                     Get_Car_Handle()->Update_Linear_Position_PID(Get_Car_Handle());
+#ifdef USE_IMU_IN_ANGULAR_PID
+                    Get_Car_Handle()->Update_Angle_Position_PID_IMU(Get_Car_Handle());
+#else
+                    Get_Car_Handle()->Update_Angle_Position_PID_WHEEL(Get_Car_Handle());
+#endif
+                }
+                else if (Get_Car_Handle()->Mode == POSISITON_A_Circle)
+                {
 #ifdef USE_IMU_IN_ANGULAR_PID
                     Get_Car_Handle()->Update_Angle_Position_PID_IMU(Get_Car_Handle());
 #else
@@ -108,29 +115,15 @@ void ENCODER_TIMER_INST_IRQHandler(void)
     {
     case DL_TIMER_IIDX_ZERO:
         // 计算速度
-        // pClass_Motor Motor_LB = Get_Motor_INST(LEFT_BACK);
-        if (Get_Motor_INST(LEFT_BACK)->is_inited)
+        if (Get_Motor_INST(RIGHT)->is_inited)
         {
-            Get_Motor_INST(LEFT_BACK)->Now_Speed = (float)(Get_Motor_INST(LEFT_BACK)->Total_Encoder_Tick) / (float)(Get_Motor_INST(LEFT_BACK)->Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * Get_Motor_INST(LEFT_BACK)->Radius;
-            Get_Motor_INST(LEFT_BACK)->Total_Encoder_Tick = 0;
+            Get_Motor_INST(RIGHT)->Now_Speed = -((float)(Get_Motor_INST(RIGHT)->Total_Encoder_Tick) / (float)(Get_Motor_INST(RIGHT)->Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * Get_Motor_INST(RIGHT)->Radius);
+            Get_Motor_INST(RIGHT)->Total_Encoder_Tick = 0;
         }
-        // pClass_Motor Motor_LF = Get_Motor_INST(LEFT_FRONT);
-        if (Get_Motor_INST(LEFT_FRONT)->is_inited)
+        if (Get_Motor_INST(LEFT)->is_inited)
         {
-            Get_Motor_INST(LEFT_FRONT)->Now_Speed = (float)(Get_Motor_INST(LEFT_FRONT)->Total_Encoder_Tick) / (float)(Get_Motor_INST(LEFT_FRONT)->Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * Get_Motor_INST(LEFT_FRONT)->Radius;
-            Get_Motor_INST(LEFT_FRONT)->Total_Encoder_Tick = 0;
-        }
-        // pClass_Motor Motor_RB = Get_Motor_INST(RIGHT_BACK);
-        if (Get_Motor_INST(RIGHT_BACK)->is_inited)
-        {
-            Get_Motor_INST(RIGHT_BACK)->Now_Speed = (float)(Get_Motor_INST(RIGHT_BACK)->Total_Encoder_Tick) / (float)(Get_Motor_INST(RIGHT_BACK)->Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * Get_Motor_INST(RIGHT_BACK)->Radius;
-            Get_Motor_INST(RIGHT_BACK)->Total_Encoder_Tick = 0;
-        }
-        // pClass_Motor Motor_RF = Get_Motor_INST(RIGHT_FRONT);
-        if (Get_Motor_INST(RIGHT_FRONT)->is_inited)
-        {
-            Get_Motor_INST(RIGHT_FRONT)->Now_Speed = (float)(Get_Motor_INST(RIGHT_FRONT)->Total_Encoder_Tick) / (float)(Get_Motor_INST(RIGHT_FRONT)->Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * Get_Motor_INST(RIGHT_FRONT)->Radius;
-            Get_Motor_INST(RIGHT_FRONT)->Total_Encoder_Tick = 0;
+            Get_Motor_INST(LEFT)->Now_Speed = (float)(Get_Motor_INST(LEFT)->Total_Encoder_Tick) / (float)(Get_Motor_INST(LEFT)->Encoder_Num_Per_Round) / ENCODER_TIMER_T * 2 * PI * Get_Motor_INST(LEFT)->Radius;
+            Get_Motor_INST(LEFT)->Total_Encoder_Tick = 0;
         }
 
         // 更新里程计
@@ -138,7 +131,6 @@ void ENCODER_TIMER_INST_IRQHandler(void)
         {
             Get_Car_Handle()->Kinematic_Forward(Get_Car_Handle());
             Get_Car_Handle()->Update_Odom(Get_Car_Handle(), ENCODER_TIMER_T);
-            // Get_Car_Handle()->PurePursuit->Update_Now_Speed(Get_Car_Handle()->PurePursuit, Get_Car_Handle()->Now_Speed);
         }
         break;
 
@@ -148,18 +140,34 @@ void ENCODER_TIMER_INST_IRQHandler(void)
 }
 #endif
 
-#ifdef USE_ADC_BUTTON
-// ADC按钮读取数据定时器中断处理函数
-void ADC_BUTTON_TIMER_INST_IRQHandler(void)
+#if defined(USE_ADC_BUTTON) || defined(USE_GRAY_SENSOR)
+// 读取数据定时器中断处理函数
+void READ_TIMER_INST_IRQHandler(void)
 {
-
-    switch (DL_TimerG_getPendingInterrupt(ADC_BUTTON_TIMER_INST))
+    uint8_t cnt = 0;
+    cnt++;
+    switch (DL_TimerG_getPendingInterrupt(READ_TIMER_INST))
     {
     case DL_TIMER_IIDX_ZERO:
+#ifdef USE_ADC_BUTTON
+    if(cnt % ADC_BUTTON_TIMER_FACTOR == 0){
         if (GET_ADCButton_INST()->is_inited)
         {
             GET_ADCButton_INST()->Check_And_Trigger(GET_ADCButton_INST()); // 获取当前ADC值
         }
+    }
+#endif
+
+#ifdef USE_GRAY_SENSOR
+    if (cnt % GRAY_SENSOR_TIMER_FACTOR == 0)
+    {
+        if (Get_Car_Handle()->Mode == FOLLOW_Circle)
+        {
+            Get_Car_Handle()->gray_scale_sensor->Update(Get_Car_Handle()->gray_scale_sensor);
+            // printf("%d %d %d %d %d %d %d %d\n", Car->gray_scale_sensor->Analog_value[0], Car->gray_scale_sensor->Analog_value[1], Car->gray_scale_sensor->Analog_value[2], Car->gray_scale_sensor->Analog_value[3], Car->gray_scale_sensor->Analog_value[4], Car->gray_scale_sensor->Analog_value[5], Car->gray_scale_sensor->Analog_value[6], Car->gray_scale_sensor->Analog_value[7]);
+        }
+    }
+#endif
 
         break;
 

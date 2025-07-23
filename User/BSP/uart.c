@@ -20,6 +20,9 @@ static Class_UART _UART_1_INST = {0}; // 串口2实例
 #ifdef USE_UART_2
 static Class_UART _UART_2_INST = {0}; // 串口1实例
 #endif
+#ifdef USE_UART_3
+static Class_UART _UART_3_INST = {0}; // 串口3实例
+#endif
 
 static uint8_t WAVE_TAIL[4] = {0x00, 0x00, 0x80, 0x7f}; // WAVE数据尾(JustFloat)
 /**
@@ -47,6 +50,12 @@ pClass_UART Get_UART_INST(uint8_t index)
 		return &_UART_2_INST;
 		break;
 #endif
+#ifdef USE_UART_3
+	case 3:
+		return &_UART_3_INST;
+		break;
+#endif
+
 	default:
 		return NULL;
 	}
@@ -71,6 +80,11 @@ pClass_UART Create_UART(uint8_t index)
 #ifdef USE_UART_2
 	case 2:
 		this = &_UART_2_INST;
+		break;
+#endif
+#ifdef USE_UART_3
+	case 3:
+		this = &_UART_3_INST;
 		break;
 #endif
 	default:
@@ -347,6 +361,10 @@ IRQn_Type Get_UART_IRQN_From_Index(uint8_t index)
 	case 2:
 		return UART_2_INST_INT_IRQN;
 #endif
+#ifdef USE_UART_3
+	case 3:
+		return UART_3_INST_INT_IRQN;
+#endif
 	default:
 		return -1;
 	}
@@ -373,6 +391,10 @@ UART_Regs *Get_UART_INST_From_Index(uint8_t index)
 #ifdef USE_UART_2
 	case 2:
 		return UART_2_INST;
+#endif
+#ifdef USE_UART_3
+	case 3:
+		return UART_3_INST;
 #endif
 	default:
 		return NULL;
@@ -461,6 +483,36 @@ void UART_2_INST_IRQHandler(void)
 		if (_UART_2_INST.UART_INST_DataProcess != NULL)
 		{
 			_UART_2_INST.UART_INST_DataProcess(&_UART_2_INST); // 调用中断处理函数
+		}
+	}
+	break;
+	default:
+		break;
+	}
+}
+#endif
+#ifdef USE_UART_3
+/**
+ * @brief 串口2中断处理函数
+ *
+ */
+void UART_3_INST_IRQHandler(void)
+{
+	if (!_UART_3_INST.is_inited)
+		return;
+
+	uint8_t receivedData = 0;
+	// 如果产生了串口中断
+	switch (DL_UART_getPendingInterrupt(UART_3_INST))
+	{
+	case DL_UART_IIDX_RX: // 如果是接收中断
+	{
+		// 接收发送过来的数据保存
+		receivedData = DL_UART_Main_receiveData(UART_3_INST);
+		_UART_3_INST.current_byte = receivedData; // 保存当前接收的字节
+		if (_UART_3_INST.UART_INST_DataProcess != NULL)
+		{
+			_UART_3_INST.UART_INST_DataProcess(&_UART_3_INST); // 调用中断处理函数
 		}
 	}
 	break;

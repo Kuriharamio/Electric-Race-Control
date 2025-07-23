@@ -1,6 +1,6 @@
-#include "Base_Modules/k230_serial.h"
+#include "Base_Modules/raspberry_serial.h"
 
-#ifdef USE_K230
+#ifdef USE_Raspberry
 
 static RxState Rx_State = STATE_WAIT_HEADER_1; // 接收状态标志位
 static uint8_t Rx_Data_Len = 0;				   // 数据长度
@@ -60,11 +60,11 @@ uint8_t Calculate_BCC(uint8_t *data, uint8_t len)
 }
 
 /**
- * @brief K230接收回调
+ * @brief Raspberry接收回调
  *
  * @param this 串口对象
  */
-void K230_Rx_Callback(pClass_UART this)
+void Raspberry_Rx_Callback(pClass_UART this)
 {
 	switch (Rx_State)
 	{
@@ -122,7 +122,7 @@ void K230_Rx_Callback(pClass_UART this)
  *@param datas
  *@param len
  */
-void K230_Transmit(pClass_UART this, float *datas, uint8_t len)
+void Raspberry_Transmit(pClass_UART this, float *datas, uint8_t len)
 {
 	int data_len = len * 4;				  // 每个 float 4 字节
 	int frame_len = 1 + 1 + data_len + 1; // 帧头 + 长度字段 + 数据 + 校验

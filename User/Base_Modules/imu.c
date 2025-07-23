@@ -15,14 +15,14 @@ void Handle_IMU_Data_Bag(pClass_UART this)
         if (crc == this->rxbuffer[this->rx_len - 1])
         {
             float yaw = (float)((short)(this->rxbuffer[7] << 8) | this->rxbuffer[6]) / 32768.0f * 180.0f;
-            if (init_cnt < 10)
+            if (!init_cnt)
             {
                 init_cnt++;
-                first_yaw += yaw;
+                first_yaw = yaw;
             }
             else
             {
-                this->Modify_Param_With_Id(this, 0, TransAngleInPI((yaw - first_yaw / 10.0f) / 180.0f * PI));
+                this->Modify_Param_With_Id(this, 0, TransAngleInPI((yaw - first_yaw) / 180.0f * PI));
             }
         }
     }
@@ -62,6 +62,9 @@ uint8_t unlock[5] = {0xFF, 0xAA, 0x69, 0x88, 0xB5};
 uint8_t start_calibration[5] = {0xFF, 0xAA, 0x01, 0x01, 0x00};
 uint8_t stop_calibration[5] = {0xFF, 0xAA, 0x01, 0x00, 0x00};
 uint8_t save[5] = {0xFF, 0xAA, 0x00, 0x00, 0x00};
+
+uint8_t six_axis[5] = {0xFF, 0xAA, 0x24, 0x01, 0x00};
+uint8_t set_z_zero[5] = {0xFF, 0xAA, 0x01, 0x04, 0x00};
 void IMU_Init(void)
 {
     pClass_UART uart = Get_UART_INST(IMU_UART_INDEX);
@@ -73,6 +76,20 @@ void IMU_Init(void)
     delay_ms(100);
     uart->Send_Datas(uart, save, 5);
     delay_ms(100);
+
+    // uart->Send_Datas(uart, unlock, 5);
+    // delay_ms(200);
+    // uart->Send_Datas(uart, six_axis, 5);
+    // delay_ms(3000);
+    // uart->Send_Datas(uart, save, 5);
+    // delay_ms(100);
+
+    // uart->Send_Datas(uart, unlock, 5);
+    // delay_ms(200);
+    // uart->Send_Datas(uart, set_z_zero, 5);
+    // delay_ms(3000);
+    // uart->Send_Datas(uart, save, 5);
+    // delay_ms(100);
 }
 
 #endif
