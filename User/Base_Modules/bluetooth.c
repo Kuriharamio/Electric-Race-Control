@@ -24,7 +24,7 @@ void Bluetooth_Rx_Callback(pClass_UART this)
         this->rxbuffer[this->rx_len++] = '\0';
         if (strstr((char *)(this->rxbuffer), "reset"))
         {
-            softwareReset(); 
+            softwareReset();
         }
         else
         {

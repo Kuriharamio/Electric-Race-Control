@@ -49,7 +49,8 @@ void PID_TIMER_INST_IRQHandler(void)
         {
             if (Get_Car_Handle()->is_inited)
             {
-                if (Get_Car_Handle()->Mode == POSISITON_L_Circle){
+                if (Get_Car_Handle()->Mode == POSISITON_L_Circle)
+                {
                     Get_Car_Handle()->Update_Linear_Position_PID(Get_Car_Handle());
 #ifdef USE_IMU_IN_ANGULAR_PID
                     Get_Car_Handle()->Update_Angle_Position_PID_IMU(Get_Car_Handle());
@@ -68,7 +69,9 @@ void PID_TIMER_INST_IRQHandler(void)
                 else if (Get_Car_Handle()->Mode == POSISITON_XY_Circle)
                 {
                     Get_Car_Handle()->Update_XY_Position_PID(Get_Car_Handle());
-                }else if(Get_Car_Handle()->Mode == TRAJECTORY_1 || Get_Car_Handle()->Mode == TRAJECTORY_2 || Get_Car_Handle()->Mode == TRAJECTORY_3){
+                }
+                else if (Get_Car_Handle()->Mode == TRAJECTORY_1 || Get_Car_Handle()->Mode == TRAJECTORY_2 || Get_Car_Handle()->Mode == TRAJECTORY_3)
+                {
                     Get_Car_Handle()->Upadate_Controller(Get_Car_Handle());
                 }
             }
@@ -150,23 +153,24 @@ void READ_TIMER_INST_IRQHandler(void)
     {
     case DL_TIMER_IIDX_ZERO:
 #ifdef USE_ADC_BUTTON
-    if(cnt % ADC_BUTTON_TIMER_FACTOR == 0){
-        if (GET_ADCButton_INST()->is_inited)
+        if (cnt % ADC_BUTTON_TIMER_FACTOR == 0)
         {
-            GET_ADCButton_INST()->Check_And_Trigger(GET_ADCButton_INST()); // 获取当前ADC值
+            if (GET_ADCButton_INST()->is_inited)
+            {
+                GET_ADCButton_INST()->Check_And_Trigger(GET_ADCButton_INST()); // 获取当前ADC值
+            }
         }
-    }
 #endif
 
 #ifdef USE_GRAY_SENSOR
-    if (cnt % GRAY_SENSOR_TIMER_FACTOR == 0)
-    {
-        if (Get_Car_Handle()->Mode == FOLLOW_Circle)
+        if (cnt % GRAY_SENSOR_TIMER_FACTOR == 0)
         {
-            Get_Car_Handle()->gray_scale_sensor->Update(Get_Car_Handle()->gray_scale_sensor);
-            // printf("%d %d %d %d %d %d %d %d\n", Car->gray_scale_sensor->Analog_value[0], Car->gray_scale_sensor->Analog_value[1], Car->gray_scale_sensor->Analog_value[2], Car->gray_scale_sensor->Analog_value[3], Car->gray_scale_sensor->Analog_value[4], Car->gray_scale_sensor->Analog_value[5], Car->gray_scale_sensor->Analog_value[6], Car->gray_scale_sensor->Analog_value[7]);
+            if (Get_Car_Handle()->Mode == FOLLOW_Circle)
+            {
+                Get_Car_Handle()->gray_scale_sensor->Update(Get_Car_Handle()->gray_scale_sensor);
+                // printf("%d %d %d %d %d %d %d %d\n", Car->gray_scale_sensor->Analog_value[0], Car->gray_scale_sensor->Analog_value[1], Car->gray_scale_sensor->Analog_value[2], Car->gray_scale_sensor->Analog_value[3], Car->gray_scale_sensor->Analog_value[4], Car->gray_scale_sensor->Analog_value[5], Car->gray_scale_sensor->Analog_value[6], Car->gray_scale_sensor->Analog_value[7]);
+            }
         }
-    }
 #endif
 
         break;

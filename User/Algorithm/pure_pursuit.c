@@ -169,7 +169,6 @@ void PurePursuit_Set_Mode(pClass_PurePursuit this, CONTROL_MODE dir)
         this->Target_Speed.angular_velocity = 0.0f;
         this->Control_Dir = STOP;
     }
-    
 }
 
 // 计算最近点的索引
@@ -221,7 +220,6 @@ int PurePursuit_Find_Lookahead_Point(pClass_PurePursuit this, float lookahead_di
 
     return lookahead_point_index;
 }
-
 
 bool PurePursuit_Calculate_Target_Speed(pClass_PurePursuit this)
 {
@@ -291,9 +289,8 @@ bool PurePursuit_Calculate_Target_Speed(pClass_PurePursuit this)
     if (distance_to_end < DECELERATION_START)
     {
         float factor = (distance_to_end) / DECELERATION_START;
-        factor = fmaxf(factor, 0.0f); 
+        factor = fmaxf(factor, 0.0f);
         this->Target_Speed.linear_velocity *= factor;
-        
     }
 
     float new_angular = this->Target_Speed.linear_velocity * curvature;

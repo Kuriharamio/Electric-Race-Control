@@ -31,7 +31,7 @@
 // #define PROTECT_CURRENT 30 // 保护电流大小
 
 //* Raspberry 串口配置
-// #define USE_Raspberry
+// #define USE_RASPBERRY
 // #define Raspberry_UART_INDEX 1   // Raspberry串口索引号
 // #define USE_UART_1          // 启用串口1
 // #define Raspberry_RX_LEN_MAX 100 // Raspberry接收数据最大长度
@@ -62,7 +62,7 @@
 
 //* PID 配置
 #define USE_PID                 // 启用PID
-#define PID_DELTA_T 0.03f      // PID 时间间隔（秒）
+#define PID_DELTA_T 0.03f       // PID 时间间隔（秒）
 #define PID_MOTOR_FACTOR 1      // 电机 PID 时间间隔比值
 #define PID_CAR_SPEED_FACTOR 2  // 小车速度 PID 时间间隔比值
 #define PID_CAR_POS_FACTOR 3    // 小车轮速 PID 时间间隔比值
@@ -73,14 +73,14 @@
 #define ENCODER_TIMER_T 0.03f // 编码器时间间隔（秒）
 
 //* 小车参数配置
-#define USE_CAR                       // 启用小车参数
-#define WHEEL_DISTANCE 0.11f // 轮距
-#define WHEEL_RADIUS 0.024f           // 轮子半径
-#define WHEEL_Gearbox_Rate 20.0f      // 减速比
-#define WHEEL_Per_Pulse 13.0f         // 每转脉冲数
+#define USE_CAR                  // 启用小车参数
+#define WHEEL_DISTANCE 0.11f     // 轮距
+#define WHEEL_RADIUS 0.024f      // 轮子半径
+#define WHEEL_Gearbox_Rate 20.0f // 减速比
+#define WHEEL_Per_Pulse 13.0f    // 每转脉冲数
 #define WHEEL_Ferq_Rate 4
 #define MAX_LINEAR_SPEED 0.8f
-#define MAX_ANGULAR_SPEED 0.8 / (WHEEL_DISTANCE)   //1.5 * 3.14f //
+#define MAX_ANGULAR_SPEED 0.8 / (WHEEL_DISTANCE) // 1.5 * 3.14f //
 
 //* PurePursuit 配置
 #define USE_PURE_PURSUIT

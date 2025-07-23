@@ -26,8 +26,8 @@ pClass_Car Create_Car(void)
     car->gray_scale_sensor = Create_GraySensor(); // 创建循迹传感器对象
 #endif
     // 创建电机对象
-    car->Motor_R = create_motor(RIGHT);  // 右后轮
-    car->Motor_L = create_motor(LEFT);   // 左后轮
+    car->Motor_R = create_motor(RIGHT); // 右后轮
+    car->Motor_L = create_motor(LEFT);  // 左后轮
 
     // 创建控制器对象
     car->PurePursuit = Create_PurePursuit();
@@ -105,21 +105,21 @@ void Car_Init(pClass_Car this)
     // 初始化电机
     this->Motor_L->Init(this->Motor_L, WHEEL_RADIUS, 1600, 3.0, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 4);                                                                           // 初始化电机对象
     this->Motor_L->PID_Speed->PID_Init(this->Motor_L->PID_Speed, 1800, 8000.0, 1.0, 0.0, 1600.0, 1600, PID_DELTA_T * PID_MOTOR_FACTOR, 0.008, 0.0, 0.0, 0.4, PID_D_First_DISABLE); // 初始化PID参数
-    this->Motor_L->Configure_IN_1(this->Motor_L, MOTOR_DRV_L_IN1_PORT, MOTOR_DRV_L_IN1_PIN);                                                                      // 配置电机引脚IN1
-    this->Motor_L->Configure_IN_2(this->Motor_L, MOTOR_DRV_L_IN2_PORT, MOTOR_DRV_L_IN2_PIN);                                                                      // 配置电机引脚IN2
-    this->Motor_L->Configure_ENCODER_A(this->Motor_L, ENCODER_L_PORT, ENCODER_L_L_A_PIN);                                                                        // 配置电机引脚编码器A
-    this->Motor_L->Configure_ENCODER_B(this->Motor_L, ENCODER_L_PORT, ENCODER_L_L_B_PIN);                                                                        // 配置电机引脚编码器B
-    this->Motor_L->Configure_PWM(this->Motor_L, PWM_MOTOR_L_INST, GPIO_PWM_MOTOR_L_C1_IDX);                                                                         // 配置电机PWM
-    this->Motor_L->Configure_STBY(this->Motor_L, MOTOR_DRV_STBY_PORT, MOTOR_DRV_STBY_PIN);                                                                      // 配置电机待机引脚
+    this->Motor_L->Configure_IN_1(this->Motor_L, MOTOR_DRV_L_IN1_PORT, MOTOR_DRV_L_IN1_PIN);                                                                                       // 配置电机引脚IN1
+    this->Motor_L->Configure_IN_2(this->Motor_L, MOTOR_DRV_L_IN2_PORT, MOTOR_DRV_L_IN2_PIN);                                                                                       // 配置电机引脚IN2
+    this->Motor_L->Configure_ENCODER_A(this->Motor_L, ENCODER_L_PORT, ENCODER_L_L_A_PIN);                                                                                          // 配置电机引脚编码器A
+    this->Motor_L->Configure_ENCODER_B(this->Motor_L, ENCODER_L_PORT, ENCODER_L_L_B_PIN);                                                                                          // 配置电机引脚编码器B
+    this->Motor_L->Configure_PWM(this->Motor_L, PWM_MOTOR_L_INST, GPIO_PWM_MOTOR_L_C1_IDX);                                                                                        // 配置电机PWM
+    this->Motor_L->Configure_STBY(this->Motor_L, MOTOR_DRV_STBY_PORT, MOTOR_DRV_STBY_PIN);                                                                                         // 配置电机待机引脚
 
     this->Motor_R->Init(this->Motor_R, WHEEL_RADIUS, 1600, 3.0, WHEEL_Gearbox_Rate, WHEEL_Per_Pulse, 4);
     this->Motor_R->PID_Speed->PID_Init(this->Motor_R->PID_Speed, 1800, 8000.0, 1.0, 0.0, 1600.0, 1600, PID_DELTA_T * PID_MOTOR_FACTOR, 0.008, 0.0, 0.0, 0.4, PID_D_First_DISABLE); // 初始化PID参数
-    this->Motor_R->Configure_IN_1(this->Motor_R, MOTOR_DRV_R_IN1_PORT, MOTOR_DRV_R_IN1_PIN);                                                                      // 配置电机引脚IN1
-    this->Motor_R->Configure_IN_2(this->Motor_R, MOTOR_DRV_R_IN2_PORT, MOTOR_DRV_R_IN2_PIN);                                                                      // 配置电机引脚IN2
-    this->Motor_R->Configure_ENCODER_A(this->Motor_R, ENCODER_R_PORT, ENCODER_R_R_A_PIN);                                                                        // 配置电机引脚编码器A
-    this->Motor_R->Configure_ENCODER_B(this->Motor_R, ENCODER_R_PORT, ENCODER_R_R_B_PIN);                                                                        // 配置电机引脚编码器B
-    this->Motor_R->Configure_PWM(this->Motor_R, PWM_MOTOR_R_INST, GPIO_PWM_MOTOR_R_C1_IDX);                                                                         // 配置电机PWM
-    this->Motor_R->Configure_STBY(this->Motor_R, MOTOR_DRV_STBY_PORT, MOTOR_DRV_STBY_PIN);                                                                      // 配置电机待机引脚
+    this->Motor_R->Configure_IN_1(this->Motor_R, MOTOR_DRV_R_IN1_PORT, MOTOR_DRV_R_IN1_PIN);                                                                                       // 配置电机引脚IN1
+    this->Motor_R->Configure_IN_2(this->Motor_R, MOTOR_DRV_R_IN2_PORT, MOTOR_DRV_R_IN2_PIN);                                                                                       // 配置电机引脚IN2
+    this->Motor_R->Configure_ENCODER_A(this->Motor_R, ENCODER_R_PORT, ENCODER_R_R_A_PIN);                                                                                          // 配置电机引脚编码器A
+    this->Motor_R->Configure_ENCODER_B(this->Motor_R, ENCODER_R_PORT, ENCODER_R_R_B_PIN);                                                                                          // 配置电机引脚编码器B
+    this->Motor_R->Configure_PWM(this->Motor_R, PWM_MOTOR_R_INST, GPIO_PWM_MOTOR_R_C1_IDX);                                                                                        // 配置电机PWM
+    this->Motor_R->Configure_STBY(this->Motor_R, MOTOR_DRV_STBY_PORT, MOTOR_DRV_STBY_PIN);                                                                                         // 配置电机待机引脚
 
     // 初始化控制器
     this->PurePursuit->Init(this->PurePursuit);
@@ -266,7 +266,6 @@ void Car_Update_XY_Position_PID(pClass_Car this)
 
     this->Target_Speed.linear_velocity = linear_pid * cosf(this->Target_Position.yaw);
     this->Target_Speed.angular_velocity = angular_pid + (linear_pid * sinf(this->Target_Position.yaw));
-
 }
 
 #ifdef USE_GRAY_SENSOR
@@ -290,7 +289,6 @@ void Car_Update_Follow_PID(pClass_Car this)
     this->Kinematic_Inverse(this);
 }
 #endif
-
 
 // /**
 //  * @brief 速度PID
@@ -342,7 +340,7 @@ void Car_Judge_Mode(pClass_Car this)
     static uint8_t Task_3_Step = 0;
     static uint8_t Task_4_Step = 0;
 
-    switch (this->Mode) 
+    switch (this->Mode)
     {
     case STOP:
         this->Target_Speed.linear_velocity = 0.0f;
@@ -368,7 +366,8 @@ void Car_Judge_Mode(pClass_Car this)
         }
         break;
     case FOLLOW_Circle:
-        if(this->gray_scale_sensor->Finish){
+        if (this->gray_scale_sensor->Finish)
+        {
             this->Finish_Current_Mode = true;
             this->gray_scale_sensor->Finish = false;
         }
@@ -398,13 +397,13 @@ void Car_Judge_Mode(pClass_Car this)
         case 2: //* C->B
             this->Update_Mode(this, FOLLOW_Circle);
             break;
-        case 3://* 转回原角度
+        case 3: //* 转回原角度
             this->Target_Position.x = 0.0f;
             this->Target_Position.y = 0.0f;
             this->Target_Position.yaw = this->Begin_Yaw + PI;
             this->Update_Mode(this, POSISITON_A_Circle);
             break;
-        case 4:  //* B->D
+        case 4: //* B->D
             this->Update_Mode(this, TRAJECTORY_2);
             break;
         case 5: //* D->A
@@ -416,7 +415,7 @@ void Car_Judge_Mode(pClass_Car this)
             this->Target_Position.yaw = this->Begin_Yaw;
             this->Update_Mode(this, POSISITON_A_Circle);
             break;
-        case 7://* 结束
+        case 7: //* 结束
             this->Update_Mode(this, STOP);
             Task_1_Step--;
             break;
@@ -476,7 +475,7 @@ void Car_Judge_Mode(pClass_Car this)
         break;
     case 3:
         Task_3_Step++;
-        switch (Task_3_Step) 
+        switch (Task_3_Step)
         {
         case 1: //* 转
 #ifdef USE_IMU_IN_ANGULAR_PID
@@ -584,15 +583,17 @@ void Car_Upadate_Controller(pClass_Car this)
     this->PurePursuit->Set_Mode(this->PurePursuit, this->Mode);
     this->PurePursuit->Now_Position = this->Current_Mode_Position;
     this->PurePursuit->Now_Speed = this->Now_Speed;
-    if(this->PurePursuit->Calculate_Target_Speed(this->PurePursuit)){
+    if (this->PurePursuit->Calculate_Target_Speed(this->PurePursuit))
+    {
         // 更新小车目标速度
         this->Target_Speed = this->PurePursuit->Get_Output_Speed(this->PurePursuit);
-    }else{
+    }
+    else
+    {
         this->Finish_Current_Mode = true;
         this->Update_Mode(this, STOP);
         this->PurePursuit->Set_Mode(this->PurePursuit, STOP);
     }
 }
-
 
 #endif

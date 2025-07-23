@@ -22,7 +22,7 @@ typedef enum
 typedef struct Class_GraySensor
 {
     unsigned short Analog_value[8];  // 原始模拟量值
-    float Normal_value[8];  // 归一化后的值
+    float Normal_value[8];           // 归一化后的值
     unsigned short Digital_value[8]; // 数字量值
 
     unsigned short Calibrated_white[8]; // 白校准基准值
@@ -35,21 +35,21 @@ typedef struct Class_GraySensor
     unsigned char Time_out;             // 超时标志
     unsigned char Tick;                 // 时基计数器
 
-    FOLLOW_MODE Mode;   // 传感器工作模式
+    FOLLOW_MODE Mode; // 传感器工作模式
 
     float k1;
     float k2;
     float k3;
     float k4;
-    float Follow_Error; // 跟随误差
-    bool undetected;    // 未检测到黑线标志
-    int Search_Direction; // 搜索方向
+    float Follow_Error;     // 跟随误差
+    bool undetected;        // 未检测到黑线标志
+    int Search_Direction;   // 搜索方向
     float Linear_Speed_Max; // 最大线速度
     bool Finish;
 
     unsigned int ADC_Value; // ADC采样值
-    bool ADC_Flag; // ADC采样标志
-    bool is_inited; // 传感器就绪标志
+    bool ADC_Flag;          // ADC采样标志
+    bool is_inited;         // 传感器就绪标志
 
     void (*Init_With_Params)(struct Class_GraySensor *this, unsigned short *Calibrated_white, unsigned short *Calibrated_black); // 带校准参数的初始化
     void (*Init_Without_Params)(struct Class_GraySensor *this);                                                                  // 首次初始化

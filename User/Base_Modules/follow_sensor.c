@@ -10,9 +10,9 @@ pClass_GraySensor Create_GraySensor(void)
     pClass_GraySensor sensor = &_Gray_Sensor;
 
     // 函数指针赋值
-    sensor->Init_With_Params = GraySensor_Init_With_Params; // 带校准参数的初始化
+    sensor->Init_With_Params = GraySensor_Init_With_Params;       // 带校准参数的初始化
     sensor->Init_Without_Params = GraySensor_Init_Without_Params; // 首次初始化
-    sensor->Update = GraySensor_Update; // 更新传感器数据
+    sensor->Update = GraySensor_Update;                           // 更新传感器数据
 
     sensor->is_inited = false; // 初始状态未就绪
 
@@ -26,11 +26,10 @@ pClass_GraySensor Get_Sensor_Handle(void)
 
 void Get_ADC_Data(pClass_GraySensor this)
 {
-    DL_ADC12_enableConversions(ADC_GRAY_SCALE_INST);          
+    DL_ADC12_enableConversions(ADC_GRAY_SCALE_INST);
     DL_ADC12_startConversion(ADC_GRAY_SCALE_INST);
 
-    this->ADC_Value += DL_ADC12_getMemResult(ADC_GRAY_SCALE_INST, ADC_GRAY_SCALE_ADCMEM_ADC_CH0); 
-
+    this->ADC_Value += DL_ADC12_getMemResult(ADC_GRAY_SCALE_INST, ADC_GRAY_SCALE_ADCMEM_ADC_CH0);
 }
 
 /* 函数功能：采集8个通道的模拟值并进行均值滤波 */
@@ -49,7 +48,7 @@ void Get_Analog_Value(pClass_GraySensor this, uint8_t filter_times)
         // 每个通道采集8次ADC值进行均值滤波
         for (j = 0; j < filter_times; j++)
         {
-            Get_ADC_Data(this); 
+            Get_ADC_Data(this);
         }
 
         if (!Direction)
@@ -111,8 +110,6 @@ void GraySensor_Init_Without_Params(pClass_GraySensor this)
     memset(this->Normal_value, 0, 16);
     memset(this->Analog_value, 0, 16);
 
-
-
     // 初始化归一化系数
     for (int i = 0; i < 8; i++)
     {
@@ -130,7 +127,6 @@ void GraySensor_Init_Without_Params(pClass_GraySensor this)
     this->Time_out = 0;
     this->Tick = 0;
     this->ADC_Flag = false; // ADC采样标志
-
 
     this->is_inited = false; // 标记未完成校准
 }
@@ -187,16 +183,18 @@ void GraySensor_Init_With_Params(pClass_GraySensor this, unsigned short *Calibra
 void GraySensor_Update(pClass_GraySensor this)
 {
     Get_Analog_Value(this, FILTER_SIZE); // 采集数据
-    Convert_Analog_To_Digital(this); // 二值化处理
-    Normalize_Analog_Values(this);   // 归一化处理
+    Convert_Analog_To_Digital(this);     // 二值化处理
+    Normalize_Analog_Values(this);       // 归一化处理
 
     int j = 0, black = 0;
     static int black_times = 0, white_times = 0;
 
     float now_error = 0;
     //* 读取数据
-    for(int i = 0; i < 8; i++){
-        if(this->Digital_value[i] == 1){
+    for (int i = 0; i < 8; i++)
+    {
+        if (this->Digital_value[i] == 1)
+        {
             black++;
         }
     }
@@ -244,7 +242,6 @@ void GraySensor_Update(pClass_GraySensor this)
     //     this->Search_Direction = 1;
     // }
 
-
     // if (black == 8)
     // {
     //     black_times++;
@@ -254,8 +251,9 @@ void GraySensor_Update(pClass_GraySensor this)
     //         //* 全黑状态处理
     //     }
     // }
-    // else 
-    if(black == 0){
+    // else
+    if (black == 0)
+    {
         white_times++;
         // if (white_times > 100) // 防止线比传感器间隔细，导致误判为白色区域
         // {
@@ -263,7 +261,8 @@ void GraySensor_Update(pClass_GraySensor this)
         //     // this->undetected = true;
         //     // this->Follow_Error = 80.0f * this->Search_Direction;
         // }
-        if(white_times > 20){
+        if (white_times > 20)
+        {
             white_times = 0;
             //* 全白状态处理
             this->Finish = true;
@@ -276,9 +275,7 @@ void GraySensor_Update(pClass_GraySensor this)
         white_times = 0;
         this->Linear_Speed_Max = 0.2f;
         this->Follow_Error = this->k1 * (this->Normal_value[0] - this->Normal_value[7]) + this->k2 * (this->Normal_value[1] - this->Normal_value[6]) + this->k3 * (this->Normal_value[2] - this->Normal_value[5]) + this->k4 * (this->Normal_value[3] - this->Normal_value[4]);
-    
     }
-    
 }
 
 #endif

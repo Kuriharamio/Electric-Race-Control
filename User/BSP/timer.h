@@ -21,7 +21,12 @@ void ENCODER_TIMER_INST_IRQHandler(void); // 编码器测速定时器中断处�
 
 #ifdef USE_ADC_BUTTON
 #include "Base_Modules/adc_button.h"
-void ADC_BUTTON_TIMER_INST_IRQHandler(void); // ADC按键定时器中断处理函数
+void READ_TIMER_INST_IRQHandler(void); // ADC按键定时器中断处理函数
+#endif
+
+#ifdef USE_GRAY_SENSOR
+#include "Base_Modules/follow_sensor.h"
+void READ_TIMER_INST_IRQHandler(void);
 #endif
 
 #endif // _TIMER_H_

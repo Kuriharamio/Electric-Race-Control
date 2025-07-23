@@ -10,7 +10,7 @@
  *       待优化：测试是否可以同时获取两个舵机的信息
  *       http://doc.feetech.cn/#/prodinfodownload?srcType=FT-SMS-STS-emanual-229f4476422d4059abfb1cb0
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #include "FT_servo.h"
@@ -77,17 +77,19 @@ pClass_FT_Servo Get_FT_Servo_Handle(uint8_t ID)
 
 void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Max_Pos, uint16_t Min_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc)
 {
-    setEnd(0); // SMS_STS舵机为小端存储结构
+    setEnd(0);              // SMS_STS舵机为小端存储结构
     this->Status = OFFLINE; // 舵机初始状态为离线
 
     uint8_t retry = 20;
-    while(this->Status == OFFLINE && retry--){
+    while (this->Status == OFFLINE && retry--)
+    {
         if (this->Ping(this))
         {
             this->Status = ONLINE;
         }
     }
-    if(!retry){
+    if (!retry)
+    {
         printf("FT Servo ID:%d ping failed!\n", this->Servo_ID);
         return;
     }
@@ -101,7 +103,8 @@ void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Ma
     this->Current = 0;
 
     retry = 20;
-    while(this->Pos == 5000 && retry--){
+    while (this->Pos == 5000 && retry--)
+    {
         this->FeedBack(this);
     }
     if (!retry)
@@ -179,7 +182,6 @@ void FT_Servo_Set_Mid_Pos(pClass_FT_Servo this)
     CalibrationOfs(this->Servo_ID);
 }
 
-
 bool FT_Servo_Ping(pClass_FT_Servo this)
 {
     Ping(this->Servo_ID);
@@ -240,7 +242,8 @@ void FT_Servo_Update(void)
     {
         _FT_SERVO_1.FeedBack(&_FT_SERVO_1); // 更新舵机反馈信息
         _FT_SERVO_1.Safety_Check(&_FT_SERVO_1);
-        if(_FT_SERVO_1.Status == PROTECTED){
+        if (_FT_SERVO_1.Status == PROTECTED)
+        {
             _FT_SERVO_1.Set_Target_Status(&_FT_SERVO_1, _FT_SERVO_1.Reset_Pos, 30, 50);
         }
         {
@@ -252,16 +255,18 @@ void FT_Servo_Update(void)
     }
     else
     {
-        ID[0] = 0;  // 舵机离线
+        ID[0] = 0; // 舵机离线
         Position[0] = 0;
         Speed[0] = 0;
         ACC[0] = 0;
     }
 
-    if(_FT_SERVO_2.Status == ONLINE || _FT_SERVO_2.Status == PROTECTED){
+    if (_FT_SERVO_2.Status == ONLINE || _FT_SERVO_2.Status == PROTECTED)
+    {
         _FT_SERVO_2.FeedBack(&_FT_SERVO_2); // 更新舵机反馈信息
         _FT_SERVO_2.Safety_Check(&_FT_SERVO_2);
-        if(_FT_SERVO_2.Status == PROTECTED){
+        if (_FT_SERVO_2.Status == PROTECTED)
+        {
             _FT_SERVO_2.Set_Target_Status(&_FT_SERVO_2, _FT_SERVO_2.Reset_Pos, 30, 50);
         }
 
@@ -271,15 +276,16 @@ void FT_Servo_Update(void)
             Speed[1] = _FT_SERVO_2.Target_Spd;
             ACC[1] = _FT_SERVO_2.Target_Acc;
         }
-    }else{
-        ID[1] = 0;  // 舵机离线
+    }
+    else
+    {
+        ID[1] = 0; // 舵机离线
         Position[1] = 0;
         Speed[1] = 0;
         ACC[1] = 0;
     }
 
     SyncWritePosEx(ID, 2, Position, Speed, ACC);
-
 }
 
 void FT_Servo_Data_Process(pClass_UART this)
@@ -326,6 +332,5 @@ void ftBus_Delay(void)
 {
     delay_cycles(80 * 1000 * 10);
 }
-
 
 #endif

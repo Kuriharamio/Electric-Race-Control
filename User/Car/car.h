@@ -5,7 +5,6 @@
 #include "Algorithm/pure_pursuit.h"
 #include "Base_Modules/follow_sensor.h"
 
-
 typedef struct Class_Car
 {
     // 电机对象
@@ -23,7 +22,7 @@ typedef struct Class_Car
 
     // pClass_PID PID_Linear;  // 速度环PID
     // pClass_PID PID_Angular; // 角度环PID
-    
+
     pClass_PID PID_Follow;
 
     // 里程计

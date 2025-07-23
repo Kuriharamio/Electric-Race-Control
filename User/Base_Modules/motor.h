@@ -66,10 +66,10 @@ typedef struct Class_Motor
     void (*Configure_ENCODER_A)(struct Class_Motor *this, GPIO_Regs *__ENCODER_A_PORT, uint32_t __ENCODER_A_PIN); // 电机引脚编码器A配置
     void (*Configure_ENCODER_B)(struct Class_Motor *this, GPIO_Regs *__ENCODER_B_PORT, uint32_t __ENCODER_B_PIN); // 电机引脚编码器B配置
 
-    void (*Update_PID)(struct Class_Motor *this); // 定时器回调函数
-    void (*Encoder_Callback)(struct Class_Motor *this, char phase);  // 编码器回调函数
-    void (*Control)(struct Class_Motor *this);                       // 电机输入引脚控制函数
-    void (*Output)(struct Class_Motor *this);                        // 电机PWM输出函数
+    void (*Update_PID)(struct Class_Motor *this);                   // 定时器回调函数
+    void (*Encoder_Callback)(struct Class_Motor *this, char phase); // 编码器回调函数
+    void (*Control)(struct Class_Motor *this);                      // 电机输入引脚控制函数
+    void (*Output)(struct Class_Motor *this);                       // 电机PWM输出函数
 
 } Class_Motor, *pClass_Motor;
 

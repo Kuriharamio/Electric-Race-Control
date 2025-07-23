@@ -124,7 +124,7 @@ void UART_Init(pClass_UART this, uint8_t rx_max_len, uint8_t param_len)
 	this->mode = DEBUG_STRING;
 	this->param_len = param_len;											// 设置参数个数
 	this->param_list = (float **)malloc(this->param_len * sizeof(float *)); // 分配参数列表内存
-	this->param_name = (char **)malloc(this->param_len * sizeof(char *));	//分配参数名称列表内存
+	this->param_name = (char **)malloc(this->param_len * sizeof(char *));	// 分配参数名称列表内存
 	if (this->param_list == NULL)
 	{
 		return; // 分配失败
@@ -193,15 +193,15 @@ void UART_Send(pClass_UART this, uint8_t *datas, size_t size)
 	}
 	else if (this->mode == HMI_WAVE)
 	{
-		if (this->param_len <=4)
+		if (this->param_len <= 4)
 		{
 			for (int i = 0; i < this->param_len; i++)
 			{
-				sprintf(temp, "add s0.id,%d,%d\xFF\xFF\xFF",i,(int)*this->param_list[i]); //发送波形显示指令
+				sprintf(temp, "add s0.id,%d,%d\xFF\xFF\xFF", i, (int)*this->param_list[i]); // 发送波形显示指令
 				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
-				sprintf(temp, "a%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); //发送数据显示指令
+				sprintf(temp, "a%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); // 发送数据显示指令
 				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
-				sprintf(temp, "c%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); //发送数据名称显示指令
+				sprintf(temp, "c%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); // 发送数据名称显示指令
 				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
 			}
 		}
@@ -209,20 +209,20 @@ void UART_Send(pClass_UART this, uint8_t *datas, size_t size)
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				sprintf(temp, "add s0.id,%d,%d\xFF\xFF\xFF",i,(int)*this->param_list[i]); //发送波形显示指令
+				sprintf(temp, "add s0.id,%d,%d\xFF\xFF\xFF", i, (int)*this->param_list[i]); // 发送波形显示指令
 				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
-				sprintf(temp, "a%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); //发送数据显示指令
+				sprintf(temp, "a%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); // 发送数据显示指令
 				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
-				sprintf(temp, "c%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); //发送数据名称显示指令
+				sprintf(temp, "c%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); // 发送数据名称显示指令
 				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
 			}
 			for (int i = 4; i < this->param_len; i++)
 			{
-				sprintf(temp, "add s1.id,%d,%d\xFF\xFF\xFF",i,(int)*this->param_list[i]); //发送波形显示指令
+				sprintf(temp, "add s1.id,%d,%d\xFF\xFF\xFF", i, (int)*this->param_list[i]); // 发送波形显示指令
 				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
-				sprintf(temp, "a%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); //发送数据显示指令
+				sprintf(temp, "a%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); // 发送数据显示指令
 				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
-				sprintf(temp, "c%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); //发送数据名称显示指令
+				sprintf(temp, "c%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); // 发送数据名称显示指令
 				this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
 			}
 		}
@@ -231,9 +231,9 @@ void UART_Send(pClass_UART this, uint8_t *datas, size_t size)
 	{
 		for (int i = 0; i < this->param_len; i++)
 		{
-			sprintf(temp, "t%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); //发送数据显示指令
+			sprintf(temp, "t%d.txt=\"%f\"\xFF\xFF\xFF", i, *this->param_list[i]); // 发送数据显示指令
 			this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
-			sprintf(temp, "d%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); //发送数据名称显示指令
+			sprintf(temp, "d%d.txt=\"%s\"\xFF\xFF\xFF", i, this->param_name[i]); // 发送数据名称显示指令
 			this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
 		}
 	}
@@ -379,7 +379,7 @@ IRQn_Type Get_UART_IRQN_From_Index(uint8_t index)
  * @return UART_Regs*
  */
 UART_Regs *Get_UART_INST_From_Index(uint8_t index)
- {
+{
 	switch (index)
 	{
 #ifdef USE_UART_0

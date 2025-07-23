@@ -3,9 +3,7 @@
  * @brief 一些数学
  */
 
-
 #include "Algorithm/drv_math.h"
-
 
 /**
  * @brief 16位大小端转换
@@ -14,9 +12,9 @@
  */
 void Math_Endian_Reverse_16(void *Address)
 {
-    uint8_t *temp_address_8   = (uint8_t *)Address;
+    uint8_t *temp_address_8 = (uint8_t *)Address;
     uint16_t *temp_address_16 = (uint16_t *)Address;
-    *temp_address_16          = temp_address_8[0] << 8 | temp_address_8[1];
+    *temp_address_16 = temp_address_8[0] << 8 | temp_address_8[1];
 }
 
 /**
@@ -28,7 +26,7 @@ void Math_Endian_Reverse_16(void *Address)
 void Math_Endian_Reverse_16_dual(void *Source, void *Destination)
 {
     uint8_t *temp_source, *temp_destination;
-    temp_source      = (uint8_t *)Source;
+    temp_source = (uint8_t *)Source;
     temp_destination = (uint8_t *)Destination;
 
     temp_destination[0] = temp_source[1];
@@ -42,9 +40,9 @@ void Math_Endian_Reverse_16_dual(void *Source, void *Destination)
  */
 void Math_Endian_Reverse_32(void *Address)
 {
-    uint8_t *temp_address_8   = (uint8_t *)Address;
+    uint8_t *temp_address_8 = (uint8_t *)Address;
     uint32_t *temp_address_32 = (uint32_t *)Address;
-    *temp_address_32          = temp_address_8[0] << 24 | temp_address_8[1] << 16 | temp_address_8[2] << 8 | temp_address_8[3];
+    *temp_address_32 = temp_address_8[0] << 24 | temp_address_8[1] << 16 | temp_address_8[2] << 8 | temp_address_8[3];
 }
 
 /**
@@ -56,7 +54,7 @@ void Math_Endian_Reverse_32(void *Address)
 void Math_Endian_Reverse_32_dual(void *Source, void *Destination)
 {
     uint8_t *temp_source, *temp_destination;
-    temp_source      = (uint8_t *)Source;
+    temp_source = (uint8_t *)Source;
     temp_destination = (uint8_t *)Destination;
 
     temp_destination[0] = temp_source[3];
@@ -75,7 +73,8 @@ void Math_Endian_Reverse_32_dual(void *Source, void *Destination)
 uint8_t Math_Sum_8(uint8_t *Address, uint32_t Length)
 {
     uint8_t sum = 0;
-    for (uint32_t i = 0; i < Length; i++) {
+    for (uint32_t i = 0; i < Length; i++)
+    {
         sum += Address[i];
     }
     return sum;
@@ -91,7 +90,8 @@ uint8_t Math_Sum_8(uint8_t *Address, uint32_t Length)
 uint16_t Math_Sum_16(uint16_t *Address, uint32_t Length)
 {
     uint16_t sum = 0;
-    for (uint32_t i = 0; i < Length; i++) {
+    for (uint32_t i = 0; i < Length; i++)
+    {
         sum += Address[i];
     }
     return sum;
@@ -107,7 +107,8 @@ uint16_t Math_Sum_16(uint16_t *Address, uint32_t Length)
 uint32_t Math_Sum_32(uint32_t *Address, uint32_t Length)
 {
     uint32_t sum = 0;
-    for (uint32_t i = 0; i < Length; i++) {
+    for (uint32_t i = 0; i < Length; i++)
+    {
         sum += Address[i];
     }
     return sum;
@@ -122,7 +123,8 @@ uint32_t Math_Sum_32(uint32_t *Address, uint32_t Length)
 float Math_Sinc(float x)
 {
     // 分母为0则按极限求法
-    if (Math_Abs_float(x) <= 2.0f * FLT_EPSILON) {
+    if (Math_Abs_float(x) <= 2.0f * FLT_EPSILON)
+    {
         return 1.0f;
     }
 
@@ -138,9 +140,12 @@ float Math_Sinc(float x)
  */
 void Math_Constrain_float(float *x, float Min, float Max)
 {
-    if (*x < Min) {
+    if (*x < Min)
+    {
         *x = Min;
-    } else if (*x > Max) {
+    }
+    else if (*x > Max)
+    {
         *x = Max;
     }
 }
@@ -154,9 +159,12 @@ void Math_Constrain_float(float *x, float Min, float Max)
  */
 void Math_Constrain_int(int *x, int Min, int Max)
 {
-    if (*x < Min) {
+    if (*x < Min)
+    {
         *x = Min;
-    } else if (*x > Max) {
+    }
+    else if (*x > Max)
+    {
         *x = Max;
     }
 }

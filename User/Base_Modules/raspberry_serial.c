@@ -1,6 +1,6 @@
 #include "Base_Modules/raspberry_serial.h"
 
-#ifdef USE_Raspberry
+#ifdef USE_RASPBERRY
 
 static RxState Rx_State = STATE_WAIT_HEADER_1; // 接收状态标志位
 static uint8_t Rx_Data_Len = 0;				   // 数据长度

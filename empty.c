@@ -14,9 +14,6 @@
 
 #include "Car/car.h"
 
-#include "problem.h"
-
-
 int main(void)
 {
   SYSCFG_DL_init();
@@ -57,7 +54,7 @@ int main(void)
 #endif                                                                // 校準加速度
 
 //* Raspberry串口通信配置
-#ifdef USE_Raspberry
+#ifdef USE_RASPBERRY
   pClass_UART Raspberry_Communicator = Create_UART(Raspberry_UART_INDEX);   // 获取Raspberry串口对象实例
   Raspberry_Communicator->Init(Raspberry_Communicator, Raspberry_RX_LEN_MAX, 1); // 初始化Raspberry串口对象
   Raspberry_Communicator->Configure_Mode(Raspberry_Communicator, DEBUG_WAVE);   // 配置调试模式
@@ -91,15 +88,49 @@ int main(void)
     Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
     HMI->Send(HMI, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 
-    // BUZZ(BEEP);
+    static Last_Task = Task_None;
+    if (Now_Task != Last_Task)
     {
-        static int count = 0;
-        count++;
-        if(count == 100){
-          Car->Task_ID = 4;
-        }
+      BUZZ(BEEP);
+      Last_Task = Now_Task;
+      switch (Now_Task)
+      {
+      case Task_1:
+      {
+        Car->Task_ID = 1;
+      }
+      break;
+      case Task_2:
+      {
+        Car->Task_ID = 2;
+      }
+      break;
+      case Task_3:
+      {
+        Car->Task_ID = 3;
+      }
+      break;
+      case Task_4:
+      {
+        Car->Task_ID = 4;
+      }
+      break;
+      case Task_5:
+      {
+        Car->Task_ID = 5;
+      }
+      break;
+      case Task_6:
+      {
+        Car->Task_ID = 6;
+      }
+      break;
+      default:
+        break;
+      }
+    }
 
-    }
+    
     delay_ms(10);
-    }
+  }
 }

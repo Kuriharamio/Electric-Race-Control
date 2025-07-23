@@ -1,18 +1,13 @@
 #include "BSP/board.h"
 
 #if !defined(__MICROLIB)
-// 不使用微库的话就需要添加下面的函数
 #if (__ARMCLIB_VERSION <= 6000000)
-// 如果编译器是AC5  就定义下面这个结构体
 struct __FILE
 {
     int handle;
 };
 #endif
 
-// FILE __stdout;
-
-// 定义_sys_exit()以避免使用半主机模式
 void _sys_exit(int x)
 {
     x = x;
@@ -21,7 +16,7 @@ void _sys_exit(int x)
 
 int fputc(int ch, FILE *stream)
 {
-    Get_UART_INST(BLUETOOTH_UART_INDEX)->Send_Bit(Get_UART_INST(BLUETOOTH_UART_INDEX), (uint8_t)ch); // 发送字符到蓝牙串口
+    Get_UART_INST(BLUETOOTH_UART_INDEX)->Send_Bit(Get_UART_INST(BLUETOOTH_UART_INDEX), (uint8_t)ch); 
     return ch;
 }
 
@@ -32,22 +27,22 @@ void softwareReset(void)
 
 void Enable_All_Interrupt(void)
 {
-    // TIM初始化
+    //* TIM初始化
 #ifdef USE_PID
     NVIC_ClearPendingIRQ(PID_TIMER_INST_INT_IRQN);
     NVIC_EnableIRQ(PID_TIMER_INST_INT_IRQN);
 #endif
+#if defined(USE_ADC_BUTTON) || defined(USE_GRAY_SENSOR)
+    NVIC_ClearPendingIRQ(READ_TIMER_INST_INT_IRQN);
+    NVIC_EnableIRQ(READ_TIMER_INST_INT_IRQN);
+#endif
 #ifdef USE_ENCODER
     NVIC_ClearPendingIRQ(ENCODER_TIMER_INST_INT_IRQN);
     NVIC_EnableIRQ(ENCODER_TIMER_INST_INT_IRQN);
-    // GPIO初始化
+    //* GPIO初始化
     NVIC_EnableIRQ(GPIOA_INT_IRQn);
     NVIC_EnableIRQ(GPIOB_INT_IRQn);
 #endif
 
-#if defined(USE_ADC_BUTTON) ||  defined(USE_GRAY_SENSOR)
-    NVIC_ClearPendingIRQ(READ_TIMER_INST_INT_IRQN);
-    NVIC_EnableIRQ(READ_TIMER_INST_INT_IRQN);
-#endif
-}
 
+}
