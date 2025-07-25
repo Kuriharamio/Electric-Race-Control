@@ -91,9 +91,13 @@ void PID_TIMER_INST_IRQHandler(void)
 #endif
 
 #ifdef USE_PTZ
-    if(Get_PTZ_INST()->is_inited){
-        Get_PTZ_INST()->Update(Get_PTZ_INST());
-    }
+        if (count % PID_SERVO_FACTOR == 0){
+            if (Get_PTZ_INST()->is_inited)
+            {
+                Get_PTZ_INST()->Update(Get_PTZ_INST());
+            }
+
+        }
 #endif
 
 #ifdef USE_SERVO

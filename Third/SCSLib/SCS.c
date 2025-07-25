@@ -8,6 +8,8 @@
 #include "INST.h"
 #include "SCS.h"
 
+#include "config.h"
+
 #ifdef USE_FT_SERVO
 
 static uint8_t Level =1;//舵机返回等级1,默认写指令开启应答

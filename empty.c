@@ -20,8 +20,8 @@ int main(void)
   SYSCFG_DL_init();
   Enable_All_Interrupt();
 
-  pClass_Car Car = Create_Car(); // 创建小车对象
-  Car->Init(Car);                // 初始化小车对象
+  // pClass_Car Car = Create_Car(); // 创建小车对象
+  // Car->Init(Car);                // 初始化小车对象
 
 //* 蓝牙配置
 #ifdef USE_BLUETOOTH
@@ -29,9 +29,9 @@ int main(void)
   Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 3);             // 初始化蓝牙对象
   Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE);                // 配置调试模式
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback); // 配置回调函数
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->Now_Position.x), " ");
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->Now_Position.y), " ");
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Car->IMU_Yaw), " ");
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->Now_Position.x), " ");
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->Now_Position.y), " ");
+  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Car->IMU_Yaw), " ");
 #endif
 
 //* HMI配置
@@ -77,13 +77,11 @@ int main(void)
 #ifdef USE_PTZ
   pClass_PTZ PTZ = Create_PTZ();
   PTZ->Init(PTZ);
-  PTZ->Servo_Up->Set_Target_Status(PTZ->Servo_Up, 4095, 30, 20);
-  PTZ->Servo_Down->Set_Target_Status(PTZ->Servo_Down, 4095, 30, 20);
 #endif
   while (1)
   {
 #ifdef USE_BLUETOOTH
-    Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
+    // Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 #endif
 #ifdef USE_HMI
     HMI->Send(HMI, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
@@ -95,6 +93,6 @@ int main(void)
       BUZZ_STATE = OFF;
     }
 
-    delay_ms(10);
+    delay_ms(1000);
   }
 }

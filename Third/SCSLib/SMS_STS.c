@@ -9,6 +9,7 @@
 #include "INST.h"
 #include "SCS.h"
 #include "SMS_STS.h"
+#include "config.h"
 
 #ifdef USE_FT_SERVO
 

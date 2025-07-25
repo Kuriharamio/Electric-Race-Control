@@ -99,7 +99,7 @@ void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Ma
         return;
     }
 
-    this->Pos = 5000;
+    this->Pos = 2047;
     this->Speed = 0;
     this->Load = 0;
     this->Temper = 0;
@@ -107,32 +107,24 @@ void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Ma
     this->Move = 0;
     this->Current = 0;
 
-    retry = 20;
-    while (this->Pos == 5000 && retry--)
-    {
-        this->FeedBack(this);
-    }
-    if (!retry)
-    {
-        printf("FT Servo ID:%d feedback failed!\n", this->Servo_ID);
-        return;
-    }
+    this->Set_Mid_Pos(this);
+
+    // retry = 500;
+    // while (this->Pos == 2047 && retry--)
+    // {
+    //     this->FeedBack(this);
+    // }
+    // if (!retry)
+    // {
+    //     printf("FT Servo ID:%d feedback failed!\n", this->Servo_ID);
+    //     return;
+    // }else{
+    //     printf("FT Servo ID:%d feedback success!\tPose: %d\n", this->Servo_ID, this->Pos);
+    // }
 
     this->Reset_Pos = this->Pos;
     this->Pos_Mode = Pos_Mode;
 
-    this->Set_Mid_Pos(this);
-
-    switch (this->Pos_Mode)
-    {
-    case POS_MODE_ABSOLUTE:
-        break;
-    case POS_MODE_RELATIVE:
-        this->Set_Mid_Pos(this);
-        break;
-    default:
-        break;
-    }
     this->Set_Max_Pos(this, Max_Pos);
     this->Set_Min_Pos(this, Min_Pos);
     this->Set_Max_Spd(this, Max_Spd);
@@ -190,12 +182,12 @@ bool FT_Servo_Ping(pClass_FT_Servo this)
     Ping(this->Servo_ID);
     if (!getLastError())
     {
-        printf("Servo ID:%d\n", this->Servo_ID);
+        printf("Ping Servo ID:%d success!\n", this->Servo_ID);
         return true;
     }
     else
     {
-        printf("Ping servo ID error!\n");
+        // printf("Ping servo ID error!\n");
         return false;
     }
 }
@@ -211,6 +203,8 @@ void FT_Servo_FeedBack(pClass_FT_Servo this)
         this->Temper = ReadTemper(-1);
         this->Move = ReadMove(-1);
         this->Current = ReadCurrent(-1);
+    }else{
+        // printf("Error: %d\n", getLastError());
     }
 }
 void FT_Servo_Safety_Check(pClass_FT_Servo this)
@@ -241,7 +235,7 @@ void FT_Servo_Update_PID(pClass_FT_Servo this)
     this->PID->Set_Now(this->PID, this->Error);
     this->PID->Update_Value(this->PID);
 
-    float output = this->PID->Get_PID_Out(this->PID) + this->Reset_Pos;
+    float output = this->PID->Get_PID_Out(this->PID) + 2047;
     this->Set_Target_Status(this, (uint16_t)(output), 10, 20);
 }
 void FT_Servo_Data_Process(pClass_UART this)
@@ -255,9 +249,6 @@ void FT_Servo_Data_Process(pClass_UART this)
     }
 }
 
-
-
-
 // FT舵机串口指令发送函数
 void ftUart_Send(uint8_t *nDat, int nLen)
 {
@@ -268,9 +259,10 @@ void ftUart_Send(uint8_t *nDat, int nLen)
 // FT舵机串口指令应答接收函数
 int ftUart_Read(uint8_t *nDat, int nLen)
 {
-    if (nLen > FT_SERVO_RX_LEN_MAX)
+    if (nLen > Rx_Len)
     {
         return 0; // 如果请求长度大于缓冲区长度，直接返回
+        // delay_us(80);
     }
 
     for (int i = 0; i < nLen; i++)
@@ -289,7 +281,7 @@ int ftUart_Read(uint8_t *nDat, int nLen)
 // FT舵机总线切换延时，时间大于10us
 void ftBus_Delay(void)
 {
-    delay_cycles(80 * 1000 * 10);
+    delay_cycles(80 * 1000);
 }
 
 #endif

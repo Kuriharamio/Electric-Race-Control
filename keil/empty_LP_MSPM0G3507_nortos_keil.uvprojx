@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\..\6_Two_Wheel_Car;..\Third</IncludePath>
+              <IncludePath>../../../../../../source/third_party/CMSIS/Core/Include;../../../../../../source;..\User;..\Third;..\..\7_PTZ</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,11 +390,6 @@
               <FilePath>..\ti_msp_dl_config.c</FilePath>
             </File>
             <File>
-              <FileName>empty.syscfg</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\empty.syscfg</FilePath>
-            </File>
-            <File>
               <FileName>startup_mspm0g350x_uvision.s</FileName>
               <FileType>2</FileType>
               <FilePath>.\startup_mspm0g350x_uvision.s</FilePath>
@@ -408,6 +403,11 @@
               <FileName>empty.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\empty.c</FilePath>
+            </File>
+            <File>
+              <FileName>empty.syscfg</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\empty.syscfg</FilePath>
             </File>
           </Files>
         </Group>

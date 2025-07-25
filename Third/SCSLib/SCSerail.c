@@ -5,6 +5,8 @@
  * зїеп: txl
  */
 #include <stdint.h>
+#include "config.h"
+
 #ifdef USE_FT_SERVO
 
 uint8_t wBuf[128];
