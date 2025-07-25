@@ -95,11 +95,13 @@ void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Ma
     }
     if (!retry)
     {
+#ifdef PRINT_DEBUG
         printf("FT Servo ID:%d ping failed!\n", this->Servo_ID);
+#endif
         return;
     }
 
-    this->Pos = 2047;
+    this->Pos = 5000;
     this->Speed = 0;
     this->Load = 0;
     this->Temper = 0;
@@ -107,20 +109,25 @@ void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Ma
     this->Move = 0;
     this->Current = 0;
 
-    this->Set_Mid_Pos(this);
+    // this->Set_Mid_Pos(this);
 
-    // retry = 500;
-    // while (this->Pos == 2047 && retry--)
-    // {
-    //     this->FeedBack(this);
-    // }
-    // if (!retry)
-    // {
-    //     printf("FT Servo ID:%d feedback failed!\n", this->Servo_ID);
-    //     return;
-    // }else{
-    //     printf("FT Servo ID:%d feedback success!\tPose: %d\n", this->Servo_ID, this->Pos);
-    // }
+    retry = 255;
+    while (this->Pos == 5000 && retry--)
+    {
+        this->FeedBack(this);
+        delay_ms(10);
+    }
+    if (!retry)
+    {
+#ifdef PRINT_DEBUG
+        printf("FT Servo ID:%d feedback failed!\n", this->Servo_ID);
+#endif
+        return;
+    }else{
+#ifdef PRINT_DEBUG
+        printf("FT Servo ID:%d feedback success!\tPose: %d\n", this->Servo_ID, this->Pos);
+#endif
+    }
 
     this->Reset_Pos = this->Pos;
     this->Pos_Mode = Pos_Mode;
@@ -182,7 +189,9 @@ bool FT_Servo_Ping(pClass_FT_Servo this)
     Ping(this->Servo_ID);
     if (!getLastError())
     {
+#ifdef PRINT_DEBUG
         printf("Ping Servo ID:%d success!\n", this->Servo_ID);
+        #endif
         return true;
     }
     else

@@ -19,6 +19,7 @@ int main(void)
 {
   SYSCFG_DL_init();
   Enable_All_Interrupt();
+  delay_ms(3000);
 
   // pClass_Car Car = Create_Car(); // 创建小车对象
   // Car->Init(Car);                // 初始化小车对象
@@ -77,6 +78,12 @@ int main(void)
 #ifdef USE_PTZ
   pClass_PTZ PTZ = Create_PTZ();
   PTZ->Init(PTZ);
+  PTZ->Servo_Up->Set_Target_Status(PTZ->Servo_Up, 2047, 10, 20);
+  PTZ->Servo_Down->Set_Target_Status(PTZ->Servo_Down, 2047, 10, 20);
+  delay_ms(3000);
+  PTZ->Draw_Img(PTZ);
+  delay_ms(1500);
+  PTZ->Draw_Func(PTZ);
 #endif
   while (1)
   {
@@ -87,12 +94,18 @@ int main(void)
     HMI->Send(HMI, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 #endif
 
+    // if (PTZ->Servo_Up->Status == ONLINE || PTZ->Servo_Up->Status == PROTECTED)
+    //   printf("ID: %d, Position: %d, Reset_Pos: %d \n", PTZ->Servo_Up->Servo_ID, PTZ->Servo_Up->Pos, PTZ->Servo_Up->Reset_Pos);
+    // if (PTZ->Servo_Down->Status == ONLINE || PTZ->Servo_Down->Status == PROTECTED)
+    //   printf("ID: %d, Position: %d, Reset_Pos: %d \n\n", PTZ->Servo_Down->Servo_ID, PTZ->Servo_Down->Pos, PTZ->Servo_Down->Reset_Pos);
+
     if(BUZZ_STATE == BEEP)
     {
       BUZZ(BEEP);
       BUZZ_STATE = OFF;
     }
 
-    delay_ms(1000);
+
+    delay_ms(10);
   }
 }

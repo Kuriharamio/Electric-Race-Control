@@ -9,6 +9,8 @@ pClass_PTZ Create_PTZ(void)
     pClass_PTZ temp = &_PTZ;
     temp->Init = PTZ_Init;
     temp->Update = PTZ_Update;
+    temp->Draw_Img = PTZ_Draw_Img;
+    temp->Draw_Func = PTZ_Draw_Func;
     temp->FT_Servo_Controller = Create_UART(FT_SERVO_UART_INDEX);
     temp->Servo_Down = Create_FT_Servo(SERVO_DOWN_INDEX);
     temp->Servo_Up = Create_FT_Servo(SERVO_UP_INDEX);
@@ -108,6 +110,87 @@ void PTZ_Update(pClass_PTZ this)
     default:
         break;
     }
+}
+
+#include "subpaths.h"
+void PTZ_Draw_Img(pClass_PTZ this)
+{
+    uint16_t spd = 40;
+
+    if (subpath_cnt == 0)
+        return;
+
+    const int16_t (*p)[2] = subpath_points; // 当前指针
+    LAZER(OFF);
+
+    for (uint16_t i = 0; i < subpath_cnt; ++i)
+    {
+        uint16_t len = subpath_lens[i];
+
+        this->Servo_Down->Set_Target_Status(this->Servo_Down, p[0][0], spd, 20);
+        this->Servo_Up->Set_Target_Status(this->Servo_Up, p[0][1], spd, 20);
+        while (abs(this->Servo_Down->Pos - p[0][0]) > 1 || abs(this->Servo_Up->Pos - p[0][1]) > 1)
+        {
+
+        }
+
+        LAZER(ON);
+        for (uint16_t k = 1; k < len; ++k)
+        {
+            this->Servo_Down->Set_Target_Status(this->Servo_Down, p[k][0], spd, 20);
+            this->Servo_Up->Set_Target_Status(this->Servo_Up, p[k][1], spd, 20);
+            delay_ms(10);
+            if (k == len - 1)
+            {
+                delay_ms(500);
+            }
+            // while(abs(this->Servo_Down->Pos - p[k][0]) > 5 || abs(this->Servo_Up->Pos - p[k][1]) > 5)
+            // {
+
+            // }
+        }
+        LAZER(OFF);
+
+        p += len;
+    }
+
+    /* 回中 */
+    this->Servo_Down->Set_Target_Status(this->Servo_Down, 2047, 10, 20);
+    this->Servo_Up->Set_Target_Status(this->Servo_Up, 2047, 10, 20);
+}
+
+
+#include "subfunc.h"
+void PTZ_Draw_Func(pClass_PTZ this)
+{
+    uint16_t spd = 40;
+    if (func_point_cnt == 0)
+        return;
+
+    this->Servo_Down->Set_Target_Status(this->Servo_Down, func_path[0][0], spd, 20);
+    this->Servo_Up->Set_Target_Status(this->Servo_Up, func_path[0][1], spd, 20);
+    while (abs(this->Servo_Down->Pos - func_path[0][0]) > 1 || abs(this->Servo_Up->Pos - func_path[0][1]) > 1)
+    {
+    }
+
+    LAZER(ON);
+    for (uint16_t i = 1; i < func_point_cnt; ++i)
+    {
+        this->Servo_Down->Set_Target_Status(this->Servo_Down, func_path[i][0], spd, 20);
+        this->Servo_Up->Set_Target_Status(this->Servo_Up, func_path[i][1], spd, 20);
+        delay_ms(10);
+        if(i == func_point_cnt - 1){
+            delay_ms(500);
+        }
+        // while (abs(this->Servo_Down->Pos - func_path[i][0]) > 5 || abs(this->Servo_Up->Pos - func_path[i][1]) > 5)
+        // {
+        // }
+    }
+    LAZER(OFF);
+
+    /* 3) 回中 */
+    this->Servo_Down->Set_Target_Status(this->Servo_Down, 2047, spd, 20);
+    this->Servo_Up->Set_Target_Status(this->Servo_Up, 2047, spd, 20);
 }
 
 #endif

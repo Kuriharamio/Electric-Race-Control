@@ -3,6 +3,7 @@
 
 #include "config.h"
 #include "FT_servo.h"
+#include "reminder.h"
 
 typedef struct Class_PTZ {
     
@@ -20,6 +21,8 @@ typedef struct Class_PTZ {
 
     void (*Init)(struct Class_PTZ* this);
     void (*Update)(struct Class_PTZ *this);
+    void (*Draw_Img)(struct Class_PTZ *this);
+    void (*Draw_Func)(struct Class_PTZ *this);
 
 } Class_PTZ, *pClass_PTZ;
 
@@ -27,5 +30,7 @@ pClass_PTZ Create_PTZ(void);
 pClass_PTZ Get_PTZ_INST(void);
 void PTZ_Init(pClass_PTZ this);
 void PTZ_Update(pClass_PTZ this);
+void PTZ_Draw_Img(pClass_PTZ this);
+void PTZ_Draw_Func(pClass_PTZ this);
 
 #endif

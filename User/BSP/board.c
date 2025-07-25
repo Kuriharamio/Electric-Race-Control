@@ -38,10 +38,6 @@ void Enable_All_Interrupt(void)
     NVIC_ClearPendingIRQ(READ_TIMER_INST_INT_IRQN);
     NVIC_EnableIRQ(READ_TIMER_INST_INT_IRQN);
 #endif
-#ifdef USE_PTZ
-    NVIC_ClearPendingIRQ(PTZ_TIMER_INST_INT_IRQN);
-    NVIC_ClearPendingIRQ(PTZ_TIMER_INST_INT_IRQN);
-#endif
 #ifdef USE_ENCODER
     NVIC_ClearPendingIRQ(ENCODER_TIMER_INST_INT_IRQN);
     NVIC_EnableIRQ(ENCODER_TIMER_INST_INT_IRQN);

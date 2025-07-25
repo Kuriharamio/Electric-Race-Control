@@ -25,6 +25,7 @@
 #define FT_SERVO_RX_LEN_MAX 255 // 飞特舵机接收数据最大长度
 #define PROTECT_CURRENT 30      // 保护电流大小
 #define PID_SERVO_FACTOR 1      // PID 时间间隔比值
+// #define PRINT_DEBUG
 
 #define USE_PTZ
 #define SERVO_DOWN_INDEX 2 // 下舵机索引号
