@@ -61,7 +61,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_ENCODER_TIMER_init();
     SYSCFG_DL_PID_TIMER_init();
     SYSCFG_DL_READ_TIMER_init();
-    SYSCFG_DL_PTZ_TIMER_init();
     SYSCFG_DL_UART_0_init();
     SYSCFG_DL_UART_1_init();
     SYSCFG_DL_UART_2_init();
@@ -117,7 +116,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerG_reset(ENCODER_TIMER_INST);
     DL_TimerG_reset(PID_TIMER_INST);
     DL_TimerG_reset(READ_TIMER_INST);
-    DL_TimerG_reset(PTZ_TIMER_INST);
     DL_UART_Main_reset(UART_0_INST);
     DL_UART_Main_reset(UART_1_INST);
     DL_UART_Main_reset(UART_2_INST);
@@ -133,7 +131,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerG_enablePower(ENCODER_TIMER_INST);
     DL_TimerG_enablePower(PID_TIMER_INST);
     DL_TimerG_enablePower(READ_TIMER_INST);
-    DL_TimerG_enablePower(PTZ_TIMER_INST);
     DL_UART_Main_enablePower(UART_0_INST);
     DL_UART_Main_enablePower(UART_1_INST);
     DL_UART_Main_enablePower(UART_2_INST);
@@ -481,42 +478,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_READ_TIMER_init(void) {
         (DL_TimerG_TimerConfig *) &gREAD_TIMERTimerConfig);
     DL_TimerG_enableInterrupt(READ_TIMER_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
     DL_TimerG_enableClock(READ_TIMER_INST);
-
-
-
-
-}
-
-/*
- * Timer clock configuration to be sourced by BUSCLK /  (40000000 Hz)
- * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
- *   1000000 Hz = 40000000 Hz / (1 * (39 + 1))
- */
-static const DL_TimerG_ClockConfig gPTZ_TIMERClockConfig = {
-    .clockSel    = DL_TIMER_CLOCK_BUSCLK,
-    .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
-    .prescale    = 39U,
-};
-
-/*
- * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * PTZ_TIMER_INST_LOAD_VALUE = (20 ms * 1000000 Hz) - 1
- */
-static const DL_TimerG_TimerConfig gPTZ_TIMERTimerConfig = {
-    .period     = PTZ_TIMER_INST_LOAD_VALUE,
-    .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC,
-    .startTimer = DL_TIMER_START,
-};
-
-SYSCONFIG_WEAK void SYSCFG_DL_PTZ_TIMER_init(void) {
-
-    DL_TimerG_setClockConfig(PTZ_TIMER_INST,
-        (DL_TimerG_ClockConfig *) &gPTZ_TIMERClockConfig);
-
-    DL_TimerG_initTimerMode(PTZ_TIMER_INST,
-        (DL_TimerG_TimerConfig *) &gPTZ_TIMERTimerConfig);
-    DL_TimerG_enableInterrupt(PTZ_TIMER_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
-    DL_TimerG_enableClock(PTZ_TIMER_INST);
 
 
 

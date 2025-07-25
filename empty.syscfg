@@ -27,7 +27,6 @@ const TIMER         = scripting.addModule("/ti/driverlib/TIMER", {}, false);
 const TIMER1        = TIMER.addInstance();
 const TIMER2        = TIMER.addInstance();
 const TIMER3        = TIMER.addInstance();
-const TIMER4        = TIMER.addInstance();
 const UART          = scripting.addModule("/ti/driverlib/UART", {}, false);
 const UART1         = UART.addInstance();
 const UART2         = UART.addInstance();
@@ -239,13 +238,6 @@ TIMER3.$name              = "READ_TIMER";
 TIMER3.timerPeriod        = "1 ms";
 TIMER3.peripheral.$assign = "TIMG0";
 
-TIMER4.timerPeriod      = "20 ms";
-TIMER4.timerStartTimer  = true;
-TIMER4.timerMode        = "PERIODIC";
-TIMER4.timerClkPrescale = 40;
-TIMER4.interrupts       = ["ZERO"];
-TIMER4.$name            = "PTZ_TIMER";
-
 UART1.$name                    = "UART_0";
 UART1.enableDMARX              = false;
 UART1.enableDMATX              = false;
@@ -311,5 +303,4 @@ GPIO5.associatedPins[0].pin.$suggestSolution = "PB23";
 GPIO5.associatedPins[1].pin.$suggestSolution = "PB26";
 GPIO6.associatedPins[0].pin.$suggestSolution = "PB8";
 GPIO6.associatedPins[1].pin.$suggestSolution = "PB9";
-TIMER4.peripheral.$suggestSolution           = "TIMG8";
 UART3.peripheral.$suggestSolution            = "UART3";

@@ -118,11 +118,6 @@ extern "C" {
 #define READ_TIMER_INST_IRQHandler                              TIMG0_IRQHandler
 #define READ_TIMER_INST_INT_IRQN                                (TIMG0_INT_IRQn)
 #define READ_TIMER_INST_LOAD_VALUE                                       (1249U)
-/* Defines for PTZ_TIMER */
-#define PTZ_TIMER_INST                                                   (TIMG8)
-#define PTZ_TIMER_INST_IRQHandler                               TIMG8_IRQHandler
-#define PTZ_TIMER_INST_INT_IRQN                                 (TIMG8_INT_IRQn)
-#define PTZ_TIMER_INST_LOAD_VALUE                                       (19999U)
 
 
 
@@ -307,7 +302,6 @@ void SYSCFG_DL_PWM_MOTOR_L_init(void);
 void SYSCFG_DL_ENCODER_TIMER_init(void);
 void SYSCFG_DL_PID_TIMER_init(void);
 void SYSCFG_DL_READ_TIMER_init(void);
-void SYSCFG_DL_PTZ_TIMER_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_UART_1_init(void);
 void SYSCFG_DL_UART_2_init(void);
