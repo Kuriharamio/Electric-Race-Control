@@ -14,11 +14,13 @@ void _sys_exit(int x)
 }
 #endif
 
+#ifdef USE_BLUETOOTH
 int fputc(int ch, FILE *stream)
 {
     Get_UART_INST(BLUETOOTH_UART_INDEX)->Send_Bit(Get_UART_INST(BLUETOOTH_UART_INDEX), (uint8_t)ch); 
     return ch;
 }
+#endif
 
 void softwareReset(void)
 {

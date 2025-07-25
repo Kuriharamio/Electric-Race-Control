@@ -163,9 +163,9 @@ extern "C" {
 #define GPIO_UART_2_IOMUX_TX                                     (IOMUX_PINCM36)
 #define GPIO_UART_2_IOMUX_RX_FUNC                      IOMUX_PINCM35_PF_UART3_RX
 #define GPIO_UART_2_IOMUX_TX_FUNC                      IOMUX_PINCM36_PF_UART3_TX
-#define UART_2_BAUD_RATE                                                  (9600)
-#define UART_2_IBRD_80_MHZ_9600_BAUD                                       (520)
-#define UART_2_FBRD_80_MHZ_9600_BAUD                                        (53)
+#define UART_2_BAUD_RATE                                                (115200)
+#define UART_2_IBRD_80_MHZ_115200_BAUD                                      (43)
+#define UART_2_FBRD_80_MHZ_115200_BAUD                                      (26)
 /* Defines for UART_3 */
 #define UART_3_INST                                                        UART2
 #define UART_3_INST_IRQHandler                                  UART2_IRQHandler
@@ -216,6 +216,10 @@ extern "C" {
 #define REMINDER_BUZZ_PORT                                               (GPIOA)
 #define REMINDER_BUZZ_PIN                                       (DL_GPIO_PIN_29)
 #define REMINDER_BUZZ_IOMUX                                       (IOMUX_PINCM4)
+/* Defines for LAZER: GPIOB.13 with pinCMx 30 on package pin 1 */
+#define REMINDER_LAZER_PORT                                              (GPIOB)
+#define REMINDER_LAZER_PIN                                      (DL_GPIO_PIN_13)
+#define REMINDER_LAZER_IOMUX                                     (IOMUX_PINCM30)
 /* Port definition for Pin Group ENCODER_R */
 #define ENCODER_R_PORT                                                   (GPIOB)
 

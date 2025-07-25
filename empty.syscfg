@@ -71,7 +71,7 @@ Board.peripheral.swclkPin.$assign = "PA20";
 Board.peripheral.swdioPin.$assign = "PA19";
 
 GPIO1.$name                              = "REMINDER";
-GPIO1.associatedPins.create(2);
+GPIO1.associatedPins.create(3);
 GPIO1.associatedPins[0].$name            = "LED";
 GPIO1.associatedPins[0].ioStructure      = "SD";
 GPIO1.associatedPins[0].assignedPin      = "22";
@@ -82,6 +82,8 @@ GPIO1.associatedPins[1].ioStructure      = "SD";
 GPIO1.associatedPins[1].internalResistor = "PULL_UP";
 GPIO1.associatedPins[1].assignedPort     = "PORTA";
 GPIO1.associatedPins[1].assignedPin      = "29";
+GPIO1.associatedPins[2].$name            = "LAZER";
+GPIO1.associatedPins[2].ioStructure      = "SD";
 
 GPIO2.port                               = "PORTB";
 GPIO2.$name                              = "ENCODER_R";
@@ -260,6 +262,7 @@ UART2.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric3";
 
 UART3.$name                    = "UART_2";
 UART3.enabledInterrupts        = ["RX"];
+UART3.targetBaudRate           = 115200;
 UART3.peripheral.rxPin.$assign = "PA13";
 UART3.peripheral.txPin.$assign = "PA14";
 UART3.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric9";
@@ -285,6 +288,7 @@ ADC122.peripheral.$suggestSolution           = "ADC1";
 ADC122.peripheral.adcPin0.$suggestSolution   = "PA15";
 GPIO1.associatedPins[0].pin.$suggestSolution = "PB22";
 GPIO1.associatedPins[1].pin.$suggestSolution = "PA29";
+GPIO1.associatedPins[2].pin.$suggestSolution = "PB13";
 GPIO2.associatedPins[0].pin.$suggestSolution = "PB17";
 GPIO2.associatedPins[1].pin.$suggestSolution = "PB18";
 GPIO3.associatedPins[0].pin.$suggestSolution = "PB21";

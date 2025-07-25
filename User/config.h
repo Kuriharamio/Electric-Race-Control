@@ -10,12 +10,25 @@
 //* 声光提示配置
 #define USE_LED  // 启用LED
 #define USE_BUZZ // 启用蜂鸣器
+#define USE_LAZER
 
 //* 蓝牙配置
-#define USE_BLUETOOTH
-#define BLUETOOTH_UART_INDEX 0  // 蓝牙串口索引号
-#define USE_UART_0              // 启用串口0
-#define BLUETOOTH_RX_LEN_MAX 20 // 蓝牙接收数据最大长度
+// #define USE_BLUETOOTH
+// #define BLUETOOTH_UART_INDEX 0  // 蓝牙串口索引号
+// #define USE_UART_0              // 启用串口0
+// #define BLUETOOTH_RX_LEN_MAX 20 // 蓝牙接收数据最大长度
+
+//* 飞特舵机串口配置
+// #define USE_FT_SERVO            // 启用飞特舵机
+// #define FT_SERVO_UART_INDEX 2   // 飞特舵机串口索引号
+// #define USE_UART_2              // 启用串口0
+// #define FT_SERVO_RX_LEN_MAX 100 // 飞特舵机接收数据最大长度
+// #define PROTECT_CURRENT 30      // 保护电流大小
+// #define PID_SERVO_FACTOR 1      // PID 时间间隔比值
+
+// #define USE_PTZ
+// #define SERVO_DOWN_INDEX 1 // 下舵机索引号
+// #define SERVO_UP_INDEX 2   // 上舵机索引号
 
 //* 串口屏配置
 #define USE_HMI
@@ -23,17 +36,10 @@
 #define USE_UART_1
 #define HMI_RX_LEN_MAX 100
 
-//* 飞特舵机串口配置
-// #define USE_FT_SERVO          // 启用飞特舵机
-// #define FT_SERVO_UART_INDEX 0 // 飞特舵机串口索引号
-// #define USE_UART_0            // 启用串口0
-// #define FT_SERVO_RX_LEN_MAX 100 // 飞特舵机接收数据最大长度
-// #define PROTECT_CURRENT 30 // 保护电流大小
-
 //* Raspberry 串口配置
 // #define USE_RASPBERRY
-// #define Raspberry_UART_INDEX 1   // Raspberry串口索引号
-// #define USE_UART_1          // 启用串口1
+// #define Raspberry_UART_INDEX 0   // Raspberry串口索引号
+// #define USE_UART_0          // 启用串口2
 // #define Raspberry_RX_LEN_MAX 100 // Raspberry接收数据最大长度
 
 //* IMU 串口配置
@@ -63,10 +69,6 @@
 //* PID 配置
 #define USE_PID                 // 启用PID
 #define PID_DELTA_T 0.03f       // PID 时间间隔（秒）
-#define PID_MOTOR_FACTOR 1      // 电机 PID 时间间隔比值
-#define PID_CAR_SPEED_FACTOR 2  // 小车速度 PID 时间间隔比值
-#define PID_CAR_POS_FACTOR 3    // 小车轮速 PID 时间间隔比值
-#define PID_CAR_FOLLOW_FACTOR 2 // 小车跟随 PID 时间间隔比值
 
 //* 编码器配置
 #define USE_ENCODER           // 启用编码器
@@ -80,7 +82,12 @@
 #define WHEEL_Per_Pulse 13.0f    // 每转脉冲数
 #define WHEEL_Ferq_Rate 4
 #define MAX_LINEAR_SPEED 0.8f
-#define MAX_ANGULAR_SPEED 0.8 / (WHEEL_DISTANCE) // 1.5 * 3.14f //
+#define MAX_ANGULAR_SPEED 0.8 / (WHEEL_DISTANCE) // 1.5 * 3.14f
+
+#define PID_MOTOR_FACTOR 1      // 电机 PID 时间间隔比值
+#define PID_CAR_SPEED_FACTOR 2  // 小车速度 PID 时间间隔比值
+#define PID_CAR_POS_FACTOR 3    // 小车轮速 PID 时间间隔比值
+#define PID_CAR_FOLLOW_FACTOR 2 // 小车跟随 PID 时间间隔比值
 
 //* PurePursuit 配置
 #define USE_PURE_PURSUIT

@@ -90,6 +90,12 @@ void PID_TIMER_INST_IRQHandler(void)
 
 #endif
 
+#ifdef USE_PTZ
+    if(Get_PTZ_INST()->is_inited){
+        Get_PTZ_INST()->Update(Get_PTZ_INST());
+    }
+#endif
+
 #ifdef USE_SERVO
         // pClass_Servo servo_up = Get_Servo_INST(SERVO_UP_INDEX);
         if (Get_Servo_INST(SERVO_UP_INDEX)->is_inited)

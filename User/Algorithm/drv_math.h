@@ -27,6 +27,7 @@ float Math_Sinc(float x);
 
 void Math_Constrain_float(float *x, float Min, float Max);
 void Math_Constrain_int(int *x, int Min, int Max);
+void Math_Constrain_uint16(uint16_t *x, uint16_t Min, uint16_t Max);
 
 float Math_Abs_float(float x);
 int Math_Abs_int(int x);

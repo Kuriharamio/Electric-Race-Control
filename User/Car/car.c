@@ -49,6 +49,7 @@ pClass_Car Create_Car(void)
 
     car->Judge_Mode = Car_Judge_Mode;
     car->Update_Mode = Car_Update_Mode;
+    car->Update_Task = Car_Update_Task;
 
     car->Update_Follow_PID = Car_Update_Follow_PID;
     // car->Update_Speed_PID = Car_Update_Speed_PID;
@@ -329,17 +330,27 @@ void Car_Update_Mode(pClass_Car this, CONTROL_MODE mode)
 }
 
 /**
+ * @brief 小车任务更新
+ *
+ * @param this
+ */
+void Car_Update_Task(pClass_Car this, uint8_t task_id)
+{
+    this->Task_ID = task_id;
+    this->Finish_Current_Mode = true;
+    this->Task_1_Step = 0;
+    this->Task_2_Step = 0;
+    this->Task_3_Step = 0;
+    this->Task_4_Step = 0;
+}
+
+/**
  * @brief 小车模式判断
  *
  * @param this
  */
 void Car_Judge_Mode(pClass_Car this)
 {
-    static uint8_t Task_1_Step = 0;
-    static uint8_t Task_2_Step = 0;
-    static uint8_t Task_3_Step = 0;
-    static uint8_t Task_4_Step = 0;
-
     switch (this->Mode)
     {
     case STOP:
@@ -383,8 +394,8 @@ void Car_Judge_Mode(pClass_Car this)
     switch (this->Task_ID)
     {
     case 1:
-        Task_1_Step++;
-        switch (Task_1_Step)
+        this->Task_1_Step++;
+        switch (this->Task_1_Step)
         {
         case 1: //* A->C
 #ifdef USE_IMU_IN_ANGULAR_PID
@@ -417,7 +428,8 @@ void Car_Judge_Mode(pClass_Car this)
             break;
         case 7: //* 结束
             this->Update_Mode(this, STOP);
-            Task_1_Step--;
+            this->Task_1_Step = 0;
+            this->Task_ID = 0;
             break;
         default:
             this->Finish_Current_Mode = true;
@@ -425,8 +437,8 @@ void Car_Judge_Mode(pClass_Car this)
         }
         break;
     case 2:
-        Task_2_Step++;
-        switch (Task_2_Step)
+        this->Task_2_Step++;
+        switch (this->Task_2_Step)
         {
         case 1: //* 直走
 #ifdef USE_IMU_IN_ANGULAR_PID
@@ -467,15 +479,16 @@ void Car_Judge_Mode(pClass_Car this)
             break;
         case 7: //* 结束
             this->Update_Mode(this, STOP);
-            Task_2_Step--;
+            this->Task_2_Step = 0;
+            this->Task_ID = 0;
             break;
         default:
             break;
         }
         break;
     case 3:
-        Task_3_Step++;
-        switch (Task_3_Step)
+        this->Task_3_Step++;
+        switch (this->Task_3_Step)
         {
         case 1: //* 转
 #ifdef USE_IMU_IN_ANGULAR_PID
@@ -534,15 +547,16 @@ void Car_Judge_Mode(pClass_Car this)
             break;
         case 6: //* 结束
             this->Update_Mode(this, STOP);
-            Task_3_Step--;
+            this->Task_3_Step = 0;
+            this->Task_ID = 0;
             break;
         default:
             break;
         }
         break;
     case 4:
-        Task_4_Step++;
-        switch (Task_4_Step)
+        this->Task_4_Step++;
+        switch (this->Task_4_Step)
         {
         case 1: //* 转
 #ifdef USE_IMU_IN_ANGULAR_PID
@@ -561,7 +575,8 @@ void Car_Judge_Mode(pClass_Car this)
             break;
         case 3: //* 结束
             this->Update_Mode(this, STOP);
-            Task_4_Step--;
+            this->Task_4_Step = 0;
+            this->Task_ID = 0;
             break;
         default:
             break;

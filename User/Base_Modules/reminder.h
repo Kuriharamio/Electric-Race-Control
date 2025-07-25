@@ -22,4 +22,9 @@ void BUZZ(REMINDER_STATE state);
 extern REMINDER_STATE BUZZ_STATE;
 #endif
 
+#ifdef USE_LAZER
+void LAZER(REMINDER_STATE state);
+extern REMINDER_STATE LAZER_STATE;
+#endif
+
 #endif // __LED_H__

@@ -4,6 +4,8 @@
 #include "config.h"
 #include "SCSLib/SCServo.h"
 #include "BSP/uart.h"
+#include "Algorithm/pid.h"
+
 typedef enum
 {
     POS_MODE_ABSOLUTE, // 绝对位置模式
@@ -44,6 +46,11 @@ typedef struct Class_FT_Servo
     uint16_t Move;
     uint16_t Current;
 
+    float Error; // PID循迹用
+    pClass_PID PID;
+
+    bool is_inited;
+
     void (*Init)(struct Class_FT_Servo *this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Max_Pos, uint16_t Min_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc);
     void (*Set_Mid_Pos)(struct Class_FT_Servo *this);
     void (*Set_Min_Pos)(struct Class_FT_Servo *this, uint16_t pos);
@@ -56,6 +63,7 @@ typedef struct Class_FT_Servo
     bool (*Ping)(struct Class_FT_Servo *this);
     void (*FeedBack)(struct Class_FT_Servo *this);
     void (*Safety_Check)(struct Class_FT_Servo *this);
+    void (*Update_PID)(struct Class_FT_Servo *this);
 
 } Class_FT_Servo, *pClass_FT_Servo;
 
@@ -74,8 +82,8 @@ void FT_Servo_Set_Target_Status(pClass_FT_Servo this, uint16_t pos, uint16_t spd
 bool FT_Servo_Ping(pClass_FT_Servo this);
 void FT_Servo_FeedBack(pClass_FT_Servo this);
 void FT_Servo_Safety_Check(pClass_FT_Servo this);
-void FT_Servo_Update(void);
 void FT_Servo_Data_Process(pClass_UART this);
+void FT_Servo_Update_PID(pClass_FT_Servo this);
 
 void ftUart_Send(uint8_t *nDat, int nLen);
 int ftUart_Read(uint8_t *nDat, int nLen);

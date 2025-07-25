@@ -8,6 +8,8 @@
 #include "INST.h"
 #include "SCS.h"
 
+#ifdef USE_FT_SERVO
+
 static uint8_t Level =1;//舵机返回等级1,默认写指令开启应答
 static uint8_t End = 0;//处理器大小端结构,默认小端存储格式
 static uint8_t u8Status;//舵机状态
@@ -347,3 +349,4 @@ int	Ack(uint8_t ID)
 	return 1;
 }
 
+#endif

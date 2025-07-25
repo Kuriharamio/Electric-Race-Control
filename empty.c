@@ -11,6 +11,7 @@
 #include "Base_Modules/adc_button.h"
 #include "Base_Modules/reminder.h"
 #include "Base_Modules/hmi.h"
+#include "Base_Modules/ptz.h"
 
 #include "Car/car.h"
 
@@ -73,64 +74,27 @@ int main(void)
   Adc_Button->Configure_Callback(Adc_Button, BUTTON_5, Test_Button_Event);            // 配置按键5的回调函数
 #endif
 
-  // FT舵机配置
-  // pClass_UART FT_Servo_Controller = Create_UART(FT_SERVO_UART_INDEX);
-  // FT_Servo_Controller->Init(FT_Servo_Controller, FT_SERVO_RX_LEN_MAX, 1);
-  // FT_Servo_Controller->Configure_Mode(FT_Servo_Controller, DEBUG_STRING);
-  // FT_Servo_Controller->Configure_Callback(FT_Servo_Controller, FT_Servo_Data_Process);
-  // pClass_FT_Servo servo_1 = Create_FT_Servo(1);
-  // pClass_FT_Servo servo_2 = Create_FT_Servo(2);
-  // servo_1->Init(servo_1, POS_MODE_ABSOLUTE, 0, 4095, 0, 60, 0, 50);
-  // servo_2->Init(servo_2, POS_MODE_ABSOLUTE, 0, 4095, 0, 60, 0, 50);
-
+#ifdef USE_PTZ
+  pClass_PTZ PTZ = Create_PTZ();
+  PTZ->Init(PTZ);
+  PTZ->Servo_Up->Set_Target_Status(PTZ->Servo_Up, 4095, 30, 20);
+  PTZ->Servo_Down->Set_Target_Status(PTZ->Servo_Down, 4095, 30, 20);
+#endif
   while (1)
   {
+#ifdef USE_BLUETOOTH
     Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
+#endif
+#ifdef USE_HMI
     HMI->Send(HMI, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
+#endif
 
-    static Last_Task = Task_None;
-    if (Now_Task != Last_Task)
+    if(BUZZ_STATE == BEEP)
     {
       BUZZ(BEEP);
-      Last_Task = Now_Task;
-      switch (Now_Task)
-      {
-      case Task_1:
-      {
-        Car->Task_ID = 1;
-      }
-      break;
-      case Task_2:
-      {
-        Car->Task_ID = 2;
-      }
-      break;
-      case Task_3:
-      {
-        Car->Task_ID = 3;
-      }
-      break;
-      case Task_4:
-      {
-        Car->Task_ID = 4;
-      }
-      break;
-      case Task_5:
-      {
-        Car->Task_ID = 5;
-      }
-      break;
-      case Task_6:
-      {
-        Car->Task_ID = 6;
-      }
-      break;
-      default:
-        break;
-      }
+      BUZZ_STATE = OFF;
     }
 
-    
     delay_ms(10);
   }
 }

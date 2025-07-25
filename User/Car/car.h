@@ -40,6 +40,10 @@ typedef struct Class_Car
 
     bool Finish_Current_Mode;
     uint8_t Task_ID;
+    uint8_t Task_1_Step;
+    uint8_t Task_2_Step;
+    uint8_t Task_3_Step;
+    uint8_t Task_4_Step;
 
     pClass_GraySensor gray_scale_sensor;
 
@@ -52,6 +56,7 @@ typedef struct Class_Car
 
     void (*Judge_Mode)(struct Class_Car *this);
     void (*Update_Mode)(struct Class_Car *this, CONTROL_MODE mode);
+    void (*Update_Task)(struct Class_Car *this, uint8_t task_id);
 
     void (*Upadate_Controller)(struct Class_Car *this);
 
@@ -79,6 +84,7 @@ void Car_Update_Angle_Position_PID_IMU(pClass_Car this);
 void Car_Update_XY_Position_PID(pClass_Car this);
 // void Car_Update_Speed_PID(pClass_Car this);
 void Car_Update_Mode(pClass_Car this, CONTROL_MODE mode);
+void Car_Update_Task(pClass_Car this, uint8_t task_id);
 void Car_Judge_Mode(pClass_Car this);
 void Car_Upadate_Controller(pClass_Car this);
 

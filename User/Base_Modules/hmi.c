@@ -3,15 +3,14 @@
 
 #ifdef USE_HMI
 
-TASK Now_Task = Task_None;
-
 void Set_Task_1(void)
 {
 #ifdef USE_RASPBERRY
     pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
     Raspberry_UART->Send_Bit(Raspberry_UART, 1);
 #endif
-    Now_Task = Task_1;
+    Get_Car_Handle()->Update_Task(Get_Car_Handle(), 1);
+    BUZZ_STATE = BEEP;
 }
 
 void Set_Task_2(void)
@@ -20,7 +19,8 @@ void Set_Task_2(void)
     pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
     Raspberry_UART->Send_Bit(Raspberry_UART, 2);
 #endif
-    Now_Task = Task_2;
+    Get_Car_Handle()->Update_Task(Get_Car_Handle(), 2);
+    BUZZ_STATE = BEEP;
 }
 
 void Set_Task_3(void)
@@ -29,7 +29,8 @@ void Set_Task_3(void)
     pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
     Raspberry_UART->Send_Bit(Raspberry_UART, 3);
 #endif
-    Now_Task = Task_3;
+    Get_Car_Handle()->Update_Task(Get_Car_Handle(), 3);
+    BUZZ_STATE = BEEP;
 }
 
 void Set_Task_4(void)
@@ -38,7 +39,8 @@ void Set_Task_4(void)
     pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
     Raspberry_UART->Send_Bit(Raspberry_UART, 4);
 #endif
-    Now_Task = Task_4;
+    Get_Car_Handle()->Update_Task(Get_Car_Handle(), 4);
+    BUZZ_STATE = BEEP;
 }
 
 void Set_Task_5(void)
@@ -47,7 +49,9 @@ void Set_Task_5(void)
     pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
     Raspberry_UART->Send_Bit(Raspberry_UART, 5);
 #endif
-    Now_Task = Task_4;
+    Get_Car_Handle()->Update_Task(Get_Car_Handle(), 5);
+    BUZZ_STATE = BEEP;
+    LAZER(OFF);
 }
 
 void Set_Task_6(void)
@@ -56,7 +60,9 @@ void Set_Task_6(void)
     pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
     Raspberry_UART->Send_Bit(Raspberry_UART, 6);
 #endif
-    Now_Task = Task_4;
+    Get_Car_Handle()->Update_Task(Get_Car_Handle(), 6);
+    BUZZ_STATE = BEEP;
+    LAZER(ON);
 }
 
 /**

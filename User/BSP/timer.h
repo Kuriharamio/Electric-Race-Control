@@ -29,4 +29,8 @@ void READ_TIMER_INST_IRQHandler(void); // ADC按键定时器中断处理函数
 void READ_TIMER_INST_IRQHandler(void);
 #endif
 
+#ifdef USE_PTZ
+#include "Base_Modules/ptz.h"
+#endif
+
 #endif // _TIMER_H_

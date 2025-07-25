@@ -174,6 +174,8 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 		 DL_GPIO_INVERSION_DISABLE, DL_GPIO_RESISTOR_PULL_UP,
 		 DL_GPIO_DRIVE_STRENGTH_LOW, DL_GPIO_HIZ_DISABLE);
 
+    DL_GPIO_initDigitalOutput(REMINDER_LAZER_IOMUX);
+
     DL_GPIO_initDigitalInputFeatures(ENCODER_R_R_A_IOMUX,
 		 DL_GPIO_INVERSION_DISABLE, DL_GPIO_RESISTOR_PULL_UP,
 		 DL_GPIO_HYSTERESIS_DISABLE, DL_GPIO_WAKEUP_DISABLE);
@@ -225,6 +227,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
     DL_GPIO_enableOutput(GPIOA, REMINDER_BUZZ_PIN |
 		MOTOR_DRV_R_IN1_PIN);
     DL_GPIO_clearPins(GPIOB, REMINDER_LED_PIN |
+		REMINDER_LAZER_PIN |
 		MOTOR_DRV_STBY_PIN |
 		MOTOR_DRV_L_IN1_PIN |
 		MOTOR_DRV_L_IN2_PIN |
@@ -234,6 +237,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
 		GRAY_SCALE_AD2_PIN);
     DL_GPIO_setPins(GPIOB, HC_SR04_TRIG_PIN);
     DL_GPIO_enableOutput(GPIOB, REMINDER_LED_PIN |
+		REMINDER_LAZER_PIN |
 		MOTOR_DRV_STBY_PIN |
 		MOTOR_DRV_L_IN1_PIN |
 		MOTOR_DRV_L_IN2_PIN |
@@ -575,11 +579,11 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_2_init(void)
     DL_UART_Main_init(UART_2_INST, (DL_UART_Main_Config *) &gUART_2Config);
     /*
      * Configure baud rate by setting oversampling and baud rate divisors.
-     *  Target baud rate: 9600
-     *  Actual baud rate: 9600.1
+     *  Target baud rate: 115200
+     *  Actual baud rate: 115190.78
      */
     DL_UART_Main_setOversampling(UART_2_INST, DL_UART_OVERSAMPLING_RATE_16X);
-    DL_UART_Main_setBaudRateDivisor(UART_2_INST, UART_2_IBRD_80_MHZ_9600_BAUD, UART_2_FBRD_80_MHZ_9600_BAUD);
+    DL_UART_Main_setBaudRateDivisor(UART_2_INST, UART_2_IBRD_80_MHZ_115200_BAUD, UART_2_FBRD_80_MHZ_115200_BAUD);
 
 
     /* Configure Interrupts */

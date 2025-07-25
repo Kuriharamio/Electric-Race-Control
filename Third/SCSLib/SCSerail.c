@@ -5,6 +5,7 @@
  * зїеп: txl
  */
 #include <stdint.h>
+#ifdef USE_FT_SERVO
 
 uint8_t wBuf[128];
 uint8_t wLen = 0;
@@ -46,3 +47,4 @@ void wFlushSCS()
 		wLen = 0;
 	}
 }
+#endif

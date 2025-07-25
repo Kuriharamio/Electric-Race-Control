@@ -54,6 +54,9 @@ pClass_FT_Servo Create_FT_Servo(uint8_t ID)
     temp_ptr->Ping = FT_Servo_Ping;
     temp_ptr->FeedBack = FT_Servo_FeedBack;
     temp_ptr->Safety_Check = FT_Servo_Safety_Check;
+    temp_ptr->Update_PID = FT_Servo_Update_PID;
+
+    temp_ptr->PID = create_PID();
 
     return temp_ptr;
 }
@@ -77,6 +80,8 @@ pClass_FT_Servo Get_FT_Servo_Handle(uint8_t ID)
 
 void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Max_Pos, uint16_t Min_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc)
 {
+    this->PID->PID_Init(this->PID, 0.05f, 0.0f, 0.00f, 0.00f, 2047.0f, 2047.0f, PID_DELTA_T * PID_SERVO_FACTOR, 0.00f, 0.00f, 0.00f, 0.00f, PID_D_First_DISABLE);
+
     setEnd(0);              // SMS_STS舵机为小端存储结构
     this->Status = OFFLINE; // 舵机初始状态为离线
 
@@ -116,6 +121,8 @@ void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Ma
     this->Reset_Pos = this->Pos;
     this->Pos_Mode = Pos_Mode;
 
+    this->Set_Mid_Pos(this);
+
     switch (this->Pos_Mode)
     {
     case POS_MODE_ABSOLUTE:
@@ -135,8 +142,9 @@ void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Ma
     this->Target_Pos = this->Pos;
     this->Target_Spd = 0;
     this->Target_Acc = 0;
-}
 
+    this->is_inited = true;
+}
 void FT_Servo_Set_Max_Pos(pClass_FT_Servo this, uint16_t pos)
 {
     uint16_t pos_temp = pos;
@@ -149,21 +157,18 @@ void FT_Servo_Set_Min_Pos(pClass_FT_Servo this, uint16_t pos)
     Math_Constrain_uint16(&pos_temp, 0, 4095);
     this->Min_Pos = pos;
 }
-
 void FT_Servo_Set_Max_Spd(pClass_FT_Servo this, uint16_t spd)
 {
     uint16_t spd_temp = spd;
     Math_Constrain_uint16(&spd_temp, 0, 90);
     this->Max_Spd = spd;
 }
-
 void FT_Servo_Set_Min_Spd(pClass_FT_Servo this, uint16_t spd)
 {
     uint16_t spd_temp = spd;
     Math_Constrain_uint16(&spd_temp, 0, 90);
     this->Min_Spd = spd;
 }
-
 void FT_Servo_Set_Max_Acc(pClass_FT_Servo this, uint16_t acc)
 {
     uint16_t acc_temp = acc;
@@ -176,12 +181,10 @@ void FT_Servo_Set_Min_Acc(pClass_FT_Servo this, uint16_t acc)
     Math_Constrain_uint16(&acc_temp, 0, 250);
     this->Min_Acc = acc;
 }
-
 void FT_Servo_Set_Mid_Pos(pClass_FT_Servo this)
 {
     CalibrationOfs(this->Servo_ID);
 }
-
 bool FT_Servo_Ping(pClass_FT_Servo this)
 {
     Ping(this->Servo_ID);
@@ -217,7 +220,6 @@ void FT_Servo_Safety_Check(pClass_FT_Servo this)
         this->Status = PROTECTED;
     }
 }
-
 void FT_Servo_Set_Target_Status(pClass_FT_Servo this, uint16_t pos, uint16_t spd, uint16_t acc)
 {
     uint16_t pos_temp = pos;
@@ -230,64 +232,18 @@ void FT_Servo_Set_Target_Status(pClass_FT_Servo this, uint16_t pos, uint16_t spd
     Math_Constrain_uint16(&acc_temp, this->Min_Acc, this->Max_Acc);
     this->Target_Acc = acc;
 }
-
-uint8_t ID[2];
-int16_t Position[2];
-uint16_t Speed[2];
-uint8_t ACC[2];
-
-void FT_Servo_Update(void)
+void FT_Servo_Update_PID(pClass_FT_Servo this)
 {
-    if (_FT_SERVO_1.Status == ONLINE || _FT_SERVO_1.Status == PROTECTED)
-    {
-        _FT_SERVO_1.FeedBack(&_FT_SERVO_1); // 更新舵机反馈信息
-        _FT_SERVO_1.Safety_Check(&_FT_SERVO_1);
-        if (_FT_SERVO_1.Status == PROTECTED)
-        {
-            _FT_SERVO_1.Set_Target_Status(&_FT_SERVO_1, _FT_SERVO_1.Reset_Pos, 30, 50);
-        }
-        {
-            ID[0] = _FT_SERVO_1.Servo_ID;
-            Position[0] = _FT_SERVO_1.Target_Pos;
-            Speed[0] = _FT_SERVO_1.Target_Spd;
-            ACC[0] = _FT_SERVO_1.Target_Acc;
-        }
-    }
-    else
-    {
-        ID[0] = 0; // 舵机离线
-        Position[0] = 0;
-        Speed[0] = 0;
-        ACC[0] = 0;
-    }
+    if (this->Status != ONLINE)
+        return;
 
-    if (_FT_SERVO_2.Status == ONLINE || _FT_SERVO_2.Status == PROTECTED)
-    {
-        _FT_SERVO_2.FeedBack(&_FT_SERVO_2); // 更新舵机反馈信息
-        _FT_SERVO_2.Safety_Check(&_FT_SERVO_2);
-        if (_FT_SERVO_2.Status == PROTECTED)
-        {
-            _FT_SERVO_2.Set_Target_Status(&_FT_SERVO_2, _FT_SERVO_2.Reset_Pos, 30, 50);
-        }
+    this->PID->Set_Target(this->PID, 0);
+    this->PID->Set_Now(this->PID, this->Error);
+    this->PID->Update_Value(this->PID);
 
-        {
-            ID[1] = _FT_SERVO_2.Servo_ID;
-            Position[1] = _FT_SERVO_2.Target_Pos;
-            Speed[1] = _FT_SERVO_2.Target_Spd;
-            ACC[1] = _FT_SERVO_2.Target_Acc;
-        }
-    }
-    else
-    {
-        ID[1] = 0; // 舵机离线
-        Position[1] = 0;
-        Speed[1] = 0;
-        ACC[1] = 0;
-    }
-
-    SyncWritePosEx(ID, 2, Position, Speed, ACC);
+    float output = this->PID->Get_PID_Out(this->PID) + this->Reset_Pos;
+    this->Set_Target_Status(this, (uint16_t)(output), 10, 20);
 }
-
 void FT_Servo_Data_Process(pClass_UART this)
 {
     Rx_Buffer[Last_Write_Index] = this->current_byte;
@@ -298,6 +254,9 @@ void FT_Servo_Data_Process(pClass_UART this)
         Last_Write_Index = 0; // 防止缓冲区溢出
     }
 }
+
+
+
 
 // FT舵机串口指令发送函数
 void ftUart_Send(uint8_t *nDat, int nLen)

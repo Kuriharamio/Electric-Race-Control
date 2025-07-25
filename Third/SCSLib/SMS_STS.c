@@ -10,6 +10,8 @@
 #include "SCS.h"
 #include "SMS_STS.h"
 
+#ifdef USE_FT_SERVO
+
 static uint8_t Mem[SMS_STS_PRESENT_CURRENT_H - SMS_STS_PRESENT_POSITION_L + 1];
 int WritePosEx(uint8_t ID, int16_t Position, uint16_t Speed, uint8_t ACC)
 {
@@ -239,5 +241,4 @@ int ReadCurrent(int ID)
 	return Current;
 }
 
-
-
+#endif

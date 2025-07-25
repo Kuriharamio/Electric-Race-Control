@@ -170,6 +170,25 @@ void Math_Constrain_int(int *x, int Min, int Max)
 }
 
 /**
+ * @brief 限幅函数 (uint16_t)
+ *
+ * @param x 传入数据
+ * @param Min 最小值
+ * @param Max 最大值
+ */
+void Math_Constrain_uint16(uint16_t *x, uint16_t Min, uint16_t Max)
+{
+    if (*x < Min)
+    {
+        *x = Min;
+    }
+    else if (*x > Max)
+    {
+        *x = Max;
+    }
+}
+
+/**
  * @brief 求绝对值 (float)
  *
  * @param x 传入数据

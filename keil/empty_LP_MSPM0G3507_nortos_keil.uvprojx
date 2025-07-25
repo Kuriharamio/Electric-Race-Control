@@ -470,11 +470,6 @@
               <FilePath>..\User\Base_Modules\imu.c</FilePath>
             </File>
             <File>
-              <FileName>k230_serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Base_Modules\k230_serial.c</FilePath>
-            </File>
-            <File>
               <FileName>motor.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Base_Modules\motor.c</FilePath>
@@ -523,6 +518,31 @@
               <FileName>car.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Car\car.c</FilePath>
+            </File>
+            <File>
+              <FileName>ptz.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\ptz.c</FilePath>
+            </File>
+            <File>
+              <FileName>raspberry_serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Base_Modules\raspberry_serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>SCS.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Third\SCSLib\SCS.c</FilePath>
+            </File>
+            <File>
+              <FileName>SCSerail.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Third\SCSLib\SCSerail.c</FilePath>
+            </File>
+            <File>
+              <FileName>SMS_STS.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Third\SCSLib\SMS_STS.c</FilePath>
             </File>
           </Files>
         </Group>
