@@ -80,7 +80,7 @@ pClass_FT_Servo Get_FT_Servo_Handle(uint8_t ID)
 
 void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Max_Pos, uint16_t Min_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc)
 {
-    this->PID->PID_Init(this->PID, 0.005f, 0.0f, 0.8f, 0.00f, 2047.0f, 2047.0f, PID_SERVO_DELTA_T * 3, 0.00f, 0.00f, 0.00f, 0.00f, PID_D_First_DISABLE);
+    this->PID->PID_Init(this->PID, 0.005f, 0.0f, 0.0f, 0.00f, 2047.0f, 2047.0f, PID_SERVO_DELTA_T * 3, 0.00f, 0.00f, 0.00f, 0.00f, PID_D_First_DISABLE);
 
     setEnd(0);              // SMS_STS舵机为小端存储结构
     this->Status = OFFLINE; // 舵机初始状态为离线
