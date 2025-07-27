@@ -10,7 +10,7 @@ void Set_Task_1(void)
     Raspberry_UART->Send_Bit(Raspberry_UART, 1);
 #endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 1);
-    BUZZ_STATE = BEEP;
+    LED_STATE = BEEP;
 }
 
 void Set_Task_2(void)
@@ -20,7 +20,7 @@ void Set_Task_2(void)
     Raspberry_UART->Send_Bit(Raspberry_UART, 2);
 #endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 2);
-    BUZZ_STATE = BEEP;
+    LED_STATE = BEEP;
 }
 
 void Set_Task_3(void)
@@ -30,7 +30,7 @@ void Set_Task_3(void)
     Raspberry_UART->Send_Bit(Raspberry_UART, 3);
 #endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 3);
-    BUZZ_STATE = BEEP;
+    LED_STATE = BEEP;
 }
 
 void Set_Task_4(void)
@@ -40,7 +40,7 @@ void Set_Task_4(void)
     Raspberry_UART->Send_Bit(Raspberry_UART, 4);
 #endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 4);
-    BUZZ_STATE = BEEP;
+    LED_STATE = BEEP;
 }
 
 void Set_Task_5(void)
@@ -50,7 +50,7 @@ void Set_Task_5(void)
     Raspberry_UART->Send_Bit(Raspberry_UART, 5);
 #endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 5);
-    BUZZ_STATE = BEEP;
+    LED_STATE = BEEP;
     LAZER(OFF);
 }
 
@@ -61,7 +61,7 @@ void Set_Task_6(void)
     Raspberry_UART->Send_Bit(Raspberry_UART, 6);
 #endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 6);
-    BUZZ_STATE = BEEP;
+    LED_STATE = BEEP;
     LAZER(ON);
 }
 

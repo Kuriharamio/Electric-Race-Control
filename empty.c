@@ -125,33 +125,34 @@ int main(void)
   SYSCFG_DL_init();
   Enable_All_Interrupt();
 
-  delay_ms(1000);
 #ifdef USE_CAR
   pClass_Car Car = Create_Car(); // 创建小车对象
   Car->Init(Car);                // 初始化小车对象
 #endif
-
+  float a = 10.0f;
+  float b = 50.0f;  
 //* 蓝牙配置
 #ifdef USE_BLUETOOTH
-  float a = 0;
   pClass_UART Bluetooth_Debuger = Create_UART(BLUETOOTH_UART_INDEX);               // 获取蓝牙对象实例
   Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 4);             // 初始化蓝牙对象
   Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE);                // 配置调试模式
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback); // 配置回调函数
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(a), " ");
-  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(b), " ");
-  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(c), " ");
-  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(d), " ");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->gray_scale_sensor->Follow_Error), "Follow_Error");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->IMU_Yaw), "IMU_Yaw");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(a), "a");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(b), "b");
 #endif
 
 //* HMI配置
 #ifdef USE_HMI
   pClass_UART HMI = Create_UART(HMI_UART_INDEX);
-  HMI->Init(HMI, HMI_RX_LEN_MAX, 2);
+  HMI->Init(HMI, HMI_RX_LEN_MAX, 4);
   HMI->Configure_Mode(HMI, HMI_WATCH);
   HMI->Configure_Callback(HMI, HMI_Rx_Callback);
   HMI->Bind_Param_With_Id(HMI, 0, &(Car->gray_scale_sensor->Follow_Error), "Follow_Error");
   HMI->Bind_Param_With_Id(HMI, 1, &(Car->IMU_Yaw), "IMU_Yaw");
+  HMI->Bind_Param_With_Id(HMI, 2, &(a), "a");
+  HMI->Bind_Param_With_Id(HMI, 3, &(b), "b");
 #endif
 
 //* IMU配置
@@ -166,6 +167,8 @@ int main(void)
 
 //* 云台配置
 #ifdef USE_PTZ
+
+  delay_ms(1000);
   pClass_PTZ PTZ = Create_PTZ();
   PTZ->Init(PTZ);
   PTZ->Servo_Up->Set_Target_Status(PTZ->Servo_Up, 2047, 30, 0);
@@ -197,19 +200,27 @@ int main(void)
   while (1)
   {
 #ifdef USE_BLUETOOTH
-    a = (float)(ADC_Button->Current_ADC_Value);
     Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 #endif
 #ifdef USE_HMI
     HMI->Send(HMI, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 #endif
 
-    if (BUZZ_STATE == BEEP)
+    if (LED_STATE == BEEP)
     {
-      BUZZ(BEEP);
-      BUZZ_STATE = OFF;
+      LED(BEEP);
+      LED_STATE = OFF;
     }
 
+    {
+      static int cnt = 0;
+      cnt++;
+      if(cnt==500){
+        float temp = a;
+        a = b;
+        b = temp;
+      }
+    }
     // {
     //   if(ptz_task_1_flag){
     //     if(PTZ->is_inited){

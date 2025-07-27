@@ -252,23 +252,23 @@ void GraySensor_Update(pClass_GraySensor this)
     //     }
     // }
     // else
-    if (black == 0)
-    {
-        white_times++;
-        // if (white_times > 100) // 防止线比传感器间隔细，导致误判为白色区域
-        // {
-        //     // this->Linear_Speed_Max = -1.5;
-        //     // this->undetected = true;
-        //     // this->Follow_Error = 80.0f * this->Search_Direction;
-        // }
-        if (white_times > 20)
-        {
-            white_times = 0;
-            //* 全白状态处理
-            this->Finish = true;
-        }
-    }
-    else
+    // if (black == 0)
+    // {
+    //     white_times++;
+    //     // if (white_times > 100) // 防止线比传感器间隔细，导致误判为白色区域
+    //     // {
+    //     //     // this->Linear_Speed_Max = -1.5;
+    //     //     // this->undetected = true;
+    //     //     // this->Follow_Error = 80.0f * this->Search_Direction;
+    //     // }
+    //     if (white_times > 20)
+    //     {
+    //         white_times = 0;
+    //         //* 全白状态处理
+    //         this->Finish = true;
+    //     }
+    // }
+    // else
     {
         this->undetected = false;
         black_times = 0;

@@ -23,6 +23,11 @@ void LED(REMINDER_STATE state)
     case TOGGLE:
         DL_GPIO_togglePins(REMINDER_LED_PORT, REMINDER_LED_PIN);
         break;
+    case BEEP:
+        DL_GPIO_setPins(REMINDER_LED_PORT, REMINDER_LED_PIN);
+        delay_ms(200);
+        DL_GPIO_clearPins(REMINDER_LED_PORT, REMINDER_LED_PIN);
+        break;
     default:
         break;
     }
