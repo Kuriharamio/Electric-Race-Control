@@ -3,7 +3,9 @@
 
 #include "ti_msp_dl_config.h"
 
+extern volatile unsigned int system_time_ms;
+
 void delay_ms(unsigned long ms);
-void delay_us(unsigned long us) ;
+// void delay_us(unsigned long us) ;
 
 #endif // __DELAY_H__

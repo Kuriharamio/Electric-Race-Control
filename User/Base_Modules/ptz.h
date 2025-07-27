@@ -23,6 +23,7 @@ typedef struct Class_PTZ {
     void (*Update)(struct Class_PTZ *this);
     void (*Draw_Img)(struct Class_PTZ *this);
     void (*Draw_Func)(struct Class_PTZ *this);
+    void (*Draw_Num)(struct Class_PTZ *this, double num, bool is_float, char *pos);
 
 } Class_PTZ, *pClass_PTZ;
 
@@ -32,5 +33,5 @@ void PTZ_Init(pClass_PTZ this);
 void PTZ_Update(pClass_PTZ this);
 void PTZ_Draw_Img(pClass_PTZ this);
 void PTZ_Draw_Func(pClass_PTZ this);
-
+void PTZ_Draw_Num(pClass_PTZ this, double num, bool is_float, char *pos);
 #endif

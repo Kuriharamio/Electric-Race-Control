@@ -5,7 +5,7 @@
 
 #include "Algorithm/pid.h"
 
-#ifdef USE_PID
+#if defined(USE_PID) || defined(USE_PID_SERVO)
 
 /**
  * @brief 创建一个PID对象

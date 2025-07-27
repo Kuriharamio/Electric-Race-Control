@@ -17,7 +17,6 @@ const GPIO2         = GPIO.addInstance();
 const GPIO3         = GPIO.addInstance();
 const GPIO4         = GPIO.addInstance();
 const GPIO5         = GPIO.addInstance();
-const GPIO6         = GPIO.addInstance();
 const PWM           = scripting.addModule("/ti/driverlib/PWM", {}, false);
 const PWM1          = PWM.addInstance();
 const PWM2          = PWM.addInstance();
@@ -27,6 +26,7 @@ const TIMER         = scripting.addModule("/ti/driverlib/TIMER", {}, false);
 const TIMER1        = TIMER.addInstance();
 const TIMER2        = TIMER.addInstance();
 const TIMER3        = TIMER.addInstance();
+const TIMER4        = TIMER.addInstance();
 const UART          = scripting.addModule("/ti/driverlib/UART", {}, false);
 const UART1         = UART.addInstance();
 const UART2         = UART.addInstance();
@@ -61,9 +61,13 @@ ADC121.peripheral.adcPin0.$assign        = "PA27";
 ADC121.adcPin0Config.hideOutputInversion = scripting.forceWrite(false);
 ADC121.adcPin0Config.$name               = "ti_driverlib_gpio_GPIOPinGeneric8";
 
-ADC122.$name                             = "ADC_BUTTON";
-ADC122.adcPin0Config.hideOutputInversion = scripting.forceWrite(false);
-ADC122.adcPin0Config.$name               = "ti_driverlib_gpio_GPIOPinGeneric13";
+ADC122.adcMem0_name        = "ADC_CH0";
+ADC122.sampClkDiv          = "DL_ADC12_CLOCK_DIVIDE_8";
+ADC122.repeatMode          = true;
+ADC122.$name               = "ADC_BUTTON";
+ADC122.adcMem0chansel      = "DL_ADC12_INPUT_CHAN_8";
+ADC122.peripheral.$assign  = "ADC1";
+ADC122.adcPin8Config.$name = "ti_driverlib_gpio_GPIOPinGeneric4";
 
 const Board                       = scripting.addModule("/ti/driverlib/Board", {}, false);
 Board.peripheral.$assign          = "DEBUGSS";
@@ -162,18 +166,6 @@ GPIO5.associatedPins[2].assignedPort = "PORTB";
 GPIO5.associatedPins[2].assignedPin  = "27";
 GPIO5.associatedPins[2].pin.$assign  = "PB27";
 
-GPIO6.$name                          = "HC_SR04";
-GPIO6.port                           = "PORTB";
-GPIO6.associatedPins.create(2);
-GPIO6.associatedPins[0].$name        = "TRIG";
-GPIO6.associatedPins[0].assignedPin  = "8";
-GPIO6.associatedPins[0].initialValue = "SET";
-GPIO6.associatedPins[1].$name        = "ECHO";
-GPIO6.associatedPins[1].assignedPin  = "9";
-GPIO6.associatedPins[1].direction    = "INPUT";
-GPIO6.associatedPins[1].interruptEn  = true;
-GPIO6.associatedPins[1].polarity     = "RISE_FALL";
-
 PWM1.timerStartTimer                    = true;
 PWM1.pwmMode                            = "EDGE_ALIGN_UP";
 PWM1.clockPrescale                      = 2;
@@ -210,7 +202,7 @@ SYSTICK.periodEnable      = true;
 SYSTICK.interruptEnable   = true;
 SYSTICK.interruptPriority = "0";
 SYSTICK.systickEnable     = true;
-SYSTICK.period            = 80;
+SYSTICK.period            = 80000;
 
 TIMER1.timerStartTimer    = true;
 TIMER1.timerMode          = "PERIODIC";
@@ -230,13 +222,21 @@ TIMER2.$name              = "PID_TIMER";
 TIMER2.timerPeriod        = "30 ms";
 TIMER2.peripheral.$assign = "TIMG6";
 
-TIMER3.timerClkPrescale   = 32;
-TIMER3.timerStartTimer    = true;
-TIMER3.interrupts         = ["ZERO"];
-TIMER3.timerMode          = "PERIODIC";
-TIMER3.$name              = "READ_TIMER";
-TIMER3.timerPeriod        = "1 ms";
-TIMER3.peripheral.$assign = "TIMG0";
+TIMER3.timerStartTimer  = true;
+TIMER3.interrupts       = ["ZERO"];
+TIMER3.timerMode        = "PERIODIC";
+TIMER3.$name            = "READ_TIMER";
+TIMER3.timerClkDiv      = 8;
+TIMER3.timerClkPrescale = 50;
+TIMER3.timerPeriod      = "5 ms";
+
+TIMER4.$name            = "PTZ_TIMER";
+TIMER4.timerStartTimer  = true;
+TIMER4.timerMode        = "PERIODIC";
+TIMER4.interrupts       = ["ZERO"];
+TIMER4.timerClkDiv      = 8;
+TIMER4.timerClkPrescale = 5;
+TIMER4.timerPeriod      = "6 ms";
 
 UART1.$name                    = "UART_0";
 UART1.enableDMARX              = false;
@@ -285,8 +285,7 @@ scripting.suppress("Migrating requires going through the Switch Board or Device 
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
-ADC122.peripheral.$suggestSolution           = "ADC1";
-ADC122.peripheral.adcPin0.$suggestSolution   = "PA15";
+ADC122.peripheral.adcPin8.$suggestSolution   = "PA22";
 GPIO1.associatedPins[0].pin.$suggestSolution = "PB22";
 GPIO1.associatedPins[1].pin.$suggestSolution = "PA29";
 GPIO1.associatedPins[2].pin.$suggestSolution = "PB13";
@@ -301,6 +300,6 @@ GPIO4.associatedPins[3].pin.$suggestSolution = "PA16";
 GPIO4.associatedPins[4].pin.$suggestSolution = "PB19";
 GPIO5.associatedPins[0].pin.$suggestSolution = "PB23";
 GPIO5.associatedPins[1].pin.$suggestSolution = "PB26";
-GPIO6.associatedPins[0].pin.$suggestSolution = "PB8";
-GPIO6.associatedPins[1].pin.$suggestSolution = "PB9";
+TIMER3.peripheral.$suggestSolution           = "TIMG8";
+TIMER4.peripheral.$suggestSolution           = "TIMG0";
 UART3.peripheral.$suggestSolution            = "UART3";

@@ -48,6 +48,7 @@ typedef struct Class_FT_Servo
 
     float Error; // PID循迹用
     pClass_PID PID;
+    float PID_Output;
 
     bool is_inited;
 

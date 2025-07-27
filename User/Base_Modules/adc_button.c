@@ -6,11 +6,11 @@ Class_ADCButton _ADC_Button = {0};
 // >>>>>>>>>   实例声明     >>>>>>>>>>>
 
 static Button Button_map[5] = {
-    {2500, 2900, BUTTON_1, false, BUTTON_IDLE, 0}, //  upup AAA 2730
-    {1900, 2300, BUTTON_2, false, BUTTON_IDLE, 0}, //  up 866 2150
-    {1400, 1800, BUTTON_3, false, BUTTON_IDLE, 0}, //  left 649  1609
-    {400, 700, BUTTON_4, false, BUTTON_IDLE, 0},   //  right 217 535
-    {800, 1200, BUTTON_5, false, BUTTON_IDLE, 0}   //  down 414  1044
+    {3700, 4300, BUTTON_1, false, BUTTON_IDLE, 0}, //  upup 4000
+    {2900, 3500, BUTTON_2, false, BUTTON_IDLE, 0}, //  up  3200
+    {2100, 2700, BUTTON_3, false, BUTTON_IDLE, 0}, //  left 2400
+    {500, 1100, BUTTON_4, false, BUTTON_IDLE, 0},   //  right 800
+    {1400, 1800, BUTTON_5, false, BUTTON_IDLE, 0}   //  down 1600
 };
 
 /**
@@ -46,10 +46,6 @@ void ADC_Init(pClass_ADCButton this, ADC12_Regs *ADC_INST, IRQn_Type ADC_INST_IN
     this->ADC_Button_IRQN = ADC_INST_INT_IRQN;
     this->ADCMEM_IDX = ADCMEM_IDX;
 
-    NVIC_ClearPendingIRQ(this->ADC_Button_IRQN);
-    NVIC_EnableIRQ(this->ADC_Button_IRQN);
-
-    this->ADC_Flag = false;
     this->Current_ADC_Value = 0;
 
     for (int i = 0; i < 5; ++i)
@@ -72,14 +68,8 @@ void ADC_Get_Current_Value(pClass_ADCButton this)
     DL_ADC12_enableConversions(this->ADC_Button_INST);
     DL_ADC12_startConversion(this->ADC_Button_INST);
 
-    // 如果 ADC 转换未完成，直接返回
-    if (this->ADC_Flag == false)
-    {
-        return;
-    }
 
     this->Current_ADC_Value = DL_ADC12_getMemResult(this->ADC_Button_INST, this->ADCMEM_IDX);
-    this->ADC_Flag = false;
 }
 
 /**
@@ -201,26 +191,6 @@ void ADC_Check_And_Trigger(pClass_ADCButton this)
     }
 }
 
-/**
- *@brief adc中断处理函数
- *
- *
- */
-void ADC_BUTTON_INST_IRQHandler(void)
-{
-    switch (DL_ADC12_getPendingInterrupt(ADC_BUTTON_INST))
-    {
-    case DL_ADC12_IIDX_MEM0_RESULT_LOADED:
-        DL_ADC12_clearInterruptStatus(ADC_BUTTON_INST, DL_ADC12_IIDX_MEM0_RESULT_LOADED);
-        if (_ADC_Button.is_inited)
-        {
-            _ADC_Button.ADC_Flag = true;
-        }
-        break;
-    default:
-        break;
-    }
-}
 
 // /*********************
 //  *   自定义按键回调  *

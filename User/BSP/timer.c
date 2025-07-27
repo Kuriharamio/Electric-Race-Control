@@ -25,9 +25,10 @@ void PID_TIMER_INST_IRQHandler(void)
         if (Get_Car_Handle()->is_inited)
         {
             Get_Car_Handle()->Judge_Mode(Get_Car_Handle());
+            Get_Car_Handle()->Kinematic_Inverse(Get_Car_Handle());
         }
 
-        Get_Car_Handle()->Kinematic_Inverse(Get_Car_Handle());
+       
 
         if (count % PID_MOTOR_FACTOR == 0)
         {
@@ -77,27 +78,6 @@ void PID_TIMER_INST_IRQHandler(void)
             }
         }
 
-#ifdef USE_GRAY_SENSOR
-        if (count % PID_CAR_FOLLOW_FACTOR == 0)
-        {
-            if (Get_Car_Handle()->is_inited)
-            {
-                if (Get_Car_Handle()->Mode == FOLLOW_Circle)
-                    Get_Car_Handle()->Update_Follow_PID(Get_Car_Handle());
-            }
-        }
-#endif
-
-#endif
-
-#ifdef USE_PTZ
-        if (count % PID_SERVO_FACTOR == 0){
-            if (Get_PTZ_INST()->is_inited)
-            {
-                Get_PTZ_INST()->Update(Get_PTZ_INST());
-            }
-
-        }
 #endif
 
 #ifdef USE_SERVO
@@ -157,7 +137,7 @@ void ENCODER_TIMER_INST_IRQHandler(void)
 // 读取数据定时器中断处理函数
 void READ_TIMER_INST_IRQHandler(void)
 {
-    uint8_t cnt = 0;
+    static uint8_t cnt = 0;
     cnt++;
     switch (DL_TimerG_getPendingInterrupt(READ_TIMER_INST))
     {
@@ -165,9 +145,9 @@ void READ_TIMER_INST_IRQHandler(void)
 #ifdef USE_ADC_BUTTON
         if (cnt % ADC_BUTTON_TIMER_FACTOR == 0)
         {
-            if (GET_ADCButton_INST()->is_inited)
+            if (Get_ADCButton_Handle()->is_inited)
             {
-                GET_ADCButton_INST()->Check_And_Trigger(GET_ADCButton_INST()); // 获取当前ADC值
+                Get_ADCButton_Handle()->Check_And_Trigger(Get_ADCButton_Handle()); // 获取当前ADC值
             }
         }
 #endif
@@ -175,16 +155,39 @@ void READ_TIMER_INST_IRQHandler(void)
 #ifdef USE_GRAY_SENSOR
         if (cnt % GRAY_SENSOR_TIMER_FACTOR == 0)
         {
-            if (Get_Car_Handle()->Mode == FOLLOW_Circle)
-            {
-                Get_Car_Handle()->gray_scale_sensor->Update(Get_Car_Handle()->gray_scale_sensor);
-                // printf("%d %d %d %d %d %d %d %d\n", Car->gray_scale_sensor->Analog_value[0], Car->gray_scale_sensor->Analog_value[1], Car->gray_scale_sensor->Analog_value[2], Car->gray_scale_sensor->Analog_value[3], Car->gray_scale_sensor->Analog_value[4], Car->gray_scale_sensor->Analog_value[5], Car->gray_scale_sensor->Analog_value[6], Car->gray_scale_sensor->Analog_value[7]);
+            if (Get_Car_Handle()->is_inited){
+                // if (Get_Car_Handle()->Mode == FOLLOW_Circle)
+                {
+                    Get_Car_Handle()->gray_scale_sensor->Update(Get_Car_Handle()->gray_scale_sensor);
+                }
             }
         }
 #endif
 
         break;
 
+    default:
+        break;
+    }
+}
+#endif
+
+#ifdef USE_PTZ
+// 读取数据定时器中断处理函数
+void PTZ_TIMER_INST_IRQHandler(void)
+{
+    uint8_t cnt = 0;
+    cnt++;
+    switch (DL_TimerG_getPendingInterrupt(PTZ_TIMER_INST))
+    {
+    case DL_TIMER_IIDX_ZERO:
+
+        if (Get_PTZ_INST()->is_inited)
+        {
+            Get_PTZ_INST()->Update(Get_PTZ_INST());
+        }
+
+        break;
     default:
         break;
     }

@@ -80,7 +80,7 @@ pClass_FT_Servo Get_FT_Servo_Handle(uint8_t ID)
 
 void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Max_Pos, uint16_t Min_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc)
 {
-    this->PID->PID_Init(this->PID, 0.05f, 0.0f, 0.00f, 0.00f, 2047.0f, 2047.0f, PID_DELTA_T * PID_SERVO_FACTOR, 0.00f, 0.00f, 0.00f, 0.00f, PID_D_First_DISABLE);
+    this->PID->PID_Init(this->PID, 0.005f, 0.0f, 0.8f, 0.00f, 2047.0f, 2047.0f, PID_SERVO_DELTA_T * 3, 0.00f, 0.00f, 0.00f, 0.00f, PID_D_First_DISABLE);
 
     setEnd(0);              // SMS_STS舵机为小端存储结构
     this->Status = OFFLINE; // 舵机初始状态为离线
@@ -110,6 +110,7 @@ void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Ma
     this->Current = 0;
 
     // this->Set_Mid_Pos(this);
+    this->PID_Output = 0.0f;
 
     retry = 255;
     while (this->Pos == 5000 && retry--)
@@ -148,37 +149,37 @@ void FT_Servo_Set_Max_Pos(pClass_FT_Servo this, uint16_t pos)
 {
     uint16_t pos_temp = pos;
     Math_Constrain_uint16(&pos_temp, 0, 4095);
-    this->Max_Pos = pos;
+    this->Max_Pos = pos_temp;
 }
 void FT_Servo_Set_Min_Pos(pClass_FT_Servo this, uint16_t pos)
 {
     uint16_t pos_temp = pos;
     Math_Constrain_uint16(&pos_temp, 0, 4095);
-    this->Min_Pos = pos;
+    this->Min_Pos = pos_temp;
 }
 void FT_Servo_Set_Max_Spd(pClass_FT_Servo this, uint16_t spd)
 {
     uint16_t spd_temp = spd;
     Math_Constrain_uint16(&spd_temp, 0, 90);
-    this->Max_Spd = spd;
+    this->Max_Spd = spd_temp;
 }
 void FT_Servo_Set_Min_Spd(pClass_FT_Servo this, uint16_t spd)
 {
     uint16_t spd_temp = spd;
     Math_Constrain_uint16(&spd_temp, 0, 90);
-    this->Min_Spd = spd;
+    this->Min_Spd = spd_temp;
 }
 void FT_Servo_Set_Max_Acc(pClass_FT_Servo this, uint16_t acc)
 {
     uint16_t acc_temp = acc;
     Math_Constrain_uint16(&acc_temp, 0, 250);
-    this->Max_Acc = acc;
+    this->Max_Acc = acc_temp;
 }
 void FT_Servo_Set_Min_Acc(pClass_FT_Servo this, uint16_t acc)
 {
     uint16_t acc_temp = acc;
     Math_Constrain_uint16(&acc_temp, 0, 250);
-    this->Min_Acc = acc;
+    this->Min_Acc = acc_temp;
 }
 void FT_Servo_Set_Mid_Pos(pClass_FT_Servo this)
 {
@@ -227,13 +228,13 @@ void FT_Servo_Set_Target_Status(pClass_FT_Servo this, uint16_t pos, uint16_t spd
 {
     uint16_t pos_temp = pos;
     Math_Constrain_uint16(&pos_temp, this->Min_Pos, this->Max_Pos);
-    this->Target_Pos = pos;
+    this->Target_Pos = pos_temp;
     uint16_t spd_temp = spd;
     Math_Constrain_uint16(&spd_temp, this->Min_Spd, this->Max_Spd);
-    this->Target_Spd = spd;
+    this->Target_Spd = spd_temp;
     uint16_t acc_temp = acc;
     Math_Constrain_uint16(&acc_temp, this->Min_Acc, this->Max_Acc);
-    this->Target_Acc = acc;
+    this->Target_Acc = acc_temp;
 }
 void FT_Servo_Update_PID(pClass_FT_Servo this)
 {
@@ -244,8 +245,8 @@ void FT_Servo_Update_PID(pClass_FT_Servo this)
     this->PID->Set_Now(this->PID, this->Error);
     this->PID->Update_Value(this->PID);
 
-    float output = this->PID->Get_PID_Out(this->PID) + 2047;
-    this->Set_Target_Status(this, (uint16_t)(output), 10, 20);
+    this->PID_Output = this->PID->Get_PID_Out(this->PID);
+    this->Set_Target_Status(this, (uint16_t)(this->PID_Output) + this->Target_Pos, 10, 20);
 }
 void FT_Servo_Data_Process(pClass_UART this)
 {

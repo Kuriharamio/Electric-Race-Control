@@ -114,10 +114,15 @@ extern "C" {
 #define PID_TIMER_INST_INT_IRQN                                 (TIMG6_INT_IRQn)
 #define PID_TIMER_INST_LOAD_VALUE                                        (7499U)
 /* Defines for READ_TIMER */
-#define READ_TIMER_INST                                                  (TIMG0)
-#define READ_TIMER_INST_IRQHandler                              TIMG0_IRQHandler
-#define READ_TIMER_INST_INT_IRQN                                (TIMG0_INT_IRQn)
-#define READ_TIMER_INST_LOAD_VALUE                                       (1249U)
+#define READ_TIMER_INST                                                  (TIMG8)
+#define READ_TIMER_INST_IRQHandler                              TIMG8_IRQHandler
+#define READ_TIMER_INST_INT_IRQN                                (TIMG8_INT_IRQn)
+#define READ_TIMER_INST_LOAD_VALUE                                        (499U)
+/* Defines for PTZ_TIMER */
+#define PTZ_TIMER_INST                                                   (TIMG0)
+#define PTZ_TIMER_INST_IRQHandler                               TIMG0_IRQHandler
+#define PTZ_TIMER_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
+#define PTZ_TIMER_INST_LOAD_VALUE                                        (5999U)
 
 
 
@@ -200,11 +205,11 @@ extern "C" {
 #define ADC_BUTTON_INST                                                     ADC1
 #define ADC_BUTTON_INST_IRQHandler                               ADC1_IRQHandler
 #define ADC_BUTTON_INST_INT_IRQN                                 (ADC1_INT_IRQn)
-#define ADC_BUTTON_ADCMEM_0                                   DL_ADC12_MEM_IDX_0
-#define ADC_BUTTON_ADCMEM_0_REF                  DL_ADC12_REFERENCE_VOLTAGE_VDDA
-#define ADC_BUTTON_ADCMEM_0_REF_VOLTAGE                                       -1 // VDDA cannot be determined
-#define GPIO_ADC_BUTTON_C0_PORT                                            GPIOA
-#define GPIO_ADC_BUTTON_C0_PIN                                    DL_GPIO_PIN_15
+#define ADC_BUTTON_ADCMEM_ADC_CH0                             DL_ADC12_MEM_IDX_0
+#define ADC_BUTTON_ADCMEM_ADC_CH0_REF            DL_ADC12_REFERENCE_VOLTAGE_VDDA
+#define ADC_BUTTON_ADCMEM_ADC_CH0_REF_VOLTAGE                                      -1 // VDDA cannot be determined
+#define GPIO_ADC_BUTTON_C8_PORT                                            GPIOA
+#define GPIO_ADC_BUTTON_C8_PIN                                    DL_GPIO_PIN_22
 
 
 
@@ -224,8 +229,8 @@ extern "C" {
 #define ENCODER_R_PORT                                                   (GPIOB)
 
 /* Defines for R_A: GPIOB.17 with pinCMx 43 on package pin 14 */
-// groups represented: ["ENCODER_L","HC_SR04","ENCODER_R"]
-// pins affected: ["L_A","L_B","ECHO","R_A","R_B"]
+// groups represented: ["ENCODER_L","ENCODER_R"]
+// pins affected: ["L_A","L_B","R_A","R_B"]
 #define GPIO_MULTIPLE_GPIOB_INT_IRQN                            (GPIOB_INT_IRQn)
 #define GPIO_MULTIPLE_GPIOB_INT_IIDX            (DL_INTERRUPT_GROUP1_IIDX_GPIOB)
 #define ENCODER_R_R_A_IIDX                                  (DL_GPIO_IIDX_DIO17)
@@ -278,16 +283,6 @@ extern "C" {
 /* Defines for AD2: GPIOB.27 with pinCMx 58 on package pin 29 */
 #define GRAY_SCALE_AD2_PIN                                      (DL_GPIO_PIN_27)
 #define GRAY_SCALE_AD2_IOMUX                                     (IOMUX_PINCM58)
-/* Port definition for Pin Group HC_SR04 */
-#define HC_SR04_PORT                                                     (GPIOB)
-
-/* Defines for TRIG: GPIOB.8 with pinCMx 25 on package pin 60 */
-#define HC_SR04_TRIG_PIN                                         (DL_GPIO_PIN_8)
-#define HC_SR04_TRIG_IOMUX                                       (IOMUX_PINCM25)
-/* Defines for ECHO: GPIOB.9 with pinCMx 26 on package pin 61 */
-#define HC_SR04_ECHO_IIDX                                    (DL_GPIO_IIDX_DIO9)
-#define HC_SR04_ECHO_PIN                                         (DL_GPIO_PIN_9)
-#define HC_SR04_ECHO_IOMUX                                       (IOMUX_PINCM26)
 
 
 
@@ -302,6 +297,7 @@ void SYSCFG_DL_PWM_MOTOR_L_init(void);
 void SYSCFG_DL_ENCODER_TIMER_init(void);
 void SYSCFG_DL_PID_TIMER_init(void);
 void SYSCFG_DL_READ_TIMER_init(void);
+void SYSCFG_DL_PTZ_TIMER_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_UART_1_init(void);
 void SYSCFG_DL_UART_2_init(void);
