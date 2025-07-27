@@ -168,8 +168,8 @@ int main(void)
 #ifdef USE_PTZ
   pClass_PTZ PTZ = Create_PTZ();
   PTZ->Init(PTZ);
-  PTZ->Servo_Up->Set_Target_Status(PTZ->Servo_Up, 2047, 30, 0);
-  PTZ->Servo_Down->Set_Target_Status(PTZ->Servo_Down, 2047, 30, 0);
+  PTZ->Servo_Up->Set_Target_Status(PTZ->Servo_Up, 0.5 * (PTZ->Servo_Up->Max_Pos + PTZ->Servo_Up->Min_Pos), 30, 0);
+  PTZ->Servo_Down->Set_Target_Status(PTZ->Servo_Down, 0.5 * (PTZ->Servo_Down->Max_Pos + PTZ->Servo_Down->Min_Pos), 30, 0);
 #endif
 
 //* Raspberry串口通信配置

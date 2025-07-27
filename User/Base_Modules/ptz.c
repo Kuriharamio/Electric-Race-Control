@@ -29,8 +29,8 @@ void PTZ_Init(pClass_PTZ this)
     this->FT_Servo_Controller->Configure_Mode(this->FT_Servo_Controller, DEBUG_STRING);
     this->FT_Servo_Controller->Configure_Callback(this->FT_Servo_Controller, FT_Servo_Data_Process);
 
-    this->Servo_Down->Init(this->Servo_Down, POS_MODE_ABSOLUTE, 2100, 1700, 0, 60, 0, 50);
-    this->Servo_Up->Init(this->Servo_Up, POS_MODE_ABSOLUTE, 2200, 1700, 0, 60, 0, 50);
+    this->Servo_Down->Init(this->Servo_Down, POS_MODE_ABSOLUTE, 2190, 1890, 0, 60, 0, 50);
+    this->Servo_Up->Init(this->Servo_Up, POS_MODE_ABSOLUTE, 2150, 1900, 0, 60, 0, 50);
 
     this->is_inited = true;
 }
@@ -53,10 +53,7 @@ void PTZ_Update(pClass_PTZ this)
             }
             else
             {
-                if (Get_FT_Servo_Handle(SERVO_DOWN_INDEX)->is_inited)
-                {
-                    Get_FT_Servo_Handle(SERVO_DOWN_INDEX)->Update_PID(Get_FT_Servo_Handle(SERVO_DOWN_INDEX));
-                }
+                this->Servo_Down->Update_PID(this->Servo_Down);
             }
 
             this->ID[0] = this->Servo_Down->Servo_ID;
@@ -84,10 +81,7 @@ void PTZ_Update(pClass_PTZ this)
             else
             {
 
-                if (Get_FT_Servo_Handle(SERVO_UP_INDEX)->is_inited)
-                {
-                    Get_FT_Servo_Handle(SERVO_UP_INDEX)->Update_PID(Get_FT_Servo_Handle(SERVO_UP_INDEX));
-                }
+                this->Servo_Up->Update_PID(this->Servo_Up);
             }
 
             this->ID[1] = this->Servo_Up->Servo_ID;
@@ -112,6 +106,25 @@ void PTZ_Update(pClass_PTZ this)
     }
 }
 
+// void PTZ_Update(pClass_PTZ this)
+// {
+
+//     this->Servo_Down->Update_PID(this->Servo_Down);
+//     this->ID[0] = this->Servo_Down->Servo_ID;
+//     this->Position[0] = this->Servo_Down->Target_Pos;
+//     this->Speed[0] = this->Servo_Down->Target_Spd;
+//     this->ACC[0] = this->Servo_Down->Target_Acc;
+
+//     this->Servo_Up->Update_PID(this->Servo_Up);
+
+//     this->ID[1] = this->Servo_Up->Servo_ID;
+//     this->Position[1] = this->Servo_Up->Target_Pos;
+//     this->Speed[1] = this->Servo_Up->Target_Spd;
+//     this->ACC[1] = this->Servo_Up->Target_Acc;
+
+//     SyncWritePosEx(this->ID, 2, this->Position, this->Speed, this->ACC);
+
+// }
 
 uint16_t map(uint16_t x, uint16_t min, uint16_t max){
     return (uint16_t)(min + x * (float)(max - min) / 4095);

@@ -21,12 +21,12 @@
 //* 飞特舵机串口配置
 #define USE_FT_SERVO            // 启用飞特舵机
 #define FT_SERVO_UART_INDEX 2   // 飞特舵机串口索引号
-#define USE_UART_2              // 启用串口0
+#define USE_UART_2              // 启用串口2
 #define FT_SERVO_RX_LEN_MAX 255 // 飞特舵机接收数据最大长度
-#define PROTECT_CURRENT 30      // 保护电流大小
+#define PROTECT_CURRENT 500      // 保护电流大小
 #define USE_PID_SERVO
 #define PID_SERVO_DELTA_T 0.006f      // PID 时间间隔比值
-#define PID_TIME_FACTOR 10
+#define PID_TIME_FACTOR 1000
 // #define PRINT_DEBUG
 
 #define USE_PTZ
