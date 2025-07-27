@@ -13,10 +13,10 @@
 #define USE_LAZER
 
 // * 蓝牙配置
-// #define USE_BLUETOOTH
-// #define BLUETOOTH_UART_INDEX 0  // 蓝牙串口索引号
-// #define USE_UART_0              // 启用串口0
-// #define BLUETOOTH_RX_LEN_MAX 20 // 蓝牙接收数据最大长度
+#define USE_BLUETOOTH
+#define BLUETOOTH_UART_INDEX 3  // 蓝牙串口索引号
+#define USE_UART_3              // 启用串口0
+#define BLUETOOTH_RX_LEN_MAX 20 // 蓝牙接收数据最大长度
 
 //* 飞特舵机串口配置
 #define USE_FT_SERVO            // 启用飞特舵机

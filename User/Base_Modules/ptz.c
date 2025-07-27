@@ -53,7 +53,7 @@ void PTZ_Update(pClass_PTZ this)
             }
             else
             {
-                this->Servo_Down->Update_PID(this->Servo_Down);
+                // this->Servo_Down->Update_PID(this->Servo_Down);
             }
 
             this->ID[0] = this->Servo_Down->Servo_ID;
@@ -81,7 +81,7 @@ void PTZ_Update(pClass_PTZ this)
             else
             {
 
-                this->Servo_Up->Update_PID(this->Servo_Up);
+                // this->Servo_Up->Update_PID(this->Servo_Up);
             }
 
             this->ID[1] = this->Servo_Up->Servo_ID;

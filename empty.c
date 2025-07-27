@@ -22,7 +22,9 @@ void Servo_UP_UP(void)
   pClass_FT_Servo servo = Get_PTZ_INST()->Servo_Up;
   if (servo->is_inited)
   {
-    servo->Set_Target_Status(servo, --servo->Target_Pos, 10, 10);
+    if(servo->Error != -5){
+      servo->Set_Target_Status(servo, --servo->Target_Pos, 20, 20);
+    }
   }
 }
 
@@ -32,7 +34,7 @@ void Servo_UP_DOWN(void)
   pClass_FT_Servo servo = Get_PTZ_INST()->Servo_Up;
   if (servo->is_inited)
   {
-    servo->Set_Target_Status(servo, ++servo->Target_Pos, 10, 10);
+    servo->Set_Target_Status(servo, ++servo->Target_Pos, 20, 20);
   }
 }
 
@@ -42,7 +44,7 @@ void Servo_DOWN_LEFT(void)
   pClass_FT_Servo servo = Get_PTZ_INST()->Servo_Down;
   if (servo->is_inited)
   {
-    servo->Set_Target_Status(servo, --servo->Target_Pos, 10, 10);
+    servo->Set_Target_Status(servo, --servo->Target_Pos, 20, 20);
   }
 }
 
@@ -52,7 +54,7 @@ void Servo_DOWN_RIGHT(void)
   pClass_FT_Servo servo = Get_PTZ_INST()->Servo_Down;
   if (servo->is_inited)
   {
-    servo->Set_Target_Status(servo, ++servo->Target_Pos, 10, 10);
+    servo->Set_Target_Status(servo, ++servo->Target_Pos, 20, 20);
   }
 }
 
@@ -131,15 +133,23 @@ int main(void)
   Car->Init(Car);                // 初始化小车对象
 #endif
 
+//* 云台配置
+#ifdef USE_PTZ
+  pClass_PTZ PTZ = Create_PTZ();
+  PTZ->Init(PTZ);
+  PTZ->Servo_Up->Set_Target_Status(PTZ->Servo_Up, 0.5 * (PTZ->Servo_Up->Max_Pos + PTZ->Servo_Up->Min_Pos), 30, 0);
+  PTZ->Servo_Down->Set_Target_Status(PTZ->Servo_Down, 0.5 * (PTZ->Servo_Down->Max_Pos + PTZ->Servo_Down->Min_Pos), 30, 0);
+#endif
+
 //* 蓝牙配置
 #ifdef USE_BLUETOOTH
   float a = 0;
   pClass_UART Bluetooth_Debuger = Create_UART(BLUETOOTH_UART_INDEX);               // 获取蓝牙对象实例
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 4);             // 初始化蓝牙对象
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 2);             // 初始化蓝牙对象
   Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE);                // 配置调试模式
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback); // 配置回调函数
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(a), " ");
-  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(b), " ");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(PTZ->Servo_Down->Error), " ");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(PTZ->Servo_Up->Error), " ");
   // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(c), " ");
   // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(d), " ");
 #endif
@@ -164,13 +174,7 @@ int main(void)
   IMU_Init();                                                                      // 校準加速度
 #endif
 
-//* 云台配置
-#ifdef USE_PTZ
-  pClass_PTZ PTZ = Create_PTZ();
-  PTZ->Init(PTZ);
-  PTZ->Servo_Up->Set_Target_Status(PTZ->Servo_Up, 0.5 * (PTZ->Servo_Up->Max_Pos + PTZ->Servo_Up->Min_Pos), 30, 0);
-  PTZ->Servo_Down->Set_Target_Status(PTZ->Servo_Down, 0.5 * (PTZ->Servo_Down->Max_Pos + PTZ->Servo_Down->Min_Pos), 30, 0);
-#endif
+
 
 //* Raspberry串口通信配置
 #ifdef USE_RASPBERRY

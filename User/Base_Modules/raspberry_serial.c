@@ -59,6 +59,7 @@ uint8_t Calculate_BCC(uint8_t *data, uint8_t len)
 	return bcc;
 }
 
+#include "Base_Modules/reminder.h"
 /**
  * @brief Raspberry接收回调
  *
@@ -66,6 +67,7 @@ uint8_t Calculate_BCC(uint8_t *data, uint8_t len)
  */
 void Raspberry_Rx_Callback(pClass_UART this)
 {
+	LED(TOGGLE);
 	switch (Rx_State)
 	{
 	case STATE_WAIT_HEADER_1:
@@ -101,6 +103,7 @@ void Raspberry_Rx_Callback(pClass_UART this)
 		if (Rx_BCC == Calculate_BCC((this->rxbuffer), this->rx_len))
 		{
 			// 转化浮点数
+
 			uint8_t index = 0;
 			while (index * 4 < (uint8_t)(this->rx_len))
 			{
