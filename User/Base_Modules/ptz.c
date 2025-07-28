@@ -106,26 +106,6 @@ void PTZ_Update(pClass_PTZ this)
     }
 }
 
-// void PTZ_Update(pClass_PTZ this)
-// {
-
-//     this->Servo_Down->Update_PID(this->Servo_Down);
-//     this->ID[0] = this->Servo_Down->Servo_ID;
-//     this->Position[0] = this->Servo_Down->Target_Pos;
-//     this->Speed[0] = this->Servo_Down->Target_Spd;
-//     this->ACC[0] = this->Servo_Down->Target_Acc;
-
-//     this->Servo_Up->Update_PID(this->Servo_Up);
-
-//     this->ID[1] = this->Servo_Up->Servo_ID;
-//     this->Position[1] = this->Servo_Up->Target_Pos;
-//     this->Speed[1] = this->Servo_Up->Target_Spd;
-//     this->ACC[1] = this->Servo_Up->Target_Acc;
-
-//     SyncWritePosEx(this->ID, 2, this->Position, this->Speed, this->ACC);
-
-// }
-
 uint16_t map(uint16_t x, uint16_t min, uint16_t max){
     return (uint16_t)(min + x * (float)(max - min) / 4095);
 }
@@ -274,7 +254,7 @@ void PTZ_Draw_Num(pClass_PTZ this, double num, bool is_float, char *pos)
     }
     gap = (uint32_t)((float)width / 10.0);
     // uint16_t height = this->Servo_Up->Max_Pos - this->Servo_Up->Min_Pos;
-    uint16_t height = (uint16_t)(width * 2);
+    uint16_t height = (uint16_t)(width / 0.618);
 
     uint16_t spd = 60;
     uint16_t acc = 40;
