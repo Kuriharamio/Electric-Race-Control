@@ -122,7 +122,7 @@ extern "C" {
 #define PTZ_TIMER_INST                                                   (TIMG0)
 #define PTZ_TIMER_INST_IRQHandler                               TIMG0_IRQHandler
 #define PTZ_TIMER_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
-#define PTZ_TIMER_INST_LOAD_VALUE                                        (5999U)
+#define PTZ_TIMER_INST_LOAD_VALUE                                        (9999U)
 
 
 
@@ -153,9 +153,9 @@ extern "C" {
 #define GPIO_UART_1_IOMUX_TX                                     (IOMUX_PINCM39)
 #define GPIO_UART_1_IOMUX_RX_FUNC                      IOMUX_PINCM20_PF_UART1_RX
 #define GPIO_UART_1_IOMUX_TX_FUNC                      IOMUX_PINCM39_PF_UART1_TX
-#define UART_1_BAUD_RATE                                                  (9600)
-#define UART_1_IBRD_40_MHZ_9600_BAUD                                       (260)
-#define UART_1_FBRD_40_MHZ_9600_BAUD                                        (27)
+#define UART_1_BAUD_RATE                                                (115200)
+#define UART_1_IBRD_40_MHZ_115200_BAUD                                      (21)
+#define UART_1_FBRD_40_MHZ_115200_BAUD                                      (45)
 /* Defines for UART_2 */
 #define UART_2_INST                                                        UART3
 #define UART_2_INST_IRQHandler                                  UART3_IRQHandler
@@ -168,9 +168,9 @@ extern "C" {
 #define GPIO_UART_2_IOMUX_TX                                     (IOMUX_PINCM36)
 #define GPIO_UART_2_IOMUX_RX_FUNC                      IOMUX_PINCM35_PF_UART3_RX
 #define GPIO_UART_2_IOMUX_TX_FUNC                      IOMUX_PINCM36_PF_UART3_TX
-#define UART_2_BAUD_RATE                                                (115200)
-#define UART_2_IBRD_80_MHZ_115200_BAUD                                      (43)
-#define UART_2_FBRD_80_MHZ_115200_BAUD                                      (26)
+#define UART_2_BAUD_RATE                                                  (9600)
+#define UART_2_IBRD_10_MHZ_9600_BAUD                                        (65)
+#define UART_2_FBRD_10_MHZ_9600_BAUD                                         (7)
 /* Defines for UART_3 */
 #define UART_3_INST                                                        UART2
 #define UART_3_INST_IRQHandler                                  UART2_IRQHandler

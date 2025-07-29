@@ -119,22 +119,23 @@ void Raspberry_Rx_Callback(pClass_UART this)
 }
 
 /**
- *@brief 向k230发送数据
+ *@brief 向Raspberry发送数据
  *
  *@param this
  *@param datas
  *@param len
  */
-void Raspberry_Transmit(pClass_UART this, float *datas, uint8_t len)
+void Raspberry_Transmit(pClass_UART this, float *datas, size_t len)
 {
 	int data_len = len * 4;				  // 每个 float 4 字节
-	int frame_len = 1 + 1 + data_len + 1; // 帧头 + 长度字段 + 数据 + 校验
+	int frame_len = 2 + 1 + data_len + 1; // 帧头 + 长度字段 + 数据 + 校验
 	uint8_t buffer[frame_len];			  // 总帧缓冲区
 
-	buffer[0] = 0xAA; // 帧头
-	buffer[1] = len;  // 数据长度字段（float 个数）
+	buffer[0] = 0xA5; // 帧头
+	buffer[1] = 0x5A;
+	buffer[2] = len;  // 数据长度字段（float 个数）
 
-	uint8_t *data_ptr = &buffer[2]; // 数据字段起始位置
+	uint8_t *data_ptr = &buffer[3]; // 数据字段起始位置
 
 	// 写入 float 数据（大端）
 	for (uint8_t i = 0; i < len; i++)
@@ -145,7 +146,7 @@ void Raspberry_Transmit(pClass_UART this, float *datas, uint8_t len)
 	// 计算 BCC（对数据字段部分进行异或）
 	uint8_t bcc = Calculate_BCC(data_ptr, data_len);
 
-	buffer[2 + data_len] = bcc; // 校验位写入帧尾
+	buffer[3 + data_len] = bcc; // 校验位写入帧尾
 
 	// 发送完整帧
 	this->Send_Datas(this, buffer, frame_len);

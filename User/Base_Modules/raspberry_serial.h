@@ -21,6 +21,6 @@ void float_to_big_endian_bytes(float value, uint8_t *bytes_out);
 float BigEndianBytesToFloat(uint8_t *bytes);
 uint8_t Calculate_BCC(uint8_t *data, uint8_t len);
 void Raspberry_Rx_Callback(pClass_UART this);
-void Raspberry_Transmit(pClass_UART this, float *datas, uint8_t len);
+void Raspberry_Transmit(pClass_UART this, float *datas, size_t len);
 
 #endif // __K230_SERIAL_H__

@@ -98,13 +98,13 @@ pClass_UART Create_UART(uint8_t index)
 	this->Send_Datas = UART_Send_Datas;			// 发送字符串函数
 	this->Clear_RxBuffer = UART_Clear_RxBuffer; // 清除接收缓冲区
 	this->UART_INST_DataProcess = NULL;			// 串口中断处理函数
-	this->Custom_Send_Datas = NULL;				// 自定义发送数据函数
+	this->Send_Float = NULL;					// 浮点数发送函数
 	this->Send = UART_Send;						// 发送数据函数
 
 	this->Configure_Mode = UART_Configure_Mode;			  // 配置调试模式
 	this->Configure_Param_Len = UART_Configure_Param_Len; // 配置参数长度
 	this->Configure_Callback = UART_Configure_Callback;	  // 配置回调函数
-	this->Configure_Custom_Send_Datas = UART_Configure_Custom_Send_Datas;
+	this->Configure_Send_Float = UART_Configure_Send_Float;
 	this->Bind_Param_With_Id = UART_Bind_Param_With_Id;		// 绑定参数
 	this->Modify_Param_With_Id = UART_Modify_Param_With_Id; // 修改参数
 
@@ -121,7 +121,7 @@ void UART_Init(pClass_UART this, uint8_t rx_max_len, uint8_t param_len)
 	NVIC_ClearPendingIRQ(Get_UART_IRQN_From_Index(this->index));
 	NVIC_EnableIRQ(Get_UART_IRQN_From_Index(this->index));
 
-	this->mode = DEBUG_STRING;
+	this->mode = RAW_DATA;
 	this->param_len = param_len;											// 设置参数个数
 	this->param_list = (float **)malloc(this->param_len * sizeof(float *)); // 分配参数列表内存
 	this->param_name = (char **)malloc(this->param_len * sizeof(char *));	// 分配参数名称列表内存
@@ -187,7 +187,7 @@ void UART_Send(pClass_UART this, uint8_t *datas, size_t size)
 		}
 		this->Send_Datas(this, (uint8_t *)WAVE_TAIL, sizeof(WAVE_TAIL)); // 发送WAVE数据尾
 	}
-	else if (this->mode == DEBUG_STRING)
+	else if (this->mode == RAW_DATA)
 	{
 		this->Send_Datas(this, datas, size); // 发送数据
 	}
@@ -237,17 +237,12 @@ void UART_Send(pClass_UART this, uint8_t *datas, size_t size)
 			this->Send_Datas(this, (uint8_t *)temp, strlen(temp));
 		}
 	}
-	else if (this->mode == CUSTOM)
-	{
-		if (this->Custom_Send_Datas != NULL)
-		{
-			this->Custom_Send_Datas(datas, size); // 发送数据
-		}
-		else
-		{
-			this->Send_Datas(this, datas, size); // 发送数据
-		}
-	}
+
+}
+
+void UART_Configure_Send_Float(pClass_UART this, void (*func)(pClass_UART this, float *datas, size_t size))
+{
+	this->Send_Float = func;
 }
 
 /**
@@ -272,16 +267,7 @@ void UART_Configure_Param_Len(pClass_UART this, uint8_t param_len)
 	this->param_len = param_len;
 }
 
-/**
- * @brief 配置串口对象的自定义发送数据函数
- *
- * @param this 串口对象
- * @param func 自定义发送数据函数
- */
-void UART_Configure_Custom_Send_Datas(pClass_UART this, void (*func)(uint8_t *datas, size_t size))
-{
-	this->Custom_Send_Datas = func; // 设置自定义发送数据函数
-}
+
 
 /**
  * @brief 配置串口对象的回调函数
@@ -293,6 +279,7 @@ void UART_Configure_Callback(pClass_UART this, void (*callback)(pClass_UART this
 {
 	this->UART_INST_DataProcess = callback; // 设置回调函数
 }
+
 
 /**
  * @brief 绑定参数

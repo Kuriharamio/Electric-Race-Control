@@ -491,7 +491,7 @@ static const DL_TimerG_ClockConfig gPTZ_TIMERClockConfig = {
 
 /*
  * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * PTZ_TIMER_INST_LOAD_VALUE = (6 ms * 1000000 Hz) - 1
+ * PTZ_TIMER_INST_LOAD_VALUE = (10 ms * 1000000 Hz) - 1
  */
 static const DL_TimerG_TimerConfig gPTZ_TIMERTimerConfig = {
     .period     = PTZ_TIMER_INST_LOAD_VALUE,
@@ -548,10 +548,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_0_init(void)
     DL_UART_Main_enableInterrupt(UART_0_INST,
                                  DL_UART_MAIN_INTERRUPT_RX);
 
-    /* Configure FIFOs */
-    DL_UART_Main_enableFIFOs(UART_0_INST);
-    DL_UART_Main_setRXFIFOThreshold(UART_0_INST, DL_UART_RX_FIFO_LEVEL_ONE_ENTRY);
-    DL_UART_Main_setTXFIFOThreshold(UART_0_INST, DL_UART_TX_FIFO_LEVEL_3_4_EMPTY);
 
     DL_UART_Main_enable(UART_0_INST);
 }
@@ -577,11 +573,11 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_1_init(void)
     DL_UART_Main_init(UART_1_INST, (DL_UART_Main_Config *) &gUART_1Config);
     /*
      * Configure baud rate by setting oversampling and baud rate divisors.
-     *  Target baud rate: 9600
-     *  Actual baud rate: 9599.81
+     *  Target baud rate: 115200
+     *  Actual baud rate: 115190.78
      */
     DL_UART_Main_setOversampling(UART_1_INST, DL_UART_OVERSAMPLING_RATE_16X);
-    DL_UART_Main_setBaudRateDivisor(UART_1_INST, UART_1_IBRD_40_MHZ_9600_BAUD, UART_1_FBRD_40_MHZ_9600_BAUD);
+    DL_UART_Main_setBaudRateDivisor(UART_1_INST, UART_1_IBRD_40_MHZ_115200_BAUD, UART_1_FBRD_40_MHZ_115200_BAUD);
 
 
     /* Configure Interrupts */
@@ -594,7 +590,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_1_init(void)
 
 static const DL_UART_Main_ClockConfig gUART_2ClockConfig = {
     .clockSel    = DL_UART_MAIN_CLOCK_BUSCLK,
-    .divideRatio = DL_UART_MAIN_CLOCK_DIVIDE_RATIO_1
+    .divideRatio = DL_UART_MAIN_CLOCK_DIVIDE_RATIO_8
 };
 
 static const DL_UART_Main_Config gUART_2Config = {
@@ -613,18 +609,16 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_2_init(void)
     DL_UART_Main_init(UART_2_INST, (DL_UART_Main_Config *) &gUART_2Config);
     /*
      * Configure baud rate by setting oversampling and baud rate divisors.
-     *  Target baud rate: 115200
-     *  Actual baud rate: 115190.78
+     *  Target baud rate: 9600
+     *  Actual baud rate: 9599.23
      */
     DL_UART_Main_setOversampling(UART_2_INST, DL_UART_OVERSAMPLING_RATE_16X);
-    DL_UART_Main_setBaudRateDivisor(UART_2_INST, UART_2_IBRD_80_MHZ_115200_BAUD, UART_2_FBRD_80_MHZ_115200_BAUD);
+    DL_UART_Main_setBaudRateDivisor(UART_2_INST, UART_2_IBRD_10_MHZ_9600_BAUD, UART_2_FBRD_10_MHZ_9600_BAUD);
 
 
     /* Configure Interrupts */
     DL_UART_Main_enableInterrupt(UART_2_INST,
                                  DL_UART_MAIN_INTERRUPT_RX);
-    /* Setting the Interrupt Priority */
-    NVIC_SetPriority(UART_2_INST_INT_IRQN, 0);
 
 
     DL_UART_Main_enable(UART_2_INST);

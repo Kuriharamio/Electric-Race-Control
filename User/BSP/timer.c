@@ -176,7 +176,7 @@ void READ_TIMER_INST_IRQHandler(void)
 // 读取数据定时器中断处理函数
 void PTZ_TIMER_INST_IRQHandler(void)
 {
-    uint8_t cnt = 0;
+    static uint8_t cnt = 0;
     cnt++;
     switch (DL_TimerG_getPendingInterrupt(PTZ_TIMER_INST))
     {

@@ -109,12 +109,15 @@ void PTZ_Task_3(void)
   }
 }
 
-void seterrorx(void)
+void EnablePID(void)
 {
   pClass_PTZ PTZ = Get_PTZ_INST();
   if (PTZ->is_inited)
   {
-    // PTZ->Servo_Down->
+    if(PTZ->PID_Enable)
+    PTZ->PID_Enable = false;
+    else
+    PTZ->PID_Enable = true;
   }
 }
 
@@ -137,6 +140,7 @@ int main(void)
 #ifdef USE_PTZ
   pClass_PTZ PTZ = Create_PTZ();
   PTZ->Init(PTZ);
+  delay_ms(1000);
   PTZ->Servo_Up->Set_Target_Status(PTZ->Servo_Up, 0.5 * (PTZ->Servo_Up->Max_Pos + PTZ->Servo_Up->Min_Pos), 30, 0);
   PTZ->Servo_Down->Set_Target_Status(PTZ->Servo_Down, 0.5 * (PTZ->Servo_Down->Max_Pos + PTZ->Servo_Down->Min_Pos), 30, 0);
 #endif
@@ -144,14 +148,17 @@ int main(void)
 //* 蓝牙配置
 #ifdef USE_BLUETOOTH
   float a = 0;
+  float b = 0;
+  float c = 0;
   pClass_UART Bluetooth_Debuger = Create_UART(BLUETOOTH_UART_INDEX);               // 获取蓝牙对象实例
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 2);             // 初始化蓝牙对象
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 5);             // 初始化蓝牙对象
   Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE);                // 配置调试模式
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback); // 配置回调函数
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(PTZ->Servo_Down->Error), " ");
   Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(PTZ->Servo_Up->Error), " ");
-  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(c), " ");
-  // Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(d), " ");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(a), " ");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(b), " ");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 4, &(c), " ");
 #endif
 
 //* HMI配置
@@ -168,20 +175,20 @@ int main(void)
 #ifdef USE_IMU
   pClass_UART IMU_Communicator = Create_UART(IMU_UART_INDEX);                      // 获取IMU串口对象实例
   IMU_Communicator->Init(IMU_Communicator, IMU_RX_LEN_MAX, 1);                     // 初始化IMU串口对象
-  IMU_Communicator->Configure_Mode(IMU_Communicator, DEBUG_STRING);                // 配置调试模式
+  IMU_Communicator->Configure_Mode(IMU_Communicator, RAW_DATA);                // 配置调试模式
   IMU_Communicator->Configure_Callback(IMU_Communicator, IMU_Rx_Callback);         // 配置IMU回调函数
   IMU_Communicator->Bind_Param_With_Id(IMU_Communicator, 0, &(Car->IMU_Yaw), " "); // 绑定参数
   IMU_Init();                                                                      // 校準加速度
 #endif
 
 
-
 //* Raspberry串口通信配置
 #ifdef USE_RASPBERRY
-  pClass_UART Raspberry_Communicator = Create_UART(Raspberry_UART_INDEX);                                // 获取Raspberry串口对象实例
+  pClass_UART Raspberry_Communicator = Create_UART(Raspberry_UART_INDEX);                            // 获取Raspberry串口对象实例
   Raspberry_Communicator->Init(Raspberry_Communicator, Raspberry_RX_LEN_MAX, 2);                         // 初始化Raspberry串口对象
-  Raspberry_Communicator->Configure_Mode(Raspberry_Communicator, DEBUG_STRING);                            // 配置调试模式
+  Raspberry_Communicator->Configure_Mode(Raspberry_Communicator, CUSTOM);                            // 配置调试模式
   Raspberry_Communicator->Configure_Callback(Raspberry_Communicator, Raspberry_Rx_Callback);             // 配置回调函数
+  Raspberry_Communicator->Configure_Send_Float(Raspberry_Communicator, Raspberry_Transmit);
   Raspberry_Communicator->Bind_Param_With_Id(Raspberry_Communicator, 0, &(PTZ->Servo_Down->Error), " "); // 绑定参数0
   Raspberry_Communicator->Bind_Param_With_Id(Raspberry_Communicator, 1, &(PTZ->Servo_Up->Error), " ");
 #endif
@@ -190,22 +197,31 @@ int main(void)
 #ifdef USE_ADC_BUTTON
   pClass_ADCButton ADC_Button = Create_ADCButton();                                                   // 创建按键对象
   ADC_Button->Init(ADC_Button, ADC_BUTTON_INST, ADC_BUTTON_INST_INT_IRQN, ADC_BUTTON_ADCMEM_ADC_CH0); // 初始化按键对象
-  ADC_Button->Configure_Callback(ADC_Button, BUTTON_1, NULL, Toggle_LAZER, NULL);
+  ADC_Button->Configure_Callback(ADC_Button, BUTTON_1, EnablePID, Toggle_LAZER, NULL);
   ADC_Button->Configure_Callback(ADC_Button, BUTTON_2, Set_Point_1, NULL, Servo_UP_UP);
   ADC_Button->Configure_Callback(ADC_Button, BUTTON_3, PTZ_Task_1, NULL, Servo_DOWN_LEFT);
   ADC_Button->Configure_Callback(ADC_Button, BUTTON_4, PTZ_Task_2, NULL, Servo_DOWN_RIGHT);
   ADC_Button->Configure_Callback(ADC_Button, BUTTON_5, Set_Point_2, NULL, Servo_UP_DOWN);
-
 #endif
   LAZER(ON);
   while (1)
   {
+    a = (float)(PTZ->Servo_Down->Pos);
+    b = (float)(PTZ->Servo_Up->Pos);
+    c = (float)(PTZ->Task_ID);
 #ifdef USE_BLUETOOTH
-    a = (float)(ADC_Button->Current_ADC_Value);
     Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 #endif
+
 #ifdef USE_HMI
     HMI->Send(HMI, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
+#endif
+
+#ifdef USE_RASPBERRY
+    float datas[3] = {a, b, 2};
+    if(Raspberry_Communicator->Send_Float){
+      Raspberry_Communicator->Send_Float(Raspberry_Communicator, datas, sizeof(datas) / sizeof(float));
+    }
 #endif
 
     if (BUZZ_STATE == BEEP)

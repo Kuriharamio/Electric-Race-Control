@@ -14,18 +14,18 @@
 
 // * 蓝牙配置
 #define USE_BLUETOOTH
-#define BLUETOOTH_UART_INDEX 3  // 蓝牙串口索引号
-#define USE_UART_3              // 启用串口0
+#define BLUETOOTH_UART_INDEX 0  // 蓝牙串口索引号
+#define USE_UART_0              // 启用串口0
 #define BLUETOOTH_RX_LEN_MAX 20 // 蓝牙接收数据最大长度
 
 //* 飞特舵机串口配置
 #define USE_FT_SERVO            // 启用飞特舵机
-#define FT_SERVO_UART_INDEX 2   // 飞特舵机串口索引号
-#define USE_UART_2              // 启用串口2
+#define FT_SERVO_UART_INDEX 1   // 飞特舵机串口索引号
+#define USE_UART_1              // 启用串口2
 #define FT_SERVO_RX_LEN_MAX 255 // 飞特舵机接收数据最大长度
 #define PROTECT_CURRENT 500      // 保护电流大小
 #define USE_PID_SERVO
-#define PID_SERVO_DELTA_T 0.006f      // PID 时间间隔比值
+#define PID_SERVO_DELTA_T 0.01f      // PID 时间间隔比值
 #define PID_TIME_FACTOR 1000
 // #define PRINT_DEBUG
 
@@ -41,8 +41,8 @@
 
 //* Raspberry 串口配置
 #define USE_RASPBERRY
-#define Raspberry_UART_INDEX 0   // Raspberry串口索引号
-#define USE_UART_0          // 启用串口0
+#define Raspberry_UART_INDEX 3   // Raspberry串口索引号
+#define USE_UART_3          // 启用串口0
 #define Raspberry_RX_LEN_MAX 100 // Raspberry接收数据最大长度
 
 //* IMU 串口配置

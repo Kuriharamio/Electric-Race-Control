@@ -17,6 +17,9 @@ typedef struct Class_PTZ {
     uint16_t Speed[2];
     uint8_t ACC[2];
 
+    uint8_t Task_ID;
+
+    bool PID_Enable;
     bool is_inited;
 
     void (*Init)(struct Class_PTZ* this);
@@ -34,4 +37,5 @@ void PTZ_Update(pClass_PTZ this);
 void PTZ_Draw_Img(pClass_PTZ this);
 void PTZ_Draw_Func(pClass_PTZ this);
 void PTZ_Draw_Num(pClass_PTZ this, double num, bool is_float, char *pos);
+
 #endif

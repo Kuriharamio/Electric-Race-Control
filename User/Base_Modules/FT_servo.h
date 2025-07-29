@@ -5,6 +5,7 @@
 #include "SCSLib/SCServo.h"
 #include "BSP/uart.h"
 #include "Algorithm/pid.h"
+#include "Algorithm/calcu_str.h"
 
 typedef enum
 {
@@ -48,11 +49,13 @@ typedef struct Class_FT_Servo
 
     float Error; // PID循迹用
     pClass_PID PID;
-    float PID_Output;
+    // pClass_STR STR;
+    float Output_Value;
+
 
     bool is_inited;
 
-    void (*Init)(struct Class_FT_Servo *this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Max_Pos, uint16_t Min_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc);
+    void (*Init)(struct Class_FT_Servo *this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Min_Pos, uint16_t Max_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc);
     void (*Set_Mid_Pos)(struct Class_FT_Servo *this);
     void (*Set_Min_Pos)(struct Class_FT_Servo *this, uint16_t pos);
     void (*Set_Max_Pos)(struct Class_FT_Servo *this, uint16_t pos);
@@ -71,7 +74,7 @@ typedef struct Class_FT_Servo
 pClass_FT_Servo Create_FT_Servo(uint8_t ID);
 pClass_FT_Servo Get_FT_Servo_Handle(uint8_t ID);
 
-void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Max_Pos, uint16_t Min_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc);
+void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Min_Pos, uint16_t Max_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc);
 void FT_Servo_Set_Max_Pos(pClass_FT_Servo this, uint16_t pos);
 void FT_Servo_Set_Min_Pos(pClass_FT_Servo this, uint16_t pos);
 void FT_Servo_Set_Max_Spd(pClass_FT_Servo this, uint16_t spd);

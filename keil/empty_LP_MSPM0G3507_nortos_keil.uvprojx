@@ -544,6 +544,11 @@
               <FileType>1</FileType>
               <FilePath>..\Third\SCSLib\SMS_STS.c</FilePath>
             </File>
+            <File>
+              <FileName>calcu_str.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Algorithm\calcu_str.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

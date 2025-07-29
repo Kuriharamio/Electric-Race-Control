@@ -57,6 +57,7 @@ pClass_FT_Servo Create_FT_Servo(uint8_t ID)
     temp_ptr->Update_PID = FT_Servo_Update_PID;
 
     temp_ptr->PID = create_PID();
+    // temp_ptr->STR = create_STR();
 
     return temp_ptr;
 }
@@ -78,9 +79,21 @@ pClass_FT_Servo Get_FT_Servo_Handle(uint8_t ID)
     return temp_ptr;
 }
 
-void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Max_Pos, uint16_t Min_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc)
+void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Min_Pos, uint16_t Max_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc)
 {
-    this->PID->PID_Init(this->PID, 0.1f, 0.15f, 0.1f, 0.00f, 2047.0f, 2047.0f, PID_SERVO_DELTA_T*3, 0.00f, 10.00f, 30.00f, 30.00f, PID_D_First_DISABLE);
+    // this->PID->PID_Init(this->PID, 0.6f, 0.1f, 0.02f, 0.0f, 1.5f, 10.0f, PID_SERVO_DELTA_T*3, 0.00f, 3.00f, 10.00f, 10.00f, PID_D_First_DISABLE);
+    this->PID->PID_Init(this->PID, 0.4f, 0.1f, 0.0f, 0.3f, 4.5f, 10.0f, PID_SERVO_DELTA_T * 3, 0.00f, 3.00f, 10.00f, 10.00f, PID_D_First_DISABLE);
+
+    // float A_m[2] = {-1.9f, 0.72f};
+    // float B_m = 0.02f;
+    // this->STR->Init(this->STR,
+    //                 STR_MODE_POLE_PLACE,
+    //                 0.98f, /* Lambda 遗忘因子 */
+    //                 A_m, B_m,
+    //                 0.5f, /* R_weight，最小方差用 */
+    //                 4.0f, /* Out_Max */
+    //                 4.0f, /* Dead_Zone */
+    //                 PID_SERVO_DELTA_T * 3);
 
     setEnd(0);              // SMS_STS舵机为小端存储结构
     this->Status = OFFLINE; // 舵机初始状态为离线
@@ -110,7 +123,7 @@ void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Ma
     this->Current = 0;
 
     // this->Set_Mid_Pos(this);
-    this->PID_Output = 0.0f;
+    this->Output_Value = 0.0f;
 
     retry = 255;
     while (this->Pos == 5000 && retry--)
@@ -238,15 +251,38 @@ void FT_Servo_Set_Target_Status(pClass_FT_Servo this, uint16_t pos, uint16_t spd
 }
 void FT_Servo_Update_PID(pClass_FT_Servo this)
 {
-    if (this->Status != ONLINE)
-        return;
+    // if (this->Status != ONLINE)
+    //     return;
 
-    this->PID->Set_Target(this->PID, -this->Error);
+    static float Max_Error = 0;
+
+    if((fabs(this->Error) > Max_Error ) || !Max_Error)
+    {
+        Max_Error = fabs(this->Error);
+    }
+
     this->PID->Set_Now(this->PID, 0);
+    this->PID->Set_Target(this->PID, -this->Error);
     this->PID->Update_Value(this->PID);
+    this->Output_Value = this->PID->Get_PID_Out(this->PID);
 
-    this->PID_Output = this->PID->Get_PID_Out(this->PID);
-    this->Set_Target_Status(this, (uint16_t)(this->PID_Output) + this->Pos, 40, 20);
+    uint16_t spd = 5 + (1 - fabs(this->Error) / Max_Error) * (uint16_t)(fabs(this->Output_Value)) * 4; // +
+    this->Set_Target_Status(this, (uint16_t)(this->Output_Value+0.5) + this->Pos, spd, 0);
+
+
+    // static float Max_Error = 0;
+    // if (fabs(this->Error) > Max_Error)
+    // {
+    //     Max_Error = fabs(this->Error);
+    // }
+
+    // this->STR->Set_Now(this->STR, 0);
+    // this->STR->Set_Target(this->STR, -this->Error);
+    // this->STR->Update_Value(this->STR);
+    // this->Output_Value = this->STR->Get_Out(this->STR);
+
+    // uint16_t spd = 5 + (1 - fabs(this->Error) / Max_Error) * 30;
+    // this->Set_Target_Status(this, (uint16_t)(this->Output_Value) + this->Pos, 30, 0);
 }
 void FT_Servo_Data_Process(pClass_UART this)
 {
