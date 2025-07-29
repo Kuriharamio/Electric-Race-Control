@@ -206,8 +206,8 @@ int main(void)
   LAZER(ON);
   while (1)
   {
-    a = (float)(PTZ->Servo_Down->Pos);
-    b = (float)(PTZ->Servo_Up->Pos);
+    a = (float)(PTZ->Servo_Down->Output_Value);
+    b = (float)(PTZ->Servo_Up->Output_Value);
     c = (float)(PTZ->Task_ID);
 #ifdef USE_BLUETOOTH
     Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
@@ -218,7 +218,7 @@ int main(void)
 #endif
 
 #ifdef USE_RASPBERRY
-    float datas[3] = {a, b, 2};
+    float datas[3] = {(float)(PTZ->Servo_Down->Pos), (float)(PTZ->Servo_Up->Pos), (float)(PTZ->Task_ID)};
     if(Raspberry_Communicator->Send_Float){
       Raspberry_Communicator->Send_Float(Raspberry_Communicator, datas, sizeof(datas) / sizeof(float));
     }

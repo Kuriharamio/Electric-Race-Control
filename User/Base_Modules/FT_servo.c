@@ -82,7 +82,7 @@ pClass_FT_Servo Get_FT_Servo_Handle(uint8_t ID)
 void FT_Servo_Init(pClass_FT_Servo this, FT_SERVO_POS_MODE Pos_Mode, uint16_t Min_Pos, uint16_t Max_Pos, uint16_t Max_Spd, uint16_t Min_Spd, uint16_t Max_Acc, uint16_t Min_Acc)
 {
     // this->PID->PID_Init(this->PID, 0.6f, 0.1f, 0.02f, 0.0f, 1.5f, 10.0f, PID_SERVO_DELTA_T*3, 0.00f, 3.00f, 10.00f, 10.00f, PID_D_First_DISABLE);
-    this->PID->PID_Init(this->PID, 0.4f, 0.1f, 0.0f, 0.3f, 4.5f, 10.0f, PID_SERVO_DELTA_T * 3, 0.00f, 3.00f, 10.00f, 10.00f, PID_D_First_DISABLE);
+    this->PID->PID_Init(this->PID, 0.4f, 0.1f, 0.0f, 0.3f, 4.5f, 10.0f, PID_SERVO_DELTA_T * 3, 0.1f, 3.00f, 10.00f, 10.00f, PID_D_First_DISABLE);
 
     // float A_m[2] = {-1.9f, 0.72f};
     // float B_m = 0.02f;
@@ -265,9 +265,18 @@ void FT_Servo_Update_PID(pClass_FT_Servo this)
     this->PID->Set_Target(this->PID, -this->Error);
     this->PID->Update_Value(this->PID);
     this->Output_Value = this->PID->Get_PID_Out(this->PID);
+    if(this->Output_Value < 0)
+    {
+        this->Output_Value -= 0.5f;
+    }
+    else if (this->Output_Value > 0)
+    {
+        this->Output_Value += 0.5f;
+    }
+    
 
-    uint16_t spd = 5 + (1 - fabs(this->Error) / Max_Error) * (uint16_t)(fabs(this->Output_Value)) * 4; // +
-    this->Set_Target_Status(this, (uint16_t)(this->Output_Value+0.5) + this->Pos, spd, 0);
+    uint16_t spd = 5 + (1 - fabs(this->Error) / Max_Error) * (uint16_t)(fabs(this->Output_Value)) * 4; 
+    this->Set_Target_Status(this, (uint16_t)(this->Output_Value + (float)this->Pos), spd, 0);
 
 
     // static float Max_Error = 0;
