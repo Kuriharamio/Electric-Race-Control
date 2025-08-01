@@ -10,7 +10,7 @@
 //* 声光提示配置
 #define USE_LED  // 启用LED
 #define USE_BUZZ // 启用蜂鸣器
-#define USE_LAZER
+// #define USE_LAZER
 
 // * 蓝牙配置
 // #define USE_BLUETOOTH
@@ -46,12 +46,12 @@
 // #define Raspberry_RX_LEN_MAX 100 // Raspberry接收数据最大长度
 
 //* IMU 串口配置
-#define USE_IMU
-#define USE_IMU_IN_ODOM
-#define USE_IMU_IN_ANGULAR_PID
-#define IMU_UART_INDEX 3  // IMU 串口索引号
-#define USE_UART_3        // 启用串口3
-#define IMU_RX_LEN_MAX 11 // IMU 接收数据最大长度
+// #define USE_IMU
+// #define USE_IMU_IN_ODOM
+// #define USE_IMU_IN_ANGULAR_PID
+// #define IMU_UART_INDEX 3  // IMU 串口索引号
+// #define USE_UART_3        // 启用串口3
+// #define IMU_RX_LEN_MAX 11 // IMU 接收数据最大长度
 
 //* 舵机配置
 // #define USE_SERVO          // 启用舵机
@@ -66,7 +66,7 @@
 
 //* 灰度传感器配置
 #define USE_GRAY_SENSOR
-#define FILTER_SIZE 1
+#define FILTER_SIZE 10
 #define GRAY_SENSOR_TIMER_FACTOR 1
 
 //* PID 配置
@@ -79,18 +79,18 @@
 
 //* 小车参数配置
 #define USE_CAR                  // 启用小车参数
-#define WHEEL_DISTANCE 0.11f     // 轮距
+#define WHEEL_DISTANCE 0.124f     // 轮距
 #define WHEEL_RADIUS 0.024f      // 轮子半径
-#define WHEEL_Gearbox_Rate 20.0f // 减速比
+#define WHEEL_Gearbox_Rate 20.409f // 减速比
 #define WHEEL_Per_Pulse 13.0f    // 每转脉冲数
 #define WHEEL_Ferq_Rate 4
-#define MAX_LINEAR_SPEED 0.8f
-#define MAX_ANGULAR_SPEED 0.8 / (WHEEL_DISTANCE) // 1.5 * 3.14f
+#define MAX_LINEAR_SPEED 0.5f
+#define MAX_ANGULAR_SPEED (0.4f / WHEEL_DISTANCE)
 
 #define PID_MOTOR_FACTOR 1      // 电机 PID 时间间隔比值
 #define PID_CAR_SPEED_FACTOR 2  // 小车速度 PID 时间间隔比值
 #define PID_CAR_POS_FACTOR 3    // 小车轮速 PID 时间间隔比值
-#define PID_CAR_FOLLOW_FACTOR 2 // 小车跟随 PID 时间间隔比值
+#define PID_CAR_FOLLOW_FACTOR 1 // 小车跟随 PID 时间间隔比值
 
 //* PurePursuit 配置
 #define USE_PURE_PURSUIT

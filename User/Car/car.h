@@ -39,11 +39,25 @@ typedef struct Class_Car
     SPEED Now_Speed;    // 实际速度
 
     bool Finish_Current_Mode;
+    uint8_t Last_Task_ID;
     uint8_t Task_ID;
     uint8_t Task_1_Step;
     uint8_t Task_2_Step;
     uint8_t Task_3_Step;
     uint8_t Task_4_Step;
+    uint8_t Task_5_Step;
+    uint8_t Task_6_Step;
+    uint8_t Task_7_Step;
+
+    uint8_t Task_1_cnt;
+    uint8_t Task_2_cnt;
+    uint8_t Task_3_cnt;
+    uint8_t Task_4_cnt;
+    uint8_t Task_5_cnt;
+
+    int Delay_cnt;
+    int Delay_Time;
+    int Delay_Lock;
 
     pClass_GraySensor gray_scale_sensor;
 

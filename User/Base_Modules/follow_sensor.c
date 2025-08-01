@@ -2,8 +2,8 @@
 #ifdef USE_GRAY_SENSOR
 static Class_GraySensor _Gray_Sensor = {0};
 
-unsigned short white[8] = {1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000};
-unsigned short black[8] = {800, 800, 800, 800, 800, 800, 800, 800};
+unsigned short white[8] = {1134, 1400, 1541, 1849, 1755, 1364, 700, 940};
+unsigned short black[8] = {244, 439, 270, 524, 452, 323, 153, 292};
 
 pClass_GraySensor Create_GraySensor(void)
 {
@@ -28,6 +28,13 @@ void Get_ADC_Data(pClass_GraySensor this)
 {
     DL_ADC12_enableConversions(ADC_GRAY_SCALE_INST);
     DL_ADC12_startConversion(ADC_GRAY_SCALE_INST);
+    // // 如果当前状态 不是 空闲状态
+    // while (DL_ADC12_getStatus(ADC_GRAY_SCALE_INST) != DL_ADC12_STATUS_CONVERSION_IDLE)
+    //     ;
+    // // 清除触发转换状态
+    // DL_ADC12_stopConversion(ADC_GRAY_SCALE_INST);
+    // // 失能ADC转换
+    // DL_ADC12_disableConversions(ADC_GRAY_SCALE_INST);
 
     this->ADC_Value += DL_ADC12_getMemResult(ADC_GRAY_SCALE_INST, ADC_GRAY_SCALE_ADCMEM_ADC_CH0);
 }
@@ -69,13 +76,20 @@ void Convert_Analog_To_Digital(pClass_GraySensor this)
             this->Digtal |= (1 << i); // 超过白阈值置1（白色）
             this->Digital_value[i] = 0;
         }
-        else if (this->Analog_value[i] < this->Gray_black[i])
+        else if(this->Analog_value[i] < this->Gray_black[i])
         {
             this->Digtal &= ~(1 << i); // 低于黑阈值置0（黑色）
             this->Digital_value[i] = 1;
         }
         // 中间灰度值保持原有状态
     }
+    // for(int i = 0; i < 8; i++){
+    //     if(this->Analog_value[i] > 900){
+    //         this->Digital_value[i] = 0;
+    //     }else{
+    //         this->Digital_value[i] = 1;
+    //     }
+    // }
 }
 
 /* 函数功能：归一化ADC值到指定范围 */
@@ -83,20 +97,19 @@ void Normalize_Analog_Values(pClass_GraySensor this)
 {
     for (int i = 0; i < 8; i++)
     {
-        // unsigned short n;
-        // // 计算归一化值（减去黑电平后缩放）
-        // if (this->Analog_value[i] < this->Calibrated_black[i])
-        //     n = 0; // 低于黑电平归零
-        // else
-        //     n = (this->Analog_value[i] - this->Calibrated_black[i]) * this->Normal_factor[i];
+        unsigned short n;
+        // 计算归一化值（减去黑电平后缩放）
+        if (this->Analog_value[i] < this->Calibrated_black[i])
+            n = 0; // 低于黑电平归零
+        else
+            n = (this->Analog_value[i] - this->Calibrated_black[i]) * this->Normal_factor[i];
 
-        // // 限幅处理
-        // if (n > this->bits)
-        // {
-        //     n = this->bits;
-        // }
-        // this->Normal_value[i] = n;
-        this->Normal_value[i] = 1 - (float)(this->Analog_value[i]) / (float)(this->bits);
+        // 限幅处理
+        if (n > this->bits)
+        {
+            n = this->bits;
+        }
+        this->Normal_value[i] = n;
     }
 }
 
@@ -116,8 +129,8 @@ void GraySensor_Init_Without_Params(pClass_GraySensor this)
         this->Normal_factor[i] = 0.0;
     }
 
-    this->k1 = 1.0f;
-    this->k2 = 0.5f;
+    this->k1 = 2.2f;
+    // this->k2 = 0.75f;
     this->k3 = 0.25f;
     this->k4 = 0.125f;
 
@@ -141,7 +154,7 @@ void GraySensor_Init_With_Params(pClass_GraySensor this, unsigned short *Calibra
     GraySensor_Init_Without_Params(this);
 
     this->bits = 4096.0;
-    this->Time_out = 1;
+    this->Time_out = 10;
 
     double Normal_Diff[8];
     unsigned short temp;
@@ -180,101 +193,76 @@ void GraySensor_Init_With_Params(pClass_GraySensor this, unsigned short *Calibra
 }
 
 /* 函数功能：传感器主任务（无定时器版本）*/
-void GraySensor_Update(pClass_GraySensor this)
+void GraySensor_Update(pClass_GraySensor this, uint8_t mode)
 {
     Get_Analog_Value(this, FILTER_SIZE); // 采集数据
     Convert_Analog_To_Digital(this);     // 二值化处理
     Normalize_Analog_Values(this);       // 归一化处理
 
-    int j = 0, black = 0;
+    int black = 0;
     static int black_times = 0, white_times = 0;
 
-    float now_error = 0;
-    //* 读取数据
-    for (int i = 0; i < 8; i++)
-    {
-        if (this->Digital_value[i] == 1)
-        {
-            black++;
+    for(int i = 0; i < 8; i++){
+        if(i!=1){
+            black += this->Digital_value[i];
         }
     }
 
-    // if (this->undetected)
-    // {
-    //     this->k1 = 0.0f;
-    //     if (this->Search_Direction == 1)
-    //     {
-    //         if (this->Digital_value[0] || this->Digital_value[1])
-    //         {
-    //             black = 1;
-    //         }
-    //         else
-    //         {
-    //             black = 0;
-    //             for (int k = 2; k < 8; k++)
-    //             {
-    //                 this->Digital_value[k] = 0;
-    //             }
-    //         }
-    //     }
-    //     else if (this->Search_Direction == -1)
-    //     {
-    //         if(this->Digital_value[6] || this->Digital_value[7]){
-    //             black = 1;
-    //         }else{
-    //             black = 0;
-    //             for (int k = 0; k < 6; k++){
-    //                 this->Digital_value[k] = 0;
-    //             }
-    //         }
-    //     }
-    // }else{
-
-    // }
-
-    // //* 判断急转方向
-    // if (this->Digital_value[7] || this->Digital_value[6])
-    // {
-    //     this->Search_Direction = -1;
-    // }
-    // if (this->Digital_value[0] || this->Digital_value[1])
-    // {
-    //     this->Search_Direction = 1;
-    // }
-
-    // if (black == 8)
-    // {
-    //     black_times++;
-    //     if (black_times > 2)
-    //     {
-    //         black_times = 0;
-    //         //* 全黑状态处理
-    //     }
-    // }
-    // else
-    // if (black == 0)
-    // {
-    //     white_times++;
-    //     // if (white_times > 100) // 防止线比传感器间隔细，导致误判为白色区域
-    //     // {
-    //     //     // this->Linear_Speed_Max = -1.5;
-    //     //     // this->undetected = true;
-    //     //     // this->Follow_Error = 80.0f * this->Search_Direction;
-    //     // }
-    //     if (white_times > 20)
-    //     {
-    //         white_times = 0;
-    //         //* 全白状态处理
-    //         this->Finish = true;
-    //     }
-    // }
-    // else
-    {
-        this->undetected = false;
-        black_times = 0;
+    if(black == 0) 
+        white_times++;
+    else
         white_times = 0;
-        this->Linear_Speed_Max = 0.2f;
-        this->Follow_Error = this->k1 * (this->Normal_value[0] - this->Normal_value[7]) + this->k2 * (this->Normal_value[1] - this->Normal_value[6]) + this->k3 * (this->Normal_value[2] - this->Normal_value[5]) + this->k4 * (this->Normal_value[3] - this->Normal_value[4]);
+
+    this->Linear_Speed_Max = 0.5f;
+
+    this->Follow_Error =  -(this->k1 * (this->Digital_value[0] - this->Digital_value[7]) + this->k2 * (this->Digital_value[1] - this->Digital_value[6]) + this->k3 * (this->Digital_value[2] - this->Digital_value[5]) + this->k4 * (this->Digital_value[3] - this->Digital_value[4]));
+    if(this->Follow_Error != 0)
+        this->Follow_Error /= (float)(black);
+
+    if (mode==1)
+    {
+        if (white_times > 0)
+        {
+            this->Finish = true;
+        }
+    }else if(mode == 2){
+        if ((this->Digital_value[7] && this->Digital_value[6] && this->Digital_value[5] && this->Digital_value[4]) || white_times > 0)
+        {
+            this->Finish = true;
+        }
+    }
+}
+
+
+/**
+ * @brief 校准白色参考值，将当前传感器采集到的模拟值写入 Calibrated_white
+ * @param this 传感器结构体指针
+ */
+void Calibrate_White(pClass_GraySensor this)
+{
+    // 采集一次当前8通道的模拟值
+    Get_Analog_Value(this, FILTER_SIZE);
+
+    // 将当前模拟值写入 Calibrated_white
+    for (int i = 0; i < 8; i++)
+    {
+        this->Calibrated_white[i] = this->Analog_value[i];
+    }
+}
+
+/**
+ * @brief 校准黑色参考值，将当前传感器采集到的模拟值写入 Calibrated_black
+ * @param this 传感器结构体指针
+ */
+void Calibrate_Black(pClass_GraySensor this)
+{
+    // 采集一次当前8通道的模拟值
+    Get_Analog_Value(this, FILTER_SIZE);
+
+    // 将当前模拟值写入 Calibrated_black
+    for (int i = 0; i < 8; i++)
+    {
+        this->Calibrated_black[i] = this->Analog_value[i];
     }
 }
 

@@ -44,7 +44,6 @@ DL_TimerA_backupConfig gPWM_MOTOR_RBackup;
 DL_TimerA_backupConfig gPWM_MOTOR_LBackup;
 DL_TimerG_backupConfig gENCODER_TIMERBackup;
 DL_TimerG_backupConfig gPID_TIMERBackup;
-DL_UART_Main_backupConfig gUART_2Backup;
 
 /*
  *  ======== SYSCFG_DL_init ========
@@ -61,10 +60,8 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_ENCODER_TIMER_init();
     SYSCFG_DL_PID_TIMER_init();
     SYSCFG_DL_READ_TIMER_init();
-    SYSCFG_DL_PTZ_TIMER_init();
     SYSCFG_DL_UART_0_init();
     SYSCFG_DL_UART_1_init();
-    SYSCFG_DL_UART_2_init();
     SYSCFG_DL_UART_3_init();
     SYSCFG_DL_ADC_GRAY_SCALE_init();
     SYSCFG_DL_ADC_BUTTON_init();
@@ -74,7 +71,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
 	gPWM_MOTOR_LBackup.backupRdy 	= false;
 	gENCODER_TIMERBackup.backupRdy 	= false;
 	gPID_TIMERBackup.backupRdy 	= false;
-	gUART_2Backup.backupRdy 	= false;
+
 
 }
 /*
@@ -89,7 +86,6 @@ SYSCONFIG_WEAK bool SYSCFG_DL_saveConfiguration(void)
 	retStatus &= DL_TimerA_saveConfiguration(PWM_MOTOR_L_INST, &gPWM_MOTOR_LBackup);
 	retStatus &= DL_TimerG_saveConfiguration(ENCODER_TIMER_INST, &gENCODER_TIMERBackup);
 	retStatus &= DL_TimerG_saveConfiguration(PID_TIMER_INST, &gPID_TIMERBackup);
-	retStatus &= DL_UART_Main_saveConfiguration(UART_2_INST, &gUART_2Backup);
 
     return retStatus;
 }
@@ -103,7 +99,6 @@ SYSCONFIG_WEAK bool SYSCFG_DL_restoreConfiguration(void)
 	retStatus &= DL_TimerA_restoreConfiguration(PWM_MOTOR_L_INST, &gPWM_MOTOR_LBackup, false);
 	retStatus &= DL_TimerG_restoreConfiguration(ENCODER_TIMER_INST, &gENCODER_TIMERBackup, false);
 	retStatus &= DL_TimerG_restoreConfiguration(PID_TIMER_INST, &gPID_TIMERBackup, false);
-	retStatus &= DL_UART_Main_restoreConfiguration(UART_2_INST, &gUART_2Backup);
 
     return retStatus;
 }
@@ -117,10 +112,8 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerG_reset(ENCODER_TIMER_INST);
     DL_TimerG_reset(PID_TIMER_INST);
     DL_TimerG_reset(READ_TIMER_INST);
-    DL_TimerG_reset(PTZ_TIMER_INST);
     DL_UART_Main_reset(UART_0_INST);
     DL_UART_Main_reset(UART_1_INST);
-    DL_UART_Main_reset(UART_2_INST);
     DL_UART_Main_reset(UART_3_INST);
     DL_ADC12_reset(ADC_GRAY_SCALE_INST);
     DL_ADC12_reset(ADC_BUTTON_INST);
@@ -133,10 +126,8 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerG_enablePower(ENCODER_TIMER_INST);
     DL_TimerG_enablePower(PID_TIMER_INST);
     DL_TimerG_enablePower(READ_TIMER_INST);
-    DL_TimerG_enablePower(PTZ_TIMER_INST);
     DL_UART_Main_enablePower(UART_0_INST);
     DL_UART_Main_enablePower(UART_1_INST);
-    DL_UART_Main_enablePower(UART_2_INST);
     DL_UART_Main_enablePower(UART_3_INST);
     DL_ADC12_enablePower(ADC_GRAY_SCALE_INST);
     DL_ADC12_enablePower(ADC_BUTTON_INST);
@@ -160,10 +151,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
         GPIO_UART_1_IOMUX_TX, GPIO_UART_1_IOMUX_TX_FUNC);
     DL_GPIO_initPeripheralInputFunction(
         GPIO_UART_1_IOMUX_RX, GPIO_UART_1_IOMUX_RX_FUNC);
-    DL_GPIO_initPeripheralOutputFunction(
-        GPIO_UART_2_IOMUX_TX, GPIO_UART_2_IOMUX_TX_FUNC);
-    DL_GPIO_initPeripheralInputFunction(
-        GPIO_UART_2_IOMUX_RX, GPIO_UART_2_IOMUX_RX_FUNC);
     DL_GPIO_initPeripheralOutputFunction(
         GPIO_UART_3_IOMUX_TX, GPIO_UART_3_IOMUX_TX_FUNC);
     DL_GPIO_initPeripheralInputFunction(
@@ -478,42 +465,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_READ_TIMER_init(void) {
 
 }
 
-/*
- * Timer clock configuration to be sourced by BUSCLK /  (5000000 Hz)
- * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
- *   1000000 Hz = 5000000 Hz / (8 * (4 + 1))
- */
-static const DL_TimerG_ClockConfig gPTZ_TIMERClockConfig = {
-    .clockSel    = DL_TIMER_CLOCK_BUSCLK,
-    .divideRatio = DL_TIMER_CLOCK_DIVIDE_8,
-    .prescale    = 4U,
-};
-
-/*
- * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
- * PTZ_TIMER_INST_LOAD_VALUE = (6 ms * 1000000 Hz) - 1
- */
-static const DL_TimerG_TimerConfig gPTZ_TIMERTimerConfig = {
-    .period     = PTZ_TIMER_INST_LOAD_VALUE,
-    .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC,
-    .startTimer = DL_TIMER_START,
-};
-
-SYSCONFIG_WEAK void SYSCFG_DL_PTZ_TIMER_init(void) {
-
-    DL_TimerG_setClockConfig(PTZ_TIMER_INST,
-        (DL_TimerG_ClockConfig *) &gPTZ_TIMERClockConfig);
-
-    DL_TimerG_initTimerMode(PTZ_TIMER_INST,
-        (DL_TimerG_TimerConfig *) &gPTZ_TIMERTimerConfig);
-    DL_TimerG_enableInterrupt(PTZ_TIMER_INST , DL_TIMERG_INTERRUPT_ZERO_EVENT);
-    DL_TimerG_enableClock(PTZ_TIMER_INST);
-
-
-
-
-}
-
 
 
 static const DL_UART_Main_ClockConfig gUART_0ClockConfig = {
@@ -588,44 +539,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_1_init(void)
     DL_UART_Main_enable(UART_1_INST);
 }
 
-static const DL_UART_Main_ClockConfig gUART_2ClockConfig = {
-    .clockSel    = DL_UART_MAIN_CLOCK_BUSCLK,
-    .divideRatio = DL_UART_MAIN_CLOCK_DIVIDE_RATIO_1
-};
-
-static const DL_UART_Main_Config gUART_2Config = {
-    .mode        = DL_UART_MAIN_MODE_NORMAL,
-    .direction   = DL_UART_MAIN_DIRECTION_TX_RX,
-    .flowControl = DL_UART_MAIN_FLOW_CONTROL_NONE,
-    .parity      = DL_UART_MAIN_PARITY_NONE,
-    .wordLength  = DL_UART_MAIN_WORD_LENGTH_8_BITS,
-    .stopBits    = DL_UART_MAIN_STOP_BITS_ONE
-};
-
-SYSCONFIG_WEAK void SYSCFG_DL_UART_2_init(void)
-{
-    DL_UART_Main_setClockConfig(UART_2_INST, (DL_UART_Main_ClockConfig *) &gUART_2ClockConfig);
-
-    DL_UART_Main_init(UART_2_INST, (DL_UART_Main_Config *) &gUART_2Config);
-    /*
-     * Configure baud rate by setting oversampling and baud rate divisors.
-     *  Target baud rate: 115200
-     *  Actual baud rate: 115190.78
-     */
-    DL_UART_Main_setOversampling(UART_2_INST, DL_UART_OVERSAMPLING_RATE_16X);
-    DL_UART_Main_setBaudRateDivisor(UART_2_INST, UART_2_IBRD_80_MHZ_115200_BAUD, UART_2_FBRD_80_MHZ_115200_BAUD);
-
-
-    /* Configure Interrupts */
-    DL_UART_Main_enableInterrupt(UART_2_INST,
-                                 DL_UART_MAIN_INTERRUPT_RX);
-    /* Setting the Interrupt Priority */
-    NVIC_SetPriority(UART_2_INST_INT_IRQN, 0);
-
-
-    DL_UART_Main_enable(UART_2_INST);
-}
-
 static const DL_UART_Main_ClockConfig gUART_3ClockConfig = {
     .clockSel    = DL_UART_MAIN_CLOCK_BUSCLK,
     .divideRatio = DL_UART_MAIN_CLOCK_DIVIDE_RATIO_1
@@ -677,7 +590,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_ADC_GRAY_SCALE_init(void)
     DL_ADC12_configConversionMem(ADC_GRAY_SCALE_INST, ADC_GRAY_SCALE_ADCMEM_ADC_CH0,
         DL_ADC12_INPUT_CHAN_0, DL_ADC12_REFERENCE_VOLTAGE_VDDA, DL_ADC12_SAMPLE_TIMER_SOURCE_SCOMP0, DL_ADC12_AVERAGING_MODE_DISABLED,
         DL_ADC12_BURN_OUT_SOURCE_DISABLED, DL_ADC12_TRIGGER_MODE_AUTO_NEXT, DL_ADC12_WINDOWS_COMP_MODE_DISABLED);
-    DL_ADC12_setSampleTime0(ADC_GRAY_SCALE_INST,12000);
+    DL_ADC12_setSampleTime0(ADC_GRAY_SCALE_INST,0);
     DL_ADC12_enableConversions(ADC_GRAY_SCALE_INST);
 }
 /* ADC_BUTTON Initialization */

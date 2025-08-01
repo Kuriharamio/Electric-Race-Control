@@ -114,15 +114,10 @@ extern "C" {
 #define PID_TIMER_INST_INT_IRQN                                 (TIMG6_INT_IRQn)
 #define PID_TIMER_INST_LOAD_VALUE                                        (7499U)
 /* Defines for READ_TIMER */
-#define READ_TIMER_INST                                                  (TIMG8)
-#define READ_TIMER_INST_IRQHandler                              TIMG8_IRQHandler
-#define READ_TIMER_INST_INT_IRQN                                (TIMG8_INT_IRQn)
+#define READ_TIMER_INST                                                  (TIMG0)
+#define READ_TIMER_INST_IRQHandler                              TIMG0_IRQHandler
+#define READ_TIMER_INST_INT_IRQN                                (TIMG0_INT_IRQn)
 #define READ_TIMER_INST_LOAD_VALUE                                        (499U)
-/* Defines for PTZ_TIMER */
-#define PTZ_TIMER_INST                                                   (TIMG0)
-#define PTZ_TIMER_INST_IRQHandler                               TIMG0_IRQHandler
-#define PTZ_TIMER_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
-#define PTZ_TIMER_INST_LOAD_VALUE                                        (5999U)
 
 
 
@@ -156,33 +151,18 @@ extern "C" {
 #define UART_1_BAUD_RATE                                                  (9600)
 #define UART_1_IBRD_40_MHZ_9600_BAUD                                       (260)
 #define UART_1_FBRD_40_MHZ_9600_BAUD                                        (27)
-/* Defines for UART_2 */
-#define UART_2_INST                                                        UART3
-#define UART_2_INST_IRQHandler                                  UART3_IRQHandler
-#define UART_2_INST_INT_IRQN                                      UART3_INT_IRQn
-#define GPIO_UART_2_RX_PORT                                                GPIOA
-#define GPIO_UART_2_TX_PORT                                                GPIOA
-#define GPIO_UART_2_RX_PIN                                        DL_GPIO_PIN_13
-#define GPIO_UART_2_TX_PIN                                        DL_GPIO_PIN_14
-#define GPIO_UART_2_IOMUX_RX                                     (IOMUX_PINCM35)
-#define GPIO_UART_2_IOMUX_TX                                     (IOMUX_PINCM36)
-#define GPIO_UART_2_IOMUX_RX_FUNC                      IOMUX_PINCM35_PF_UART3_RX
-#define GPIO_UART_2_IOMUX_TX_FUNC                      IOMUX_PINCM36_PF_UART3_TX
-#define UART_2_BAUD_RATE                                                (115200)
-#define UART_2_IBRD_80_MHZ_115200_BAUD                                      (43)
-#define UART_2_FBRD_80_MHZ_115200_BAUD                                      (26)
 /* Defines for UART_3 */
 #define UART_3_INST                                                        UART2
 #define UART_3_INST_IRQHandler                                  UART2_IRQHandler
 #define UART_3_INST_INT_IRQN                                      UART2_INT_IRQn
 #define GPIO_UART_3_RX_PORT                                                GPIOB
-#define GPIO_UART_3_TX_PORT                                                GPIOB
+#define GPIO_UART_3_TX_PORT                                                GPIOA
 #define GPIO_UART_3_RX_PIN                                        DL_GPIO_PIN_16
-#define GPIO_UART_3_TX_PIN                                        DL_GPIO_PIN_15
+#define GPIO_UART_3_TX_PIN                                        DL_GPIO_PIN_21
 #define GPIO_UART_3_IOMUX_RX                                     (IOMUX_PINCM33)
-#define GPIO_UART_3_IOMUX_TX                                     (IOMUX_PINCM32)
+#define GPIO_UART_3_IOMUX_TX                                     (IOMUX_PINCM46)
 #define GPIO_UART_3_IOMUX_RX_FUNC                      IOMUX_PINCM33_PF_UART2_RX
-#define GPIO_UART_3_IOMUX_TX_FUNC                      IOMUX_PINCM32_PF_UART2_TX
+#define GPIO_UART_3_IOMUX_TX_FUNC                      IOMUX_PINCM46_PF_UART2_TX
 #define UART_3_BAUD_RATE                                                  (9600)
 #define UART_3_IBRD_40_MHZ_9600_BAUD                                       (260)
 #define UART_3_FBRD_40_MHZ_9600_BAUD                                        (27)
@@ -297,10 +277,8 @@ void SYSCFG_DL_PWM_MOTOR_L_init(void);
 void SYSCFG_DL_ENCODER_TIMER_init(void);
 void SYSCFG_DL_PID_TIMER_init(void);
 void SYSCFG_DL_READ_TIMER_init(void);
-void SYSCFG_DL_PTZ_TIMER_init(void);
 void SYSCFG_DL_UART_0_init(void);
 void SYSCFG_DL_UART_1_init(void);
-void SYSCFG_DL_UART_2_init(void);
 void SYSCFG_DL_UART_3_init(void);
 void SYSCFG_DL_ADC_GRAY_SCALE_init(void);
 void SYSCFG_DL_ADC_BUTTON_init(void);

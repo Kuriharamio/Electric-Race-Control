@@ -100,7 +100,8 @@ void Car_Init(pClass_Car this)
     // 初始化循迹传感器
     this->gray_scale_sensor->Init_With_Params(this->gray_scale_sensor, white, black);
     // 初始化循迹 PID
-    this->PID_Follow->PID_Init(this->PID_Follow, 5.0f, 0.0f, 0.1f, 30.0f, 0.0, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_FOLLOW_FACTOR, 0.0f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
+    // this->PID_Follow->PID_Init(this->PID_Follow, 0.0008f, 0.0f, 0.00f, 0.001f, 0.0, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_FOLLOW_FACTOR, 0.0f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
+    this->PID_Follow->PID_Init(this->PID_Follow, 1.2f, 0.0f, 0.2f, 15.0f, 0.0, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_FOLLOW_FACTOR, 0.0f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
 
 #endif
     // 初始化电机
@@ -130,7 +131,7 @@ void Car_Init(pClass_Car this)
     // this->PID_Angular->PID_Init(this->PID_Angular, 0.6f, 10.0f, 0.0f, 0.0f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_SPEED_FACTOR, 0.050f, 0.0f, 0.0f, 0.00f, PID_D_First_DISABLE);
 
     this->PID_Linear_Position->PID_Init(this->PID_Linear_Position, 2.0f, 1.0f, 0.0f, 0.0f, MAX_LINEAR_SPEED, MAX_LINEAR_SPEED, PID_DELTA_T * PID_CAR_POS_FACTOR, 0.020f, 0.0f, 0.0f, 0.2f, PID_D_First_DISABLE);
-    this->PID_Angle_Position_WHEEL->PID_Init(this->PID_Angle_Position_WHEEL, 2.0f, 1.0f, 0.0f, 0.0f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_POS_FACTOR, 0.020f, 0.0f, 0.0f, 0.2f, PID_D_First_DISABLE);
+    this->PID_Angle_Position_WHEEL->PID_Init(this->PID_Angle_Position_WHEEL, 2.0f, 1.0f, 0.0f, 0.0f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_POS_FACTOR, 0.020f, 0.0f, 0.0f, 0.0f, PID_D_First_DISABLE);
     this->PID_Angle_Position_IMU->PID_Init(this->PID_Angle_Position_IMU, 2.0f, 1.0f, 0.0f, 0.0f, MAX_ANGULAR_SPEED, MAX_ANGULAR_SPEED, PID_DELTA_T * PID_CAR_POS_FACTOR, 0.020f, 0.0f, 0.0f, 0.2f, PID_D_First_DISABLE);
 
     // 初始化完成标志位
@@ -221,7 +222,7 @@ void Car_Update_Linear_Position_PID(pClass_Car this)
  */
 void Car_Update_Angle_Position_PID_WHEEL(pClass_Car this)
 {
-    float error_yaw = TransAngleInPI(this->Target_Position.yaw - this->Now_Position.yaw);
+    float error_yaw = TransAngleInPI(this->Target_Position.yaw - this->Current_Mode_Position.yaw);
     this->PID_Angle_Position_WHEEL->Set_Target(this->PID_Angle_Position_WHEEL, error_yaw);
     this->PID_Angle_Position_WHEEL->Set_Now(this->PID_Angle_Position_WHEEL, 0);
     this->PID_Angle_Position_WHEEL->Update_Value(this->PID_Angle_Position_WHEEL);
@@ -277,13 +278,14 @@ void Car_Update_XY_Position_PID(pClass_Car this)
  */
 void Car_Update_Follow_PID(pClass_Car this)
 {
-    this->PID_Follow->Set_Target(this->PID_Follow, 0.0);
-    this->PID_Follow->Set_Now(this->PID_Follow, this->gray_scale_sensor->Follow_Error);
+    this->PID_Follow->Set_Target(this->PID_Follow, this->gray_scale_sensor->Follow_Error);
+    this->PID_Follow->Set_Now(this->PID_Follow, 0);
     this->PID_Follow->Update_Value(this->PID_Follow);
 
-    float max_speed = MAX_ANGULAR_SPEED * WHEEL_DISTANCE;
     this->Target_Speed.angular_velocity = this->PID_Follow->Get_PID_Out(this->PID_Follow);
-    this->Target_Speed.linear_velocity = max_speed - fabs(this->Target_Speed.angular_velocity * WHEEL_DISTANCE);
+    this->Target_Speed.linear_velocity = (MAX_ANGULAR_SPEED - fabs(this->Target_Speed.angular_velocity)) * WHEEL_DISTANCE;
+    // this->Target_Speed.linear_velocity = 0.5f;
+    // this->Target_Speed.angular_velocity = 0.0f;
 
     Math_Constrain_float(&this->Target_Speed.linear_velocity, -10.0f, this->gray_scale_sensor->Linear_Speed_Max);
 
@@ -342,6 +344,9 @@ void Car_Update_Task(pClass_Car this, uint8_t task_id)
     this->Task_2_Step = 0;
     this->Task_3_Step = 0;
     this->Task_4_Step = 0;
+    this->Task_5_Step = 0;
+    this->Task_6_Step = 0;
+    this->Task_7_Step = 0;
 }
 
 /**
@@ -351,11 +356,38 @@ void Car_Update_Task(pClass_Car this, uint8_t task_id)
  */
 void Car_Judge_Mode(pClass_Car this)
 {
+    uint8_t mode = 0;
+    switch (this->Last_Task_ID)
+    {
+    case 1:
+        if(this->Task_1_cnt < 3){
+            mode = 1;
+        }else{
+            mode = 2;
+        }
+        break;
+    case 5:
+        if (this->Task_5_cnt < 19)
+        {
+            mode = 1;
+        }
+        else
+        {
+            mode = 2;
+        }
+        break;
+    default:
+        break;
+    }
+    this->gray_scale_sensor->Update(this->gray_scale_sensor, mode);
+    if(this->Delay_Lock > 0)
+        this->Delay_Lock--;
     switch (this->Mode)
     {
     case STOP:
         this->Target_Speed.linear_velocity = 0.0f;
         this->Target_Speed.angular_velocity = 0.0f;
+        this->Kinematic_Inverse(this);
         this->Finish_Current_Mode = true;
         break;
     case POSISITON_L_Circle:
@@ -365,13 +397,13 @@ void Car_Judge_Mode(pClass_Car this)
         }
         break;
     case POSISITON_A_Circle:
-        if (fabs(TransAngleInPI(this->Target_Position.yaw - this->Now_Position.yaw)) < 0.05f)
+        if (fabs(TransAngleInPI(this->Target_Position.yaw - this->Current_Mode_Position.yaw)) < 0.05f)
         {
             this->Finish_Current_Mode = true;
         }
         break;
     case POSISITON_XY_Circle:
-        if (fabs(this->Target_Position.x - this->Current_Mode_Position.x) < 0.02f && fabs(this->Target_Position.y - this->Current_Mode_Position.y) < 0.02f)
+        if (fabs(this->Target_Position.x - this->Current_Mode_Position.x) < 0.1f && fabs(this->Target_Position.y - this->Current_Mode_Position.y) < 0.1f)
         {
             this->Finish_Current_Mode = true;
         }
@@ -379,8 +411,30 @@ void Car_Judge_Mode(pClass_Car this)
     case FOLLOW_Circle:
         if (this->gray_scale_sensor->Finish)
         {
-            this->Finish_Current_Mode = true;
-            this->gray_scale_sensor->Finish = false;
+            if(this->Delay_Lock > 0){
+                this->gray_scale_sensor->Finish = false;
+            }else{
+                this->Finish_Current_Mode = true;
+                this->gray_scale_sensor->Finish = false;
+                this->Last_Task_ID = this->Task_ID;
+                this->Update_Task(this, 7);
+            }
+            // this->Finish_Current_Mode = true;
+            // this->gray_scale_sensor->Finish = false;
+            // this->Update_Mode(this, STOP);
+            // this->Update_Task(this, 0);
+        }
+        break;
+    case DELAY_MODE:
+        this->Delay_cnt++;
+        if (this->Delay_cnt > this->Delay_Time)
+        {
+            if (((this->gray_scale_sensor->Digital_value[3]) || ((this->gray_scale_sensor->Digital_value[4]) || (this->gray_scale_sensor->Digital_value[2])) || (this->gray_scale_sensor->Digital_value[0]) || this->Delay_Time < 50))
+            {
+                this->Delay_cnt = 0;
+                this->Delay_Time = 0;
+                this->Finish_Current_Mode = true;
+            }
         }
         break;
     default:
@@ -397,188 +451,112 @@ void Car_Judge_Mode(pClass_Car this)
         this->Task_1_Step++;
         switch (this->Task_1_Step)
         {
-        case 1: //* A->C
-#ifdef USE_IMU_IN_ANGULAR_PID
-            this->Begin_Yaw = this->IMU_Yaw;
-#else
-            this->Begin_Yaw = this->Now_Position.yaw;
-#endif
-            this->Update_Mode(this, TRAJECTORY_1);
+        case 1:
+            this->Last_Task_ID = this->Task_ID;
+            this->Motor_L->Target_Speed = -0.16;
+            this->Motor_R->Target_Speed = 0.24;
+            this->Delay_Time = 25 * 6;
+            this->Delay_Lock = 100 * 6;
+            this->Update_Mode(this, DELAY_MODE);
             break;
-        case 2: //* C->B
+        case 2:
             this->Update_Mode(this, FOLLOW_Circle);
-            break;
-        case 3: //* 转回原角度
-            this->Target_Position.x = 0.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw + PI;
-            this->Update_Mode(this, POSISITON_A_Circle);
-            break;
-        case 4: //* B->D
-            this->Update_Mode(this, TRAJECTORY_2);
-            break;
-        case 5: //* D->A
-            this->Update_Mode(this, FOLLOW_Circle);
-            break;
-        case 6: //* 转回原角度
-            this->Target_Position.x = 0.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw;
-            this->Update_Mode(this, POSISITON_A_Circle);
-            break;
-        case 7: //* 结束
-            this->Update_Mode(this, STOP);
-            this->Task_1_Step = 0;
-            this->Task_ID = 0;
-            break;
-        default:
-            this->Finish_Current_Mode = true;
-            break;
-        }
-        break;
-    case 2:
-        this->Task_2_Step++;
-        switch (this->Task_2_Step)
-        {
-        case 1: //* 直走
-#ifdef USE_IMU_IN_ANGULAR_PID
-            this->Begin_Yaw = this->IMU_Yaw;
-#else
-            this->Begin_Yaw = this->Now_Position.yaw;
-#endif
-            this->Target_Position.x = -1.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw;
-
-            this->Update_Mode(this, POSISITON_L_Circle);
-            break;
-        case 2: //* 巡线
-            this->Update_Mode(this, FOLLOW_Circle);
-            break;
-        case 3: //* 转向相反方向
-            this->Target_Position.x = 0.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw + PI;
-            break;
-        case 4: //* 直走
-            this->Target_Position.x = -1.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw + PI;
-
-            this->Update_Mode(this, POSISITON_L_Circle);
-            break;
-        case 5: //* 巡线
-            this->Update_Mode(this, FOLLOW_Circle);
-            break;
-        case 6: //* 转回原角度
-            this->Target_Position.x = 0.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw;
-
-            this->Update_Mode(this, POSISITON_A_Circle);
-            break;
-        case 7: //* 结束
-            this->Update_Mode(this, STOP);
-            this->Task_2_Step = 0;
-            this->Task_ID = 0;
             break;
         default:
             break;
         }
         break;
-    case 3:
-        this->Task_3_Step++;
-        switch (this->Task_3_Step)
+    case 5:
+        this->Task_5_Step++;
+        switch (this->Task_5_Step)
         {
-        case 1: //* 转
-#ifdef USE_IMU_IN_ANGULAR_PID
-            this->Begin_Yaw = this->IMU_Yaw;
-#else
-            this->Begin_Yaw = this->Now_Position.yaw;
-#endif
-            this->Target_Position.x = 0.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw - atan2f(0.8f, 0.95f);
-
-            this->Update_Mode(this, POSISITON_A_Circle);
+        case 1:
+            this->Last_Task_ID = this->Task_ID;
+            this->Motor_L->Target_Speed = -0.16;
+            this->Motor_R->Target_Speed = 0.24;
+            this->Delay_Time = 25 * 6;
+            this->Delay_Lock = 100 * 6;
+            this->Update_Mode(this, DELAY_MODE);
             break;
-        case 2: //* 直走
-            this->Target_Position.x = -sqrt(0.8f * 0.8f + 0.95f * 0.95f);
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw - atan2f(0.8f, 0.95f);
-            this->Update_Mode(this, POSISITON_L_Circle);
-            break;
-        case 3: //* 转回原角度
-            this->Target_Position.x = 0.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw;
-            this->Update_Mode(this, POSISITON_A_Circle);
-            break;
-        case 4: //* 巡线
+        case 2:
             this->Update_Mode(this, FOLLOW_Circle);
-            break;
-        // case 5: //* 转向相反方向
-        //     this->Target_Position.x = 0.0f;
-        //     this->Target_Position.y = 0.0f;
-        //     this->Target_Position.yaw = this->Begin_Yaw + PI - atan2f(0.8f, 1.0f);
-        //     this->Update_Mode(this, POSISITON_L_Circle);
-        //     break;
-        // case 6: //* 直走
-        //     this->Target_Position.x = -sqrt(0.8f * 0.8f + 1.0f * 1.0f);
-        //     this->Target_Position.y = 0.0f;
-        //     this->Target_Position.yaw = this->Begin_Yaw + PI - atan2f(0.8f, 1.0f);
-        //     this->Update_Mode(this, POSISITON_L_Circle);
-        //     break;
-        // case 7: //* 直走
-        //     this->Target_Position.x = 0.0f;
-        //     this->Target_Position.y = 0.0f;
-        //     this->Target_Position.yaw = this->Begin_Yaw + PI;
-        //     this->Update_Mode(this, POSISITON_L_Circle);
-        //     break;
-        // case 8: //* 巡线
-        //     this->Update_Mode(this, FOLLOW_Circle);
-        //     break;
-        case 5: //* 转回原角度
-            this->Target_Position.x = 0.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw;
-
-            this->Update_Mode(this, POSISITON_A_Circle);
-            break;
-        case 6: //* 结束
-            this->Update_Mode(this, STOP);
-            this->Task_3_Step = 0;
-            this->Task_ID = 0;
             break;
         default:
             break;
         }
         break;
-    case 4:
-        this->Task_4_Step++;
-        switch (this->Task_4_Step)
+    case 7:
+        this->Task_7_Step++;
+        switch (this->Task_7_Step)
         {
-        case 1: //* 转
-#ifdef USE_IMU_IN_ANGULAR_PID
-            this->Begin_Yaw = this->IMU_Yaw;
-#else
-            this->Begin_Yaw = this->Now_Position.yaw;
-#endif
-            this->Update_Mode(this, TRAJECTORY_3);
+        case 1:
+            this->Motor_L->Target_Speed = 0.0f;
+            this->Motor_R->Target_Speed = 0.0f;
+            this->Delay_Time = 30;
+            this->Update_Mode(this, DELAY_MODE);
             break;
-        case 2: //* 转回原角度
-            this->Target_Position.x = 0.0f;
-            this->Target_Position.y = 0.0f;
-            this->Target_Position.yaw = this->Begin_Yaw;
+        case 2:
+            this->Motor_L->Target_Speed = -0.120;
+            this->Motor_R->Target_Speed = 0.080;
+            this->Delay_Time = 25 * 6;
+            this->Delay_Lock = 100 * 6;
+            this->Update_Mode(this, DELAY_MODE);
+            switch (this->Last_Task_ID)
+            {
+            case 1:
+                if(this->Task_1_cnt == 3){
+                    this->Motor_L->Target_Speed = 0.0;
+                    this->Motor_R->Target_Speed = 0.0;
+                    this->Delay_Time = 0;
+                    this->Delay_Lock = 0;
+                    this->Update_Mode(this, STOP);
+                    this->Finish_Current_Mode = true;
+                }
+                break;
+            case 5:
+                if (this->Task_5_cnt == 19)
+                {
+                    this->Motor_L->Target_Speed = 0.0;
+                    this->Motor_R->Target_Speed = 0.0;
+                    this->Delay_Time = 0;
+                    this->Delay_Lock = 0;
+                    this->Update_Mode(this, STOP);
+                    this->Finish_Current_Mode = true;
+                }
+                break;
+            default:
+                break;
+            }
 
-            this->Update_Mode(this, POSISITON_A_Circle);
             break;
-        case 3: //* 结束
-            this->Update_Mode(this, STOP);
-            this->Task_4_Step = 0;
-            this->Task_ID = 0;
-            break;
-        default:
+        case 3:
+            switch(this->Last_Task_ID)
+            {
+                case 1:
+                    this->Task_1_cnt++;
+                    if(this->Task_1_cnt == 4)
+                    {
+                        this->Update_Mode(this, STOP);
+                        this->Update_Task(this, 0);
+                    }else{
+                        this->Update_Task(this, 1);
+                        this->Task_1_Step = 1;
+                    }
+                break;
+                case 5:
+                    this->Task_5_cnt++;
+                    if (this->Task_5_cnt == 20)
+                    {
+                        this->Update_Mode(this, STOP);
+                        this->Update_Task(this, 0);
+                    }
+                    else
+                    {
+                        this->Update_Task(this, 5);
+                        this->Task_5_Step = 1;
+                    }
+                    break;
+                }
             break;
         }
         break;

@@ -14,6 +14,7 @@ typedef enum
     POSISITON_A_Circle,
     POSISITON_XY_Circle,
     FOLLOW_Circle,
+    DELAY_MODE,
     TRAJECTORY_1,
     TRAJECTORY_2,
     TRAJECTORY_3,

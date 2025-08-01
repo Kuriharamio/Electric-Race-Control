@@ -22,11 +22,11 @@ void PID_TIMER_INST_IRQHandler(void)
     case DL_TIMER_IIDX_ZERO:
         count++;
 #ifdef USE_CAR
-        if (Get_Car_Handle()->is_inited)
-        {
-            Get_Car_Handle()->Judge_Mode(Get_Car_Handle());
-            Get_Car_Handle()->Kinematic_Inverse(Get_Car_Handle());
-        }
+        // if (Get_Car_Handle()->is_inited)
+        // {
+        //     Get_Car_Handle()->Judge_Mode(Get_Car_Handle());
+        //     // Get_Car_Handle()->Kinematic_Inverse(Get_Car_Handle());
+        // }
 
        
 
@@ -74,6 +74,17 @@ void PID_TIMER_INST_IRQHandler(void)
                 else if (Get_Car_Handle()->Mode == TRAJECTORY_1 || Get_Car_Handle()->Mode == TRAJECTORY_2 || Get_Car_Handle()->Mode == TRAJECTORY_3)
                 {
                     Get_Car_Handle()->Upadate_Controller(Get_Car_Handle());
+                }
+            }
+        }
+
+        if (count % PID_CAR_FOLLOW_FACTOR == 0)
+        {
+            if (Get_Car_Handle()->is_inited)
+            {
+                if (Get_Car_Handle()->Mode == FOLLOW_Circle)
+                {
+                    Get_Car_Handle()->Update_Follow_PID(Get_Car_Handle());
                 }
             }
         }
@@ -156,9 +167,9 @@ void READ_TIMER_INST_IRQHandler(void)
         if (cnt % GRAY_SENSOR_TIMER_FACTOR == 0)
         {
             if (Get_Car_Handle()->is_inited){
-                // if (Get_Car_Handle()->Mode == FOLLOW_Circle)
+                // if (Get_Car_Handle()->Mode == FOLLOW_Circle || Get_Car_Handle()->Mode == DELAY_MODE)
                 {
-                    Get_Car_Handle()->gray_scale_sensor->Update(Get_Car_Handle()->gray_scale_sensor);
+                    Get_Car_Handle()->Judge_Mode(Get_Car_Handle());
                 }
             }
         }

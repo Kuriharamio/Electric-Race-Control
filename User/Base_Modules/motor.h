@@ -33,9 +33,9 @@ typedef struct Class_Motor
     float Output_Max;
     float Speed_Max;
     // 编码器计数
-    int Encoder_Num_Per_Round;
-    int Last_Encoder_Tick;
-    int Total_Encoder_Tick;
+    float Encoder_Num_Per_Round;
+    float Last_Encoder_Tick;
+    float Total_Encoder_Tick;
 
     float Radius;
     // 引脚定义
@@ -57,7 +57,7 @@ typedef struct Class_Motor
     GPIO_Regs *ENCODER_B_PORT;
     uint32_t ENCODER_B_PIN;
 
-    void (*Init)(struct Class_Motor *this, float __radius, float __Output_Max, float __Speed_Max, int __Gearbox_Rate, int __Per_Pulse, int __Frequency_doubling); // 电机初始化
+    void (*Init)(struct Class_Motor *this, float __radius, float __Output_Max, float __Speed_Max, float __Gearbox_Rate, int __Per_Pulse, int __Frequency_doubling); // 电机初始化
 
     void (*Configure_IN_1)(struct Class_Motor *this, GPIO_Regs *__IN_1_PORT, uint32_t __IN_1_PIN);                // 电机引脚IN1配置
     void (*Configure_IN_2)(struct Class_Motor *this, GPIO_Regs *__IN_2_PORT, uint32_t __IN_2_PIN);                // 电机引脚IN2配置
@@ -83,7 +83,7 @@ void Motor_Configure_PWM(pClass_Motor this, GPTIMER_Regs *__PWM_INST, uint32_t _
 void Motor_Configure_ENCODER_A(pClass_Motor this, GPIO_Regs *__ENCODER_A_PORT, uint32_t __ENCODER_A_PIN);
 void Motor_Configure_ENCODER_B(pClass_Motor this, GPIO_Regs *__ENCODER_B_PORT, uint32_t __ENCODER_B_PIN);
 
-void Motor_Init(pClass_Motor this, float __radius, float __Output_Max, float __Speed_Max, int __Gearbox_Rate, int __Per_Pulse, int __Frequency_doubling);
+void Motor_Init(pClass_Motor this, float __radius, float __Output_Max, float __Speed_Max, float __Gearbox_Rate, int __Per_Pulse, int __Frequency_doubling);
 
 void Motor_Encoder_Callback(pClass_Motor this, char phase);
 void Motor_Update_PID(pClass_Motor this);

@@ -5,64 +5,68 @@
 
 void Set_Task_1(void)
 {
-#ifdef USE_RASPBERRY
-    pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
-    Raspberry_UART->Send_Bit(Raspberry_UART, 1);
-#endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 1);
+    Get_Car_Handle()->Task_1_cnt = 0;
+    Get_Car_Handle()->Task_2_cnt = 0;
+    Get_Car_Handle()->Task_3_cnt = 0;
+    Get_Car_Handle()->Task_4_cnt = 0;
+    Get_Car_Handle()->Task_5_cnt = 0;
     LED_STATE = BEEP;
 }
 
 void Set_Task_2(void)
 {
-#ifdef USE_RASPBERRY
-    pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
-    Raspberry_UART->Send_Bit(Raspberry_UART, 2);
-#endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 2);
+    Get_Car_Handle()->Task_1_cnt = 0;
+    Get_Car_Handle()->Task_2_cnt = 0;
+    Get_Car_Handle()->Task_3_cnt = 0;
+    Get_Car_Handle()->Task_4_cnt = 0;
+    Get_Car_Handle()->Task_5_cnt = 0;
     LED_STATE = BEEP;
 }
 
 void Set_Task_3(void)
 {
-#ifdef USE_RASPBERRY
-    pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
-    Raspberry_UART->Send_Bit(Raspberry_UART, 3);
-#endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 3);
+    Get_Car_Handle()->Task_1_cnt = 0;
+    Get_Car_Handle()->Task_2_cnt = 0;
+    Get_Car_Handle()->Task_3_cnt = 0;
+    Get_Car_Handle()->Task_4_cnt = 0;
+    Get_Car_Handle()->Task_5_cnt = 0;
     LED_STATE = BEEP;
 }
 
 void Set_Task_4(void)
 {
-#ifdef USE_RASPBERRY
-    pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
-    Raspberry_UART->Send_Bit(Raspberry_UART, 4);
-#endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 4);
+    Get_Car_Handle()->Task_1_cnt = 0;
+    Get_Car_Handle()->Task_2_cnt = 0;
+    Get_Car_Handle()->Task_3_cnt = 0;
+    Get_Car_Handle()->Task_4_cnt = 0;
+    Get_Car_Handle()->Task_5_cnt = 0;
     LED_STATE = BEEP;
 }
 
 void Set_Task_5(void)
 {
-#ifdef USE_RASPBERRY
-    pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
-    Raspberry_UART->Send_Bit(Raspberry_UART, 5);
-#endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 5);
+    Get_Car_Handle()->Task_1_cnt = 0;
+    Get_Car_Handle()->Task_2_cnt = 0;
+    Get_Car_Handle()->Task_3_cnt = 0;
+    Get_Car_Handle()->Task_4_cnt = 0;
+    Get_Car_Handle()->Task_5_cnt = 0;
     LED_STATE = BEEP;
-    LAZER(OFF);
 }
 
 void Set_Task_6(void)
 {
-#ifdef USE_RASPBERRY
-    pClass_UART Raspberry_UART = Get_UART_INST(Raspberry_UART_INDEX);
-    Raspberry_UART->Send_Bit(Raspberry_UART, 6);
-#endif
     Get_Car_Handle()->Update_Task(Get_Car_Handle(), 6);
+    Get_Car_Handle()->Task_1_cnt = 0;
+    Get_Car_Handle()->Task_2_cnt = 0;
+    Get_Car_Handle()->Task_3_cnt = 0;
+    Get_Car_Handle()->Task_4_cnt = 0;
+    Get_Car_Handle()->Task_5_cnt = 0;
     LED_STATE = BEEP;
-    LAZER(ON);
 }
 
 /**
@@ -125,6 +129,16 @@ void HMI_Rx_Callback(pClass_UART this)
         else if (strcmp((char *)this->rxbuffer, "task6") == 0)
         {
             Set_Task_6();
+        }
+        else if (strcmp((char *)this->rxbuffer, "command1") == 0)
+        {
+            Calibrate_Black(Get_Sensor_Handle());
+            LED_STATE = BEEP;
+        }
+        else if (strcmp((char *)this->rxbuffer, "command2") == 0)
+        {
+            Calibrate_White(Get_Sensor_Handle());
+            LED_STATE = BEEP;
         }
         else
         {

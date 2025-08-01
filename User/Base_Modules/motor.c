@@ -73,7 +73,7 @@ pClass_Motor Get_Motor_INST(SIDE side)
  * @brief 电机初始化
  *
  */
-void Motor_Init(pClass_Motor this, float __radius, float __Output_Max, float __Speed_Max, int __Gearbox_Rate, int __Per_Pulse, int __Frequency_doubling)
+void Motor_Init(pClass_Motor this, float __radius, float __Output_Max, float __Speed_Max, float __Gearbox_Rate, int __Per_Pulse, int __Frequency_doubling)
 {
     this->Direction = BRAKE;
 

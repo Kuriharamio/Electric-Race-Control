@@ -46,6 +46,7 @@ typedef struct Class_GraySensor
     int Search_Direction;   // 搜索方向
     float Linear_Speed_Max; // 最大线速度
     bool Finish;
+    int Turn;
 
     unsigned int ADC_Value; // ADC采样值
     bool ADC_Flag;          // ADC采样标志
@@ -53,7 +54,7 @@ typedef struct Class_GraySensor
 
     void (*Init_With_Params)(struct Class_GraySensor *this, unsigned short *Calibrated_white, unsigned short *Calibrated_black); // 带校准参数的初始化
     void (*Init_Without_Params)(struct Class_GraySensor *this);                                                                  // 首次初始化
-    void (*Update)(struct Class_GraySensor *this);                                                                               // 更新传感器全部数据
+    void (*Update)(struct Class_GraySensor *this, uint8_t mode);                                                                               // 更新传感器全部数据
 
 } Class_GraySensor, *pClass_GraySensor;
 
@@ -62,6 +63,9 @@ pClass_GraySensor Get_Sensor_Handle(void);
 
 void GraySensor_Init_Without_Params(pClass_GraySensor sensor);                                                                  // 首次初始化
 void GraySensor_Init_With_Params(pClass_GraySensor sensor, unsigned short *Calibrated_white, unsigned short *Calibrated_black); // 带校准参数的初始化
-void GraySensor_Update(pClass_GraySensor sensor);
+void GraySensor_Update(pClass_GraySensor this, uint8_t mode);
+void Calibrate_White(pClass_GraySensor this);
+void Calibrate_Black(pClass_GraySensor this);
 
 #endif // __FOLLOW_SENSOR_H__
+

@@ -15,144 +15,42 @@
 
 #include "Car/car.h"
 
-#ifdef USE_PTZ
-// 上舵机向上
-void Servo_UP_UP(void)
-{
-  pClass_FT_Servo servo = Get_PTZ_INST()->Servo_Up;
-  if (servo->is_inited)
-  {
-    servo->Set_Target_Status(servo, --servo->Target_Pos, 10, 10);
-  }
-}
-
-// 上舵机向下
-void Servo_UP_DOWN(void)
-{
-  pClass_FT_Servo servo = Get_PTZ_INST()->Servo_Up;
-  if (servo->is_inited)
-  {
-    servo->Set_Target_Status(servo, ++servo->Target_Pos, 10, 10);
-  }
-}
-
-// 下舵机向左
-void Servo_DOWN_LEFT(void)
-{
-  pClass_FT_Servo servo = Get_PTZ_INST()->Servo_Down;
-  if (servo->is_inited)
-  {
-    servo->Set_Target_Status(servo, --servo->Target_Pos, 10, 10);
-  }
-}
-
-// 下舵机向右
-void Servo_DOWN_RIGHT(void)
-{
-  pClass_FT_Servo servo = Get_PTZ_INST()->Servo_Down;
-  if (servo->is_inited)
-  {
-    servo->Set_Target_Status(servo, ++servo->Target_Pos, 10, 10);
-  }
-}
-
-void Toggle_LAZER(void)
-{
-  LAZER(TOGGLE);
-}
-
-void Set_Point_1(void)
-{
-  pClass_PTZ PTZ = Get_PTZ_INST();
-  PTZ->Servo_Down->Set_Min_Pos(PTZ->Servo_Down, PTZ->Servo_Down->Pos);
-  PTZ->Servo_Up->Set_Min_Pos(PTZ->Servo_Up, PTZ->Servo_Up->Pos);
-  LED(TOGGLE);
-}
-
-void Set_Point_2(void)
-{
-  pClass_PTZ PTZ = Get_PTZ_INST();
-  PTZ->Servo_Down->Set_Max_Pos(PTZ->Servo_Down, PTZ->Servo_Down->Pos);
-  PTZ->Servo_Up->Set_Max_Pos(PTZ->Servo_Up, PTZ->Servo_Up->Pos);
-  LED(TOGGLE);
-}
-
-bool ptz_task_1_flag = false;
-void PTZ_Task_1(void)
-{
-  pClass_PTZ PTZ = Get_PTZ_INST();
-  if (PTZ->is_inited)
-  {
-    ptz_task_1_flag = true;
-  }
-}
-
-bool ptz_task_2_flag = false;
-void PTZ_Task_2(void)
-{
-  pClass_PTZ PTZ = Get_PTZ_INST();
-  if (PTZ->is_inited)
-  {
-    ptz_task_2_flag = true;
-  }
-}
-
-bool ptz_task_3_flag = false;
-void PTZ_Task_3(void)
-{
-  pClass_PTZ PTZ = Get_PTZ_INST();
-  if (PTZ->is_inited)
-  {
-    ptz_task_3_flag = true;
-  }
-}
-
-void seterrorx(void)
-{
-  pClass_PTZ PTZ = Get_PTZ_INST();
-  if (PTZ->is_inited)
-  {
-    // PTZ->Servo_Down->
-  }
-}
-
-
-
-#endif
 
 int main(void)
 {
   SYSCFG_DL_init();
-  Enable_All_Interrupt();
 
 #ifdef USE_CAR
   pClass_Car Car = Create_Car(); // 创建小车对象
   Car->Init(Car);                // 初始化小车对象
 #endif
-  float a = 10.0f;
-  float b = 50.0f;  
+
 //* 蓝牙配置
 #ifdef USE_BLUETOOTH
   pClass_UART Bluetooth_Debuger = Create_UART(BLUETOOTH_UART_INDEX);               // 获取蓝牙对象实例
-  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 4);             // 初始化蓝牙对象
+  Bluetooth_Debuger->Init(Bluetooth_Debuger, BLUETOOTH_RX_LEN_MAX, 3);             // 初始化蓝牙对象
   Bluetooth_Debuger->Configure_Mode(Bluetooth_Debuger, DEBUG_WAVE);                // 配置调试模式
   Bluetooth_Debuger->Configure_Callback(Bluetooth_Debuger, Bluetooth_Rx_Callback); // 配置回调函数
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->gray_scale_sensor->Follow_Error), "Follow_Error");
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->IMU_Yaw), "IMU_Yaw");
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(a), "a");
-  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 3, &(b), "b");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 0, &(Car->Target_Speed.angular_velocity), "0");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 1, &(Car->Target_Position.yaw), "1");
+  Bluetooth_Debuger->Bind_Param_With_Id(Bluetooth_Debuger, 2, &(Car->Now_Position.yaw), "2");
+  
 #endif
 
 //* HMI配置
 #ifdef USE_HMI
+  float a = 0;
+  float b = 0;
+  float c = 0;
+  // float d = 0;
   pClass_UART HMI = Create_UART(HMI_UART_INDEX);
   HMI->Init(HMI, HMI_RX_LEN_MAX, 4);
   HMI->Configure_Mode(HMI, HMI_WATCH);
   HMI->Configure_Callback(HMI, HMI_Rx_Callback);
-  HMI->Bind_Param_With_Id(HMI, 0, &(Car->gray_scale_sensor->Follow_Error), "Follow_Error");
-  HMI->Bind_Param_With_Id(HMI, 1, &(Car->IMU_Yaw), "IMU_Yaw");
-  HMI->Bind_Param_With_Id(HMI, 2, &(a), "a");
-  HMI->Bind_Param_With_Id(HMI, 3, &(b), "b");
+  HMI->Bind_Param_With_Id(HMI, 0, &(Car->gray_scale_sensor->Follow_Error), "F_E");
+  HMI->Bind_Param_With_Id(HMI, 1, &(a), "ID");
+  HMI->Bind_Param_With_Id(HMI, 2, &(b), "cnt");
+  HMI->Bind_Param_With_Id(HMI, 3, &(c), "MODE");
 #endif
 
 //* IMU配置
@@ -167,7 +65,6 @@ int main(void)
 
 //* 云台配置
 #ifdef USE_PTZ
-
   delay_ms(1000);
   pClass_PTZ PTZ = Create_PTZ();
   PTZ->Init(PTZ);
@@ -194,58 +91,31 @@ int main(void)
   ADC_Button->Configure_Callback(ADC_Button, BUTTON_3, PTZ_Task_1, NULL, Servo_DOWN_LEFT);
   ADC_Button->Configure_Callback(ADC_Button, BUTTON_4, PTZ_Task_2, NULL, Servo_DOWN_RIGHT);
   ADC_Button->Configure_Callback(ADC_Button, BUTTON_5, Set_Point_2, NULL, Servo_UP_DOWN);
-
 #endif
-  LAZER(ON);
+  delay_ms(4000);
+  Enable_All_Interrupt();
+  LED_STATE = BEEP;
+  // Car->Mode = MOTOR_TEST;
+  // Car->Target_Speed.linear_velocity = 1.0f;
   while (1)
   {
 #ifdef USE_BLUETOOTH
     Bluetooth_Debuger->Send(Bluetooth_Debuger, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 #endif
 #ifdef USE_HMI
+    a = (float)(Car->Task_ID);
+    b = (float)(Car->Task_1_cnt);
+    c = (float)(Car->Mode);
     HMI->Send(HMI, (uint8_t *)"Debugging...\r\n", 15); // 发送数据
 #endif
 
     if (LED_STATE == BEEP)
     {
-      LED(BEEP);
+      // LED(BEEP);
       LED_STATE = OFF;
     }
 
-    {
-      static int cnt = 0;
-      cnt++;
-      if(cnt==500){
-        float temp = a;
-        a = b;
-        b = temp;
-      }
-    }
-    // {
-    //   if(ptz_task_1_flag){
-    //     if(PTZ->is_inited){
-    //       PTZ->Draw_Img(PTZ);
-    //       ptz_task_1_flag = false;
-    //     }
-    //   }
-    //   if (ptz_task_2_flag)
-    //   {
-    //     if (PTZ->is_inited)
-    //     {
-    //       PTZ->Draw_Func(PTZ);
-    //       ptz_task_2_flag = false;
-    //     }
-    //   }
-    //   if(ptz_task_3_flag)
-    //   {
-    //     if(PTZ->is_inited)
-    //     {
-    //       PTZ->Draw_Num(PTZ, 0.123456789, true, "%.10f");
-    //       ptz_task_3_flag = false;
-    //     }
-    //   }
-    // }
 
-    delay_ms(10);
+    delay_ms(100);
   }
 }
