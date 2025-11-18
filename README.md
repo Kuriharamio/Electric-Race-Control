@@ -20,26 +20,36 @@
 
 ```
 Electric-Race-Control/
-├── User/                 # 核心应用代码
-│   ├── config.h          # 系统配置宏定义
-│   ├── Base_Modules/     # 基础模块实现
-│   │   ├── uart.c/.h     # 串口通信模块
-│   │   ├── imu.c/.h      # 惯性测量单元驱动
-│   │   ├── motor.c/.h    # 电机控制模块
-│   │   ├── ptz.c/.h      # 云台控制模块
-│   │   ├── bluetooth.c/.h # 蓝牙通信模块
-│   │   └── adc_button.c/.h # ADC按键模块
-│   └── Car/              # 小车控制相关
-│       └── car.c/.h      # 小车控制逻辑
-├── BSP/                  # 板级支持包
-│   ├── board.c/.h        # 板级初始化
-│   ├── uart.c/.h         # 串口硬件驱动
-│   └── timer.c/.h        # 定时器驱动
-├── Algorithm/            # 算法库
-│   └── drv_math.h        # 数学工具函数
-├── Utils/                # 工具函数（用于生成路径，给小车跟踪）
-└── K230/                 # 上位机视觉代码
-└── Raspberry_pi/                 # 上位机视觉代码
+├── User/                           # 核心应用代码
+│   ├── config.h                    # 系统配置宏定义
+│   ├── Base_Modules/               # 基础模块实现
+│   │   ├── uart.c/.h               # 串口通信模块
+│   │   ├── imu.c/.h                # 惯性测量单元驱动
+│   │   ├── motor.c/.h              # 电机控制模块
+│   │   ├── ptz.c/.h                # 云台控制模块
+│   │   ├── bluetooth.c/.h          # 蓝牙通信模块
+│   │   ├── FT_servo.c/.h           # 飞特舵机模块
+│   │   ├── hmi.c/.h                # 串口屏模块
+│   │   ├── follow_sensor.c/.h      # 感为灰度传感器模块
+│   │   ├── servo.c/.h              # PWM舵机模块
+│   │   ├── raspberry_serial.c/.h   # 树莓派串口通信
+│   │   └── adc_button.c/.h         # ADC按键模块
+│   └── Car/                        # 小车控制相关
+│       └── car.c/.h                # 小车控制逻辑
+├── BSP/                            # 板级支持包
+│   ├── board.c/.h                  # 板级初始化
+│   ├── uart.c/.h                   # 串口硬件驱动
+│   ├── i2c.c/.h                    # i2c硬件驱动
+│   ├── gpio.c/.h                   # gpio硬件驱动
+│   ├── delay.c/.h                  # 延时函数
+│   └── timer.c/.h                  # 定时器驱动
+├── Algorithm/                      # 算法库
+│   ├── drv_math.c/.h               # 数学工具函数
+│   ├── pid.c/.h                    # PID 算法
+│   └── pure_pursuit.c/.h           # Pure Pursuit 算法
+├── Utils/                          # 工具函数（用于生成路径，给小车跟踪）
+└── K230/                           # 上位机视觉代码
+└── Raspberry_pi/                   # 上位机视觉代码
 ```
 
 ## 核心设计思想
